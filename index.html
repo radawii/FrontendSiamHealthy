@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Siam-Healthy</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="./js/header.js" defer></script>
+</head>
+
+<body>
+    <my-header></my-header>
+    <!-- {% include "header.html" %} -->
+    <!-- แบนเนอร์ -->
+    <div class="carousel-container">
+        <button class="carousel-btn prev-btn" id="prevBtn">&#10094;</button>
+
+        <div class="carousel-viewport">
+            <div class="carousel-track" id="carouselTrack">
+
+                <div class="carousel-item">
+                    <div class="item-mockup">
+                        <img src="./img/banner1.png" alt="">
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="item-mockup">
+                        <img src="./img/banner2.png" alt="">
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="item-mockup">
+                        <img src="./img/banner3.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="carousel-btn next-btn" id="nextBtn">&#10095;</button>
+    </div>
+    <!-- แบนเนอร์ -->
+
+    <!-- ร้านค้า -->
+    <div class="shop">
+        <div class="product-card">
+            <div class="product-image">รูปภาพสินค้า</div>
+            <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 1</h3>
+            <p class="product-price"><span class="old-price">1,980 ฿</span> 990 ฿</p>
+            <button class="buy-button">ใส่ตะกร้า</button>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">รูปภาพสินค้า</div>
+            <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 2</h3>
+            <p class="product-price">1,250 ฿</p>
+            <button class="buy-button">ใส่ตะกร้า</button>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">รูปภาพสินค้า</div>
+            <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 3</h3>
+            <p class="product-price"><span class="old-price">1,980 ฿</span> 450 ฿</p>
+            <button class="buy-button">ใส่ตะกร้า</button>
+        </div>
+
+        <div class="product-card">
+            <div class="product-image">รูปภาพสินค้า</div>
+            <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 4</h3>
+            <p class="product-price">3,200 ฿</p>
+            <button class="buy-button">ใส่ตะกร้า</button>
+        </div>
+    </div>
+    <div class="view-all-container">
+        <button class="view-all-btn" onclick="window.location.href='/shop';">ดูทั้งหมด</button>
+    </div>
+    <!-- ร้านค้า -->
+
+    <!-- Banner 2 -->
+    <div class="banner2">
+        <img src="./img/banner4.png" alt="">
+    </div>
+    <!-- Banner 2 -->
+
+    <!-- Supplements icon -->
+    <div class="sup-articles">
+        <h2>
+            ยกระดับมาตรฐานสินค้าและบริการ
+        </h2>
+        <h2>
+            พร้อมก้าวขึ้นสู่การเป็นผู้นำด้านอาหารเสริม
+        </h2>
+        <div class="icon-sup">
+            <div class="icon-block">
+                <div class="icon-image">ไอคอน 1</div>
+                <h3 class="icon-title">สินค้าผ่านการรับรองจาก อย.</h3>
+            </div>
+            <div class="icon-block">
+                <div class="icon-image">ไอคอน 2</div>
+                <h3 class="icon-title">คัดสรรสารสกัดคุณภาพสูง</h3>
+            </div>
+            <div class="icon-block">
+                <div class="icon-image">ไอคอน 3</div>
+                <h3 class="icon-title">นวัตกรรมการผลิตที่ได้มาตรฐาน</h3>
+            </div>
+            <div class="icon-block">
+                <div class="icon-image">ไอคอน 4</div>
+                <h3 class="icon-title">ปลอดภัยต่อร่างกายขั้นสูงสุด</h3>
+            </div>
+            <div class="icon-block">
+                <div class="icon-image">ไอคอน 5</div>
+                <h3 class="icon-title">จัดส่งสินค้าทั่วไทยอย่างรวดเร็ว</h3>
+            </div>
+            <div class="icon-block">
+                <div class="icon-image">ไอคอน 6</div>
+                <h3 class="icon-title">เจ้าหน้าที่ให้คำปรึกษาฟรีตลอด 24 ชม.</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Supplements icon -->
+
+    <!-- Health articles -->
+    <div class="article-container">
+        <h2>
+            บทความสุขภาพ
+        </h2>
+        <div class="articles">
+            <div class="article-card" onclick="window.location.href='articles/article1.html';" style="cursor: pointer;">
+                <div class="article-image">
+                    <img src="./articles/img/a1.png">
+                </div>
+                <h3 class="article-title">
+                    ลุกก็โอย นั่งก็โอย เจ็บหัวเข่าแปล๊บๆ ทุกครั้งที่ก้าวลงบันได
+                    สัญญาณข้อเข่าเสื่อมที่คนวัย 40+ ต้องฟื้นฟูอย่างไรก่อนจะสาย?
+                </h3>
+                <p class="article-date">1/6/2026</p>
+            </div>
+            <div class="article-card" onclick="window.location.href='articles/article2.html';" style="cursor: pointer;">
+                <div class="article-image">
+                    <img src="./articles/img/a2.png">
+                </div>
+                <h3 class="article-title">
+                    หน้าจอมือถือทำลายดวงตามากกว่าที่คิด: วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง 
+                    ภัยเงียบจากแสงสีฟ้าที่คนยุคปัจจุบันมองข้ามไม่ได้
+                </h3>
+                <p class="article-date">1/6/2026</p>
+            </div>
+            <div class="article-card" onclick="window.location.href='articles/article3.html';" style="cursor: pointer;">
+                <div class="article-image">
+                    <img src="./articles/img/a3.png">
+                </div>
+                <h3 class="article-title">
+                    หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย 
+                    ภัยเงียบที่บั่นทอนความสุขในครอบครัว
+                </h3>
+                <p class="article-date">1/6/2026</p>
+            </div>
+        </div>
+        <div class="view-all-container">
+            <button class="view-all-btn" onclick="window.location.href='/articles';">ดูทั้งหมด</button>
+        </div>
+    </div>
+    <!-- Health articles -->
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Copyright © 2026 Siam-Healthy. All rights reserved.</p>
+    </div>
+    <!-- Footer -->
+
+    <script src="./js/carousel.js"></script>
+    <!-- <script src="./js/script.js"></script> -->
+</body>
+
+</html>

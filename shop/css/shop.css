@@ -1,0 +1,938 @@
+body {
+  margin: 0;
+  font-family: "Prompt", sans-serif;
+  background-color: #f0f0f0;
+  font-size: 18px;
+}
+
+input,
+button {
+  font-family: "Prompt", sans-serif;
+}
+
+/* รีเซ็ตค่าเริ่มต้นและกำหนดฟอนต์ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Prompt', sans-serif;
+  /* เปลี่ยนเป็นฟอนต์ที่โปรเจกต์คุณใช้ได้เลย */
+}
+
+h2 {
+  font-size: 1.7em;
+  margin: 15px auto;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.2em;
+  margin: 0 0 15px;
+}
+
+/* ตัว Header หลัก */
+.main-header {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  /* เส้นแบ่งจางๆ ด้านล่าง */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* กล่องครอบที่ช่วยจำกัดความกว้างและจัดให้คอนเทนต์อยู่ตรงกลาง */
+.header-container {
+  max-width: 1200px;
+  /* ขยายหรือลดตามขนาดหน้าจอหลักของคุณ */
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 80px;
+  /* ความสูงของแถบ Header */
+  display: flex;
+  justify-content: space-between;
+  /* ตัวเด็ด: ผลักโลโก้ไปซ้าย สุด เมนูไปขวาสุด */
+  align-items: center;
+}
+
+/* ส่วนของโลโก้ */
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #00581d;
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-name {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: -0.5px;
+}
+
+/* ส่วนของเมนูฝั่งขวา */
+.nav-menu {
+  display: flex;
+  gap: 30px;
+  /* ระยะห่างระหว่างแท็บ */
+  height: 100%;
+  /* ให้ความสูงเต็มเท่ากลุ่มเนวิเกชัน */
+}
+
+/* ตัวลิงก์แต่ละแท็บ */
+.nav-tab {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #00581d;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+  /* ใช้ตั้งค่าจุดอ้างอิงให้เส้นใต้ */
+  height: 100%;
+  transition: color 0.2s ease;
+}
+
+/* เอฟเฟกต์เส้นใต้แท็บ (แอบซ่อนไว้ก่อน) */
+.nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  /* ติดขอบล่างของแถบพอดี */
+  left: 0;
+  width: 100%;
+  height: 3px;
+  /* ความหนาของเส้นแท็บ */
+  background-color: #00581d;
+  /* สีของเส้นแท็บ */
+  transform: scaleX(0);
+  /* เริ่มต้นให้ความกว้างของเส้นเป็น 0 */
+  transition: transform 0.25s ease-out;
+}
+
+/* เมื่อเอาเมาส์มาวาง (Hover) หรือแท็บนั้นกำลังเปิดอยู่ (Active) */
+.nav-tab:hover::after,
+.nav-tab.active::after {
+  transform: scaleX(1);
+  /* ขยายเส้นใต้ออกมาเต็มความกว้างตัวอักษร */
+}
+
+.nav-tab:hover {
+  color: #008807;
+  /* เปลี่ยนสีตัวอักษรให้อ่อนลงนิดนึงตอนเมาส์ชี้ */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  display: block;
+  background-color: #ffffff;
+}
+
+.container p {
+  margin-bottom: 10px;
+}
+
+.container img {
+  max-width: 1000px;
+  width: 100%;
+  display: block;
+  margin: 20px auto;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  /* เรียงจากบนลงล่าง */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fff;
+}
+
+.product-card.hidden {
+  display: none;
+  opacity: 0;
+  transform: translateY(15px);
+  /* ให้การ์ดเด้งขึ้นมาจากด้านล่างนิดนึง */
+}
+
+.product-image {
+  width: 100%;
+  height: 320px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.product-image img {
+  width: 100%;
+}
+
+.product-title {
+  font-size: 18px;
+  margin: 15px 0 5px 0;
+}
+
+.product-date {
+  font-size: 14px;
+}
+
+/* สินค้า */
+.product-page {
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+.gallery {
+  width: 55%;
+}
+
+.main-image {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.main-image img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+  transition: .4s;
+  cursor: pointer;
+}
+
+.thumbs {
+  display: flex;
+  gap: 10px;
+}
+
+.thumbs img {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: .25s;
+}
+
+.thumbs img:hover {
+  border-color: #ff6a00;
+}
+
+.product-info {
+  width: 40%;
+}
+
+.main-image:hover img {
+  transform: scale(1.15);
+}
+
+.product-info h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.price {
+  font-size: 36px;
+  color: #ff4d4f;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.price s {
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+}
+
+.product-benefits {
+  margin: 30px 0;
+}
+
+.benefit-item {
+  margin: 8px 0;
+  display: inline-block;
+  padding: 15px;
+  background: white;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+  transition: .3s;
+}
+
+.benefit-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+}
+
+.check {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.benefit-item span {
+  display: inline;
+  font-size: 14px;
+  font-weight: 700;
+  color: green;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width:768px) {
+  .product-benefits {
+    flex-direction: column;
+  }
+}
+
+.option {
+  margin: 25px 0;
+}
+
+.option label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.option button {
+  padding: 10px 18px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cart,
+.buy {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.cart {
+  background: #222;
+  color: #fff;
+}
+
+.buy {
+  background: #ff6a00;
+  color: #fff;
+}
+
+.bblack {
+  border: 1px solid black;
+}
+
+/* สินค้า */
+.white-box {
+  display: flex;
+  gap: 20px;
+}
+
+.white-item {
+  flex: 1;
+  padding: 20px 25px;
+  border-radius: 12px;
+  background: #fff;
+  border: 3px solid #5a5a5a;
+}
+
+.white-item h3 {
+  margin: 0 0 15px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.white-item ul {
+  margin: 0;
+  padding-left: 25px;
+}
+
+.white-item li {
+  margin-bottom: 12px;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.warning-box {
+  display: flex;
+  gap: 20px;
+}
+
+.warning-item {
+  flex: 1;
+  padding: 20px 25px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.warning-item h3 {
+  margin: 0 0 15px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.warning-item ul {
+  margin: 0;
+  padding-left: 25px;
+}
+
+.warning-item li {
+  margin-bottom: 12px;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+/* กล่องซ้าย */
+.warning-item:first-child {
+  border: 3px solid #ef4444;
+  background: #fff5f5;
+}
+
+.warning-item:first-child h3 {
+  color: #dc2626;
+}
+
+/* กล่องขวา */
+.warning-item:last-child {
+  border: 3px solid #f59e0b;
+  background: #fffaf0;
+}
+
+.warning-item:last-child h3 {
+  color: #d97706;
+}
+
+.white-item,
+.warning-item {
+  transition: .3s;
+}
+
+.white-item:hover,
+.warning-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .12);
+}
+
+@media (max-width:768px) {
+
+  .warning-box {
+    flex-direction: column;
+  }
+
+  .warning-item:first-child {
+    border-right: none;
+    border-bottom: 1px solid #222;
+  }
+
+}
+
+.lv1 {
+  margin: 15px 0 15px 15px;
+  padding: 15px;
+  list-style-position: inside;
+}
+
+.lv1 li {
+  margin-bottom: 5px;
+}
+
+.lv1 b {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+
+.lv2 {
+  margin: 15px 0 15px 50px;
+  list-style-position: outside;
+}
+
+.ingredient-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.ingredient-card {
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  transition: .3s;
+}
+
+.ingredient-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .1);
+}
+
+.ingredient-image {
+  height: 180px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ingredient-image img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.ingredient-card h3 {
+  text-align: center;
+  margin: 18px 0;
+  font-size: 28px;
+}
+
+.ingredient-card ul {
+  padding: 0 20px 20px 40px;
+  line-height: 1.7;
+}
+
+.risk-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.risk-title {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.danger {
+  background: #d32f2f;
+}
+
+.warning {
+  background: #ff9800;
+}
+
+.risk-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 22px;
+  margin-bottom: 18px;
+  border: 1px solid #eee;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+  transition: .3s;
+}
+
+.risk-card:hover {
+  transform: translateY(-5px);
+}
+
+.risk-card h3 {
+  margin: 0 0 10px;
+  color: #222;
+  font-size: 22px;
+}
+
+.risk-card p {
+  margin: 0;
+  color: #666;
+  line-height: 1.8;
+}
+
+@media(max-width:768px) {
+  .risk-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-container {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* หัวตาราง */
+.product-table th {
+  background-color: #1a365d;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 18px 24px;
+  border-bottom: 3px solid #0f2444;
+}
+
+.product-table th.genesis {
+  background-color: #5d531a;
+  border-bottom: 3px solid #44380f;
+}
+
+/* เนื้อหาในตาราง */
+.product-table td {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0e2;
+  color: #505521;
+  font-size: 18px;
+  line-height: 1.6;
+  vertical-align: top;
+}
+
+.product-table td.gene {
+  border-bottom: 1px solid #f0f0e2;
+  color: #505521;
+}
+
+/* คอลัมน์แรก (หัวข้อคุณสมบัติ) */
+.product-table td:first-child {
+  font-weight: 600;
+  color: #3b371e;
+  width: 35%;
+  background-color: #f8fafc;
+  /* ไฮไลท์แถบซ้ายให้เด่น */
+  border-right: 1px solid #e2e8f0;
+}
+
+.product-table td.gene:first-child {
+  font-weight: 600;
+  color: #3b371e;
+  width: 35%;
+  background-color: #fcfcf8;
+  /* ไฮไลท์แถบซ้ายให้เด่น */
+  border-right: 1px solid #f0f0e2;
+}
+
+/* เอฟเฟกต์เมื่อเอาเมาส์ไปชี้ (Hover) */
+.product-table tr:hover td {
+  background-color: #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+/* ปรับแต่งสำหรับหน้าจอมือถือ */
+@media (max-width: 600px) {
+
+  .product-table th,
+  .product-table td {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .product-table th {
+    font-size: 20px;
+  }
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+.product-table2 {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.product-table2 th {
+  background-color: #8a1e50;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 600;
+  padding: 20px 24px;
+  letter-spacing: 0.5px;
+}
+
+.product-table2 th:nth-child(1) {
+  width: 25%;
+}
+
+.product-table2 th:nth-child(2) {
+  width: 40%;
+}
+
+.product-table2 th:nth-child(3) {
+  width: 35%;
+}
+
+.product-table2 tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.product-table2 tr:last-child {
+  border-bottom: none;
+}
+
+.product-table2 tr:hover {
+  background-color: #f8fafc;
+}
+
+.product-table2 td {
+  padding: 24px;
+  font-size: 17px;
+  line-height: 1.6;
+  vertical-align: top;
+}
+
+/* คอลัมน์ปัญหา (เน้นสีสร้างการตระหนักรู้) */
+.col-problem {
+  font-weight: 700;
+  color: #9b0a0a;
+  background-color: #fffafd;
+}
+
+.col-mechanism {
+  color: #334155;
+}
+
+/* คอลัมน์ผลกระทบ */
+.col-effect ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.col-effect li {
+  margin-bottom: 8px;
+  color: #475569;
+}
+
+.col-effect li:last-child {
+  margin-bottom: 0;
+}
+
+/* --- 2. สไตล์แบบการ์ดทันสมัย (Mobile & Alternative) --- */
+.cards-container {
+  display: none;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.info-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border-left: 5px solid #b91c1c;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #b91c1c;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+}
+
+.card-sub-section {
+  margin-bottom: 12px;
+}
+
+.card-sub-section:last-child {
+  margin-bottom: 0;
+}
+
+.card-label {
+  font-weight: 600;
+  color: #1e3a8a;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.card-text {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #334155;
+}
+
+.card-text ul {
+  margin: 5px 0 0 0;
+  padding-left: 18px;
+}
+
+/* --- ปรับการแสดงผลอัตโนมัติตามขนาดหน้าจอ (Responsive) --- */
+@media (max-width: 768px) {
+  .table-responsive {
+    display: none;
+  }
+
+  .cards-container {
+    display: grid;
+  }
+
+  body {
+    padding: 20px 12px;
+  }
+
+  .section-header h1 {
+    font-size: 22px;
+  }
+}
+
+.redd {
+  color: red;
+}
+
+.lv1 b.topic {
+  font-size: 1.2em;
+}
+
+.review-container {
+  width: 100%;
+  max-width: 1200px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- ส่วนเรทติ้งด้านบน (Rating Summary) --- */
+.rating-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+}
+
+.rating-left {
+  text-align: center;
+  flex: 1;
+}
+
+.rating-big-num {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stars-orange {
+  color: #ff9800;
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.shopee-text {
+  font-size: 13px;
+  color: #666;
+}
+
+.shopee-text span {
+  color: #ff5722;
+  /* สีส้ม Shopee */
+  font-weight: bold;
+}
+
+.rating-right {
+  flex: 1.5;
+  padding-left: 20px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.bar-label {
+  width: 15px;
+}
+
+.bar-container {
+  flex: 1;
+  background-color: #f1f1f1;
+  height: 6px;
+  border-radius: 3px;
+  margin: 0 10px;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  background-color: #222;
+  /* สีแถบตามภาพจะค่อนข้างเข้ม */
+  border-radius: 3px;
+}
+
+.bar-count {
+  width: 45px;
+  text-align: left;
+  color: #aaa;
+}
+
+/* --- ส่วนคอมเมนต์รีวิว (Review Comment) --- */
+.user-name {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.review-text {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #111;
+  margin-bottom: 15px;
+}
+
+.review-image {
+  max-width: 220px;
+  border-radius: 4px;
+  display: block;
+}
