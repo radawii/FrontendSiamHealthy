@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+
+<head>
+  <title id="page-title">Siam-Healthy - Product</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <link rel="stylesheet" href="./css/shop.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="../js/header.js" defer></script>
+</head>
+
+<body>
+  <my-header></my-header>
+
+  <div class="container-detail">
+    <div class="product-page">
+      <div class="gallery">
+        <div class="main-image" style="position: relative;">
+          <button id="prevImgBtn"
+            style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(255,255,255,0.85); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: 0.2s;">❮</button>
+
+          <!-- รูปหลัก -->
+          <img id="mainProduct" src="" alt="Product Image" style="width: 100%; display: block;" />
+
+          <button id="nextImgBtn"
+            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(255,255,255,0.85); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: 0.2s;">❯</button>
+        </div>
+
+        <div id="thumbList" class="thumbs">
+          <!-- JS จะแทรกรูปเล็กที่นี่ -->
+        </div>
+      </div>
+
+      <!-- ข้อมูลสินค้าหลัก -->
+      <div class="product-info">
+        <h1 id="productName"></h1>
+        <div class="product-rating-header">
+          <div id="productStars" class="stars-orange">★★★★★</div>
+          <span id="productReviewCount" style="font-size: 14px; color: #666"></span>
+        </div>
+
+        <div class="price">
+          <span id="newPrice"></span> <s id="oldPrice"></s>
+        </div>
+
+        <div id="benefitList" class="product-benefits">
+          <!-- JS จะแทรกประโยชน์ที่นี่ -->
+        </div>
+
+        <p id="productDescription"></p>
+        <br />
+
+        <p id="productFda"></p>
+
+        <!-- ส่วนเลือกจำนวนสินค้าและปุ่มสั่งซื้อ -->
+        <div class="product-action-container">
+
+          <!-- ปุ่มเลือกจำนวนสินค้า -->
+          <div class="quantity-selector-wrapper" style="margin: 0;">
+            <div class="quantity-controller">
+              <button type="button" id="decreaseBtn">-</button>
+              <input type="text" id="quantityInput" value="1" readonly />
+              <button type="button" id="increaseBtn">+</button>
+            </div>
+          </div>
+
+          <!-- ปุ่มเพิ่มลงตะกร้า (แบบย่อ มีไอคอน) -->
+          <div class="action-buttons-wrapper">
+            <!-- ปุ่มเพิ่มลงตะกร้า (ไอคอน+ข้อความ ไม่มีกรอบ) -->
+            <button class="cart-btn-minimal" onclick="alert('เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว!')">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span>เพิ่มลงตะกร้า</span>
+            </button>
+
+            <!-- ปุ่มซื้อเลย (สีดำล้วน ขยายเต็ม) -->
+            <button class="buy-btn-black" onclick="alert('ซื้อสินค้าเรียบร้อย!')">
+              ซื้อเลย
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- รีวิว -->
+    <br />
+    <h2>ยืนยันประสิทธิภาพจากผู้ใช้จริง</h2>
+    <div class="review-container">
+      <!-- ส่วนสรุปดาว -->
+      <div class="rating-summary">
+        <div class="rating-left">
+          <div class="rating-big-num" id="summaryBigRating">4.7</div>
+          <div class="stars-orange">★★★★★</div>
+          <div class="shopee-text">+<span id="summaryReviewCount">2k</span> reviews</span></div>
+        </div>
+        <div class="rating-right">
+          <div class="bar-row">
+            <span>5</span>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 85%;"></div>
+            </div>
+            <span class="bar-count" style="color: #888;">(1,800)</span>
+          </div>
+          <div class="bar-row">
+            <span>4</span>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 15%;"></div>
+            </div>
+            <span class="bar-count" style="color: #888;">(300)</span>
+          </div>
+          <div class="bar-row">
+            <span>3</span>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 0%;"></div>
+            </div>
+            <span class="bar-count" style="color: #888;">(0)</span>
+          </div>
+          <div class="bar-row">
+            <span>2</span>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 0%;"></div>
+            </div>
+            <span class="bar-count" style="color: #888;">(0)</span>
+          </div>
+          <div class="bar-row">
+            <span>1</span>
+            <div class="bar-container">
+              <div class="bar-fill" style="width: 0%;"></div>
+            </div>
+            <span class="bar-count" style="color: #888;">(0)</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="reviewList">
+        <!-- JS จะแทรกคอมเมนต์ที่นี่ -->
+      </div>
+    </div>
+
+    <!-- ส่วนผสมของผลิตภัณฑ์ -->
+    <br />
+    <h2 id="ingredientTitle">เจาะลึกสารสกัดหลัก ฟื้นฟูจากภายใน</h2>
+    <div id="ingredientGrid" class="ingredient-grid">
+      <!-- JS จะแทรกส่วนผสมที่นี่ -->
+    </div>
+
+    <!-- ส่วนจัดเลย์เอาต์ซ้าย-ขวา -->
+    <div class="warning-layout-section">
+      <!-- ฝั่งซ้าย: รูปภาพขนาดกำลังดี -->
+      <div class="warning-left-image">
+        <img id="bannerImage1" alt="Warning Illustration" />
+      </div>
+
+      <!-- ฝั่งขวา: หัวข้อและกล่องคำเตือน Accordion -->
+      <div class="warning-right-content">
+        <h2 id="warningTitle"></h2>
+        <!-- กล่องคำเตือน / สัญญาณเตือน -->
+        <div id="warningBox" class="accordion-container"></div>
+      </div>
+    </div>
+
+    <!-- ส่วน Banner 2 (แสดงผลตรงกลาง) -->
+    <div id="banner2Container" class="banner2-wrapper reveal-on-scroll">
+      <img id="bannerImage2" src="" alt="Banner" class="banner2-img" />
+    </div>
+
+    <!-- ส่วนผลกระทบ (Impact Section) -->
+    <div class="impact-section reveal-on-scroll">
+      <h2 id="impactTitle" class="impact-header-title"></h2>
+      <p id="impactIntro" class="impact-intro-text"></p>
+
+      <div id="impactGrid" class="impact-cards-grid">
+        <!-- JS จะสร้าง Impact Cards -->
+      </div>
+    </div>
+
+    <h2 id="solutionTitle" class="reveal-on-scroll"></h2>
+    <div id="solutionBox" class="accordion-container"></div>
+
+    <h2 id="resultTitle"></h2>
+
+    <!-- กล่องหลักที่แบ่งซ้าย ขวา ใน div เดียวกัน -->
+    <div class="results-flex-wrapper">
+
+      <!-- ฝั่งซ้าย: รองรับทั้งแบบการ์ด (List) และแบบตาราง (Table) -->
+      <div class="results-left-cards">
+        <!-- กรณีแสดงผลเป็นรายการการ์ด -->
+        <ul id="resultList" class="lv1">
+          <!-- JS จะแทรกรายการผลลัพธ์ที่นี่ -->
+        </ul>
+
+        <!-- กรณีแสดงผลเป็นตาราง -->
+        <div id="resultTableContainer" style="display: none;">
+          <!-- JS จะแทรกตารางที่นี่ -->
+        </div>
+      </div>
+
+      <!-- ฝั่งขวา: รูปภาพประกอบ -->
+      <div class="results-right-image">
+        <img id="resultImage" src="" alt="" />
+      </div>
+
+    </div>
+
+    <!-- ปุ่มล่างสุด -->
+    <div class="product-buy">
+      <button class="buy">สั่งซื้อทันที</button>
+    </div>
+  </div>
+
+  </div>
+
+  <script src="./js/product-data.js"></script>
+  <script src="./js/product-template.js"></script>
+</body>
+
+</html>

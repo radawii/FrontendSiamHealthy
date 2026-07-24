@@ -1,33 +1,13 @@
-body {
-  margin: 0;
-  font-family: "Prompt", sans-serif;
-  background-color: #f0f0f0;
-  font-size: 18px;
-}
-
-input,
-button {
-  font-family: "Prompt", sans-serif;
-}
-
-/* รีเซ็ตค่าเริ่มต้นและกำหนดฟอนต์ */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Prompt', sans-serif;
-  /* เปลี่ยนเป็นฟอนต์ที่โปรเจกต์คุณใช้ได้เลย */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-h2 {
-  font-size: 1.7em;
-  margin: 15px auto;
-  text-align: center;
-}
-
-h3 {
-  font-size: 1.2em;
-  margin: 0 0 15px;
+body {
+    font-family: 'Prompt', sans-serif;
+    background-color: #ffffff;
+    color: #333;
 }
 
 /* ตัว Header หลัก */
@@ -35,27 +15,21 @@ h3 {
   width: 100%;
   background-color: #ffffff;
   border-bottom: 1px solid #e5e5e5;
-  /* เส้นแบ่งจางๆ ด้านล่าง */
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-/* กล่องครอบที่ช่วยจำกัดความกว้างและจัดให้คอนเทนต์อยู่ตรงกลาง */
 .header-container {
   max-width: 1200px;
-  /* ขยายหรือลดตามขนาดหน้าจอหลักของคุณ */
   margin: 0 auto;
   padding: 0 20px;
   height: 80px;
-  /* ความสูงของแถบ Header */
   display: flex;
   justify-content: space-between;
-  /* ตัวเด็ด: ผลักโลโก้ไปซ้าย สุด เมนูไปขวาสุด */
   align-items: center;
 }
 
-/* ส่วนของโลโก้ */
 .logo-section {
   display: flex;
   align-items: center;
@@ -75,16 +49,12 @@ h3 {
   letter-spacing: -0.5px;
 }
 
-/* ส่วนของเมนูฝั่งขวา */
 .nav-menu {
   display: flex;
   gap: 30px;
-  /* ระยะห่างระหว่างแท็บ */
   height: 100%;
-  /* ให้ความสูงเต็มเท่ากลุ่มเนวิเกชัน */
 }
 
-/* ตัวลิงก์แต่ละแท็บ */
 .nav-tab {
   display: flex;
   align-items: center;
@@ -98,841 +68,1504 @@ h3 {
   transition: color 0.2s ease;
 }
 
-/* เอฟเฟกต์เส้นใต้แท็บ (แอบซ่อนไว้ก่อน) */
 .nav-tab::after {
   content: '';
   position: absolute;
   bottom: 0;
-  /* ติดขอบล่างของแถบพอดี */
   left: 0;
   width: 100%;
   height: 3px;
-  /* ความหนาของเส้นแท็บ */
   background-color: #00581d;
-  /* สีของเส้นแท็บ */
   transform: scaleX(0);
-  /* เริ่มต้นให้ความกว้างของเส้นเป็น 0 */
   transition: transform 0.25s ease-out;
 }
 
-/* เมื่อเอาเมาส์มาวาง (Hover) หรือแท็บนั้นกำลังเปิดอยู่ (Active) */
 .nav-tab:hover::after,
 .nav-tab.active::after {
   transform: scaleX(1);
-  /* ขยายเส้นใต้ออกมาเต็มความกว้างตัวอักษร */
 }
 
 .nav-tab:hover {
   color: #008807;
-  /* เปลี่ยนสีตัวอักษรให้อ่อนลงนิดนึงตอนเมาส์ชี้ */
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px;
-  display: block;
-  background-color: #ffffff;
+    display: flex;
+    max-width: 1440px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px;
+}
+.container-detail {
+    display: block;
+    flex-direction: column;
+    max-width: 1440px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px;
 }
 
-.container p {
-  margin-bottom: 10px;
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
 }
 
-.container img {
-  max-width: 1000px;
-  width: 100%;
-  display: block;
-  margin: 20px auto;
+.sidebar h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    margin-bottom: 8px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #666;
+    font-size: 14px;
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.sidebar a:hover, 
+.sidebar a.active {
+    background-color: #eef7f2;
+    color: #000;
+    font-weight: 600;
+}
+
+.main-content {
+    flex-grow: 1;
+}
+
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.shop-header .product-count {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.shop-header select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Prompt', sans-serif;
+    color: #666;
+    outline: none;
 }
 
 .products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4 , 1fr);
+    gap: 30px;
 }
 
 .product-card {
-  display: flex;
-  flex-direction: column;
-  /* เรียงจากบนลงล่าง */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
 }
 
-.product-card.hidden {
-  display: none;
-  opacity: 0;
-  transform: translateY(15px);
-  /* ให้การ์ดเด้งขึ้นมาจากด้านล่างนิดนึง */
+.product-card:hover .product-image img {
+    transform: scale(1.08);
 }
 
 .product-image {
-  width: 100%;
-  height: 320px;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
 }
 
 .product-image img {
-  width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
 }
 
 .product-title {
-  font-size: 18px;
-  margin: 15px 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #111;
 }
 
-.product-date {
-  font-size: 14px;
+.product-tag {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
 }
 
-/* สินค้า */
+.product-price {
+    margin-bottom: 15px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #aaa;
+    font-size: 13px;
+    margin-right: 5px;
+}
+
+.new-price {
+    color: #111;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* BUTTONS */
+.buy-button {
+    width: 100%;
+    padding: 10px 0;
+    background-color: #ffffff;
+    color: #111;
+    border: 1px solid #111;
+    border-radius: 8px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.buy-button:hover {
+    background-color: #111;
+    color: #ffffff;
+}
+
+
+/* RESPONSIVE DESIGN (มือถือ / แท็บเล็ต) */
+@media (max-width: 992px) {
+    .products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+    
+    .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 10px;
+    }
+    
+    .sidebar li {
+        margin-bottom: 0;
+    }
+    
+    .products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .products {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* PRODUCT DETAIL PAGE (ส่วนรูปและข้อมูลหลัก)*/
 .product-page {
-  display: flex;
-  gap: 50px;
-  align-items: flex-start;
+    display: flex;
+    gap: 50px;
+    margin-bottom: 50px;
+    align-items: flex-start;
 }
 
 .gallery {
-  width: 55%;
+    flex: 1;
+    max-width: 50%;
 }
 
 .main-image {
-  border-radius: 16px;
-  overflow: hidden;
-  margin-bottom: 15px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
 .main-image img {
-  width: 100%;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-  display: block;
-  transition: .4s;
-  cursor: pointer;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    mix-blend-mode: multiply;
 }
 
 .thumbs {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
 }
 
 .thumbs img {
-  width: 90px;
-  height: 90px;
-  border-radius: 10px;
-  object-fit: cover;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: .25s;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
 }
 
 .thumbs img:hover {
-  border-color: #ff6a00;
+    border-color: #ccc;
+}
+
+.thumbs img.active {
+    border-color: #111;
 }
 
 .product-info {
-  width: 40%;
-}
-
-.main-image:hover img {
-  transform: scale(1.15);
+    flex: 1;
 }
 
 .product-info h1 {
-  font-size: 48px;
-  margin-bottom: 15px;
-}
-
-.price {
-  font-size: 36px;
-  color: #ff4d4f;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.price s {
-  font-size: 24px;
-  font-weight: 400;
-  color: black;
+    font-size: 32px;
+    font-weight: 700;
+    color: #111;
 }
 
 .product-benefits {
-  margin: 30px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
 }
 
 .benefit-item {
-  margin: 8px 0;
-  display: inline-block;
-  padding: 15px;
-  background: white;
-  border: 1px solid #e9e9e9;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
-  transition: .3s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #333;
 }
 
-.benefit-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, .12);
+.benefit-item .check {
+    background-color: #eef7f2;
+    color: #00581d;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
 }
 
-.check {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #22c55e;
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: bold;
-  flex-shrink: 0;
+.product-info p {
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
 }
 
-.benefit-item span {
-  display: inline;
-  font-size: 14px;
-  font-weight: 700;
-  color: green;
-  line-height: 1.4;
+.product-info .price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 20px
 }
 
-/* Responsive */
-@media (max-width:768px) {
-  .product-benefits {
-    flex-direction: column;
-  }
+.product-info .price s {
+    color: #aaa;
+    font-size: 20px;
+    font-weight: 400;
+    margin-right: 15px;
 }
 
-.option {
-  margin: 25px 0;
+.product-info button {
+    /* width: 100%; */
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
 }
 
-.option label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
+.product-info button.cart {
+    background-color: #ffffff;
+    color: #111;
+    border: 1px solid #111;
 }
 
-.option button {
-  padding: 10px 18px;
-  margin-right: 10px;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 8px;
-  cursor: pointer;
+.product-info button.cart:hover {
+    background-color: #f5f5f5;
 }
 
-.cart,
-.buy {
-  width: 100%;
-  padding: 16px;
-  font-size: 18px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 15px;
+.product-info button.buy {
+    background-color: #111;
+    color: #ffffff;
+    border: 1px solid #111;
 }
 
-.cart {
-  background: #222;
-  color: #fff;
+.product-info button.buy:hover {
+    background-color: #333;
 }
 
-.buy {
-  background: #ff6a00;
-  color: #fff;
+#productStars {
+    color: #f5a623 !important;
+    font-size: 28px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
 }
 
-.bblack {
-  border: 1px solid black;
+/* คลาสสำหรับจัดกล่องเรตติ้งใต้ชื่อสินค้า */
+.product-rating-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-/* สินค้า */
-.white-box {
-  display: flex;
-  gap: 20px;
+.container > img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 20px 0;
+    display: block;
 }
 
-.white-item {
-  flex: 1;
-  padding: 20px 25px;
-  border-radius: 12px;
-  background: #fff;
-  border: 3px solid #5a5a5a;
+.container > h2 {
+    font-size: 24px;
+    margin: 40px 0 20px;
+    border-left: 4px solid #111;
+    padding-left: 12px;
+    color: #111;
+    line-height: 1.4;
 }
 
-.white-item h3 {
-  margin: 0 0 15px;
-  font-size: 24px;
-  font-weight: 700;
+.container > p {
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 15px;
 }
 
-.white-item ul {
-  margin: 0;
-  padding-left: 25px;
-}
-
-.white-item li {
-  margin-bottom: 12px;
-  font-size: 20px;
-  line-height: 1.6;
-}
-
+/* (Warning Box) */
 .warning-box {
-  display: flex;
-  gap: 20px;
-}
-
-.warning-item {
-  flex: 1;
-  padding: 20px 25px;
-  border-radius: 12px;
-  background: #fff;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    background-color: #fffafa;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #ffebeb;
+    margin: 20px 0;
 }
 
 .warning-item h3 {
-  margin: 0 0 15px;
-  font-size: 24px;
-  font-weight: 700;
+    font-size: 18px;
+    color: #d32f2f;
+    margin-bottom: 15px;
 }
 
 .warning-item ul {
-  margin: 0;
-  padding-left: 25px;
+    list-style-type: disc;
+    margin-left: 20px;
+    line-height: 1.8;
+    color: #444;
 }
 
-.warning-item li {
-  margin-bottom: 12px;
-  font-size: 20px;
-  line-height: 1.6;
+/* ลิสต์ผลลัพธ์แบบมีไอคอนติ๊กถูก */
+ul.lv1 {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 30px;
 }
 
-/* กล่องซ้าย */
-.warning-item:first-child {
-  border: 3px solid #ef4444;
-  background: #fff5f5;
+ul.lv1 li {
+    margin-bottom: 15px;
+    padding-left: 35px;
+    position: relative;
+    line-height: 1.6;
+    color: #444;
 }
 
-.warning-item:first-child h3 {
-  color: #dc2626;
+ul.lv1 li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    background-color: #00581d;
+    color: #fff;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
 }
 
-/* กล่องขวา */
-.warning-item:last-child {
-  border: 3px solid #f59e0b;
-  background: #fffaf0;
-}
-
-.warning-item:last-child h3 {
-  color: #d97706;
-}
-
-.white-item,
-.warning-item {
-  transition: .3s;
-}
-
-.white-item:hover,
-.warning-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, .12);
-}
-
-@media (max-width:768px) {
-
-  .warning-box {
-    flex-direction: column;
-  }
-
-  .warning-item:first-child {
-    border-right: none;
-    border-bottom: 1px solid #222;
-  }
-
-}
-
-.lv1 {
-  margin: 15px 0 15px 15px;
-  padding: 15px;
-  list-style-position: inside;
-}
-
-.lv1 li {
-  margin-bottom: 5px;
-}
-
-.lv1 b {
-  font-size: 1.1em;
-  font-weight: 700;
-}
-
-.lv2 {
-  margin: 15px 0 15px 50px;
-  list-style-position: outside;
-}
-
+/* INGREDIENTS GRID (ส่วนผสม) */
 .ingredient-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
 }
 
 .ingredient-card {
-  border: 1px solid #ddd;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #fff;
-  transition: .3s;
+    background-color: #f9f9f9;
+    padding: 30px 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid #eee;
 }
 
 .ingredient-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, .1);
-}
-
-.ingredient-image {
-  height: 180px;
-  background: #f8f8f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.03);
 }
 
 .ingredient-image img {
-  max-width: 80%;
-  max-height: 80%;
-  object-fit: contain;
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
 }
 
 .ingredient-card h3 {
-  text-align: center;
-  margin: 18px 0;
-  font-size: 28px;
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #222;
 }
 
 .ingredient-card ul {
-  padding: 0 20px 20px 40px;
-  line-height: 1.7;
+    text-align: left;
+    font-size: 14px;
+    color: #555;
+    margin-left: 20px;
+    line-height: 1.6;
 }
 
-.risk-section {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-.risk-title {
-  color: #fff;
-  font-size: 28px;
-  font-weight: 700;
-  text-align: center;
-  padding: 18px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.danger {
-  background: #d32f2f;
-}
-
-.warning {
-  background: #ff9800;
-}
-
-.risk-card {
-  background: #fff;
-  border-radius: 15px;
-  padding: 22px;
-  margin-bottom: 18px;
-  border: 1px solid #eee;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
-  transition: .3s;
-}
-
-.risk-card:hover {
-  transform: translateY(-5px);
-}
-
-.risk-card h3 {
-  margin: 0 0 10px;
-  color: #222;
-  font-size: 22px;
-}
-
-.risk-card p {
-  margin: 0;
-  color: #666;
-  line-height: 1.8;
-}
-
-@media(max-width:768px) {
-  .risk-section {
-    grid-template-columns: 1fr;
-  }
-}
-
-.table-container {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  margin: 20px 0;
-}
-
-.product-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-/* หัวตาราง */
-.product-table th {
-  background-color: #1a365d;
-  color: #ffffff;
-  font-size: 20px;
-  font-weight: 700;
-  padding: 18px 24px;
-  border-bottom: 3px solid #0f2444;
-}
-
-.product-table th.genesis {
-  background-color: #5d531a;
-  border-bottom: 3px solid #44380f;
-}
-
-/* เนื้อหาในตาราง */
-.product-table td {
-  padding: 20px 24px;
-  border-bottom: 1px solid #f0f0e2;
-  color: #505521;
-  font-size: 18px;
-  line-height: 1.6;
-  vertical-align: top;
-}
-
-.product-table td.gene {
-  border-bottom: 1px solid #f0f0e2;
-  color: #505521;
-}
-
-/* คอลัมน์แรก (หัวข้อคุณสมบัติ) */
-.product-table td:first-child {
-  font-weight: 600;
-  color: #3b371e;
-  width: 35%;
-  background-color: #f8fafc;
-  /* ไฮไลท์แถบซ้ายให้เด่น */
-  border-right: 1px solid #e2e8f0;
-}
-
-.product-table td.gene:first-child {
-  font-weight: 600;
-  color: #3b371e;
-  width: 35%;
-  background-color: #fcfcf8;
-  /* ไฮไลท์แถบซ้ายให้เด่น */
-  border-right: 1px solid #f0f0e2;
-}
-
-/* เอฟเฟกต์เมื่อเอาเมาส์ไปชี้ (Hover) */
-.product-table tr:hover td {
-  background-color: #f1f5f9;
-  transition: background-color 0.2s ease;
-}
-
-/* ปรับแต่งสำหรับหน้าจอมือถือ */
-@media (max-width: 600px) {
-
-  .product-table th,
-  .product-table td {
-    padding: 14px 16px;
-    font-size: 16px;
-  }
-
-  .product-table th {
-    font-size: 20px;
-  }
-}
-
-.table-responsive {
-  display: block;
-  width: 100%;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  margin-bottom: 40px;
-}
-
-.product-table2 {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.product-table2 th {
-  background-color: #8a1e50;
-  color: #ffffff;
-  font-size: 19px;
-  font-weight: 600;
-  padding: 20px 24px;
-  letter-spacing: 0.5px;
-}
-
-.product-table2 th:nth-child(1) {
-  width: 25%;
-}
-
-.product-table2 th:nth-child(2) {
-  width: 40%;
-}
-
-.product-table2 th:nth-child(3) {
-  width: 35%;
-}
-
-.product-table2 tr {
-  border-bottom: 1px solid #e2e8f0;
-  transition: background-color 0.2s ease;
-}
-
-.product-table2 tr:last-child {
-  border-bottom: none;
-}
-
-.product-table2 tr:hover {
-  background-color: #f8fafc;
-}
-
-.product-table2 td {
-  padding: 24px;
-  font-size: 17px;
-  line-height: 1.6;
-  vertical-align: top;
-}
-
-/* คอลัมน์ปัญหา (เน้นสีสร้างการตระหนักรู้) */
-.col-problem {
-  font-weight: 700;
-  color: #9b0a0a;
-  background-color: #fffafd;
-}
-
-.col-mechanism {
-  color: #334155;
-}
-
-/* คอลัมน์ผลกระทบ */
-.col-effect ul {
-  margin: 0;
-  padding-left: 18px;
-}
-
-.col-effect li {
-  margin-bottom: 8px;
-  color: #475569;
-}
-
-.col-effect li:last-child {
-  margin-bottom: 0;
-}
-
-/* --- 2. สไตล์แบบการ์ดทันสมัย (Mobile & Alternative) --- */
-.cards-container {
-  display: none;
-  grid-template-columns: 1fr;
-  gap: 20px;
-}
-
-.info-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-  border-left: 5px solid #b91c1c;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #b91c1c;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 8px;
-}
-
-.card-sub-section {
-  margin-bottom: 12px;
-}
-
-.card-sub-section:last-child {
-  margin-bottom: 0;
-}
-
-.card-label {
-  font-weight: 600;
-  color: #1e3a8a;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.card-text {
-  font-size: 14.5px;
-  line-height: 1.5;
-  color: #334155;
-}
-
-.card-text ul {
-  margin: 5px 0 0 0;
-  padding-left: 18px;
-}
-
-/* --- ปรับการแสดงผลอัตโนมัติตามขนาดหน้าจอ (Responsive) --- */
-@media (max-width: 768px) {
-  .table-responsive {
-    display: none;
-  }
-
-  .cards-container {
-    display: grid;
-  }
-
-  body {
-    padding: 20px 12px;
-  }
-
-  .section-header h1 {
-    font-size: 22px;
-  }
-}
-
-.redd {
-  color: red;
-}
-
-.lv1 b.topic {
-  font-size: 1.2em;
-}
-
+/* REVIEWS (รีวิวสินค้า)*/
 .review-container {
-  width: 100%;
-  max-width: 1200px;
-  background: #fff;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 20px;
 }
 
-/* --- ส่วนเรทติ้งด้านบน (Rating Summary) --- */
 .rating-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 25px;
-  margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 30px;
 }
 
 .rating-left {
-  text-align: center;
-  flex: 1;
+    text-align: center;
 }
 
 .rating-big-num {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 8px;
+    font-size: 56px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1;
 }
 
 .stars-orange {
-  color: #ff9800;
-  font-size: 20px;
-  margin-bottom: 6px;
+    color: #f5a623;
+    font-size: 18px;
+    margin: 10px 0;
 }
 
 .shopee-text {
-  font-size: 13px;
-  color: #666;
+    font-size: 14px;
+    color: #888;
 }
-
 .shopee-text span {
-  color: #ff5722;
-  /* สีส้ม Shopee */
-  font-weight: bold;
+    font-weight: bold;
+    color: #111;
 }
 
 .rating-right {
-  flex: 1.5;
-  padding-left: 20px;
+    flex: 1;
 }
 
 .bar-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-  font-size: 12px;
-  color: #666;
-}
-
-.bar-label {
-  width: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #555;
 }
 
 .bar-container {
-  flex: 1;
-  background-color: #f1f1f1;
-  height: 6px;
-  border-radius: 3px;
-  margin: 0 10px;
-  position: relative;
+    flex: 1;
+    height: 8px;
+    background-color: #eee;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .bar-fill {
-  height: 100%;
-  background-color: #222;
-  /* สีแถบตามภาพจะค่อนข้างเข้ม */
-  border-radius: 3px;
+    height: 100%;
+    background-color: #f5a623;
+    border-radius: 4px;
 }
 
 .bar-count {
-  width: 45px;
-  text-align: left;
-  color: #aaa;
+    width: 40px;
+    text-align: right;
 }
 
-/* --- ส่วนคอมเมนต์รีวิว (Review Comment) --- */
+/* comment*/
+.review-comment {
+    border-bottom: 1px solid #eaeaea;
+    padding: 25px 0;
+}
+
+.review-comment:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
 .user-name {
-  font-size: 19px;
-  font-weight: 700;
-  margin-bottom: 8px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111;
 }
 
 .review-text {
-  font-size: 17px;
-  line-height: 1.6;
-  color: #111;
-  margin-bottom: 15px;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    font-size: 15px;
 }
 
 .review-image {
-  max-width: 220px;
-  border-radius: 4px;
-  display: block;
+    max-width: 120px;
+    border-radius: 8px;
+    display: block;
+    border: 1px solid #eee;
+    cursor: pointer;
+}
+
+/* ปุ่มสั่งซื้อด้านล่างสุด */
+.product-buy {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px 0 50px;
+}
+
+.product-buy button.buy {
+    background-color: #111;
+    color: #ffffff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Prompt', sans-serif;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.product-buy button.buy:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+}
+
+.product-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+.product-buttons button {
+    flex: 1;
+    margin-top: 0 !important;
+}
+
+/* RESPONSIVE สำหรับมือถือ/แท็บเล็ต*/
+@media (max-width: 992px) {
+    .ingredient-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-page {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .gallery, .product-info {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .warning-box {
+        grid-template-columns: 1fr;
+    }
+    
+    .ingredient-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .rating-summary {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .rating-right {
+        width: 100%;
+    }
+}
+
+/* MODERN ACCORDION STYLE (สำหรับ Warning & Solution)*/
+.accordion-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 25px 0 40px 0;
+}
+
+.accordion-item {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #eaeaea;
+    border-radius: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: none;
+}
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-item.solution-type {
+    background-color: #f8f9fa;
+    border-color: #eaeaea;
+}
+
+.accordion-header {
+    width: 100%;
+    padding: 22px 25px;
+    background: none;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Prompt', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
+
+.accordion-item.solution-type .accordion-header {
+    color: #111;
+}
+
+.accordion-icon {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+    padding: 0 25px;
+    color: #444;
+    line-height: 1.8;
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 500px;
+    padding: 0 25px 25px 25px;  
+}
+
+.accordion-content ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.container-detail > h2 {
+    font-size: 24px;
+    margin: 50px 0 20px 0;
+    border-left: 4px solid #111;
+    padding-left: 12px;
+    color: #111;
+    line-height: 1.4;
+}
+
+/* SCROLL REVEAL & SLIDER EFFECTS (สำหรับ Ingredients)*/
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.ingredient-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.ingredient-card {
+    background-color: #ffffff;
+    padding: 30px 20px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+}
+
+.ingredient-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,88,29,0.08);
+    border-color: #00581d;
+}
+
+.ingredient-image {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background-color: #eef7f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s ease;
+}
+
+.ingredient-card:hover .ingredient-image {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.ingredient-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.ingredient-card h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #111;
+    font-weight: 600;
+}
+
+.ingredient-card ul {
+    text-align: left;
+    font-size: 14px;
+    color: #555;
+    margin-left: 20px;
+    line-height: 1.6;
+}
+
+/* Responsive สำหรับ Grid ส่วนผสม */
+@media (max-width: 992px) {
+    .ingredient-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .ingredient-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* LAYOUT ซ้าย-ขวา สำหรับส่วนรายละเอียดสินค้า*/
+.warning-layout-section {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin: 200px 0 100px;
+}
+.warning-left-image {
+    flex: 1;
+    max-width: 45%;
+}
+
+.warning-left-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.warning-right-content {
+    flex: 1;
+}
+
+.warning-right-content h2 {
+    margin-top: 0 !important;
+    font-size: 24px;
+    border-left: 4px solid #111;
+    padding-left: 12px;
+    color: #111;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .warning-layout-section {
+        flex-direction: column;
+    }
+    .warning-left-image {
+        max-width: 100%;
+    }
+}
+.results-flex-wrapper {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin: 25px 0 40px 0;
+}
+.results-left-cards {
+    flex: 1.2;
+}
+.results-right-image {
+    flex: 1;
+}
+.results-right-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    object-fit: cover;
+}
+
+
+ul.lv1 {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+ul.lv1 li {
+    background-color: #fcfcfc;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+    padding: 16px 18px 16px 55px;
+    position: relative;
+    line-height: 1.5;
+    color: #444;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+    margin-bottom: 0 !important;
+}
+
+ul.lv1 li:hover {
+    transform: scale(1.02) translateX(4px);
+    box-shadow: 0 8px 25px rgba(0, 88, 29, 0.08);
+    border-color: #00581d;
+    background-color: #ffffff;
+    z-index: 10;
+}
+
+ul.lv1 li::before {
+    content: "✓";
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    background-color: #eef7f2;
+    color: #00581d;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+ul.lv1 li:hover::before {
+    background-color: #00581d;
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+
+ul.lv1 li b {
+    color: #111;
+    font-size: 14px;
+    display: inline;
+    margin-right: 5px;
+}
+
+@media (max-width: 992px) {
+    .results-flex-wrapper {
+        flex-direction: column;
+    }
+    .results-left-cards, .results-right-image {
+        width: 100%;
+        flex: none;
+    }
+}
+
+/*REVIEW SUMMARY*/
+.rating-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 30px;
+}
+
+.rating-left {
+    text-align: center;
+    min-width: 130px;
+}
+
+.rating-big-num {
+    font-size: 48px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1;
+}
+
+.stars-orange {
+    color: #f5a623;
+    font-size: 16px;
+    margin: 8px 0;
+}
+
+.shopee-text {
+    font-size: 13px;
+    color: #888;
+}
+
+.rating-right {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.bar-row:hover {
+    transform: translateX(4px);
+    color: #00581d;
+    font-weight: 600;
+}
+
+.bar-container {
+    flex: 1;
+    height: 7px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background-color: #f5a623;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.3s ease;
+}
+
+.bar-row:hover .bar-fill {
+    background-color: #00581d; 
+}
+
+.bar-count {
+    width: 45px;
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 768px) {
+    .rating-summary {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+    .rating-right {
+        max-width: 100%;
+    }
+}
+
+.custom-result-table {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    font-size: 16px;
+    color: #444;
+}
+
+.custom-result-table th {
+    background-color: #00581d;
+    color: #ffffff;
+    padding: 14px 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.custom-result-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee;
+    line-height: 1.5;
+}
+
+.custom-result-table tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-result-table tr:hover {
+    background-color: #fcfcfc;
+}
+
+#prevImgBtn:hover, #nextImgBtn:hover {
+    background: #ffffff !important;
+    transform: translateY(-50%) scale(1.1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    color: #00581d;
+}
+
+/* PRODUCT ACTION BUTTONS (ปุ่มสั่งซื้อและตะกร้า) */
+.product-action-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.action-buttons-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 25px;
+}
+
+/* ปุ่มเพิ่มลงตะกร้า (Secondary Button)*/
+.cart-btn-minimal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    color: #444;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 10px;
+    transition: all 0.2s ease;
+}
+
+.cart-btn-minimal i {
+    font-size: 26px;
+    color: #111;
+    transition: transform 0.2s ease;
+}
+
+.cart-btn-minimal:hover {
+    color: #000;
+}
+
+.cart-btn-minimal:hover i {
+    transform: translateY(-3px);
+}
+
+.buy-btn-black {
+    flex: 1;
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.buy-btn-black:hover {
+    background-color: #333333;
+}
+
+.buy-btn-black:active {
+    transform: scale(0.98);
+}
+
+/* QUANTITY SELECTOR*/
+.quantity-selector-wrapper {
+    margin: 0;
+}
+
+.quantity-controller {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden; 
+    background: #ffffff;
+    height: 38px;
+}
+
+.quantity-controller button {
+    background: transparent;
+    border: none;
+    width: 38px;
+    height: 100%;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: normal;
+    color: #777;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 0;
+    
+    transition: background-color 0.2s;
+}
+
+.quantity-controller button:hover {
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.quantity-controller button:active {
+    background-color: #eeeeee;
+}
+
+.quantity-controller input {
+    width: 45px;
+    height: 100%;
+    text-align: center;
+    border: none;
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #111;
+    background: transparent;
+    outline: none;
+    pointer-events: none;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.quantity-controller button.disabled {
+    color: #dfdfdf !important;
+    cursor: not-allowed !important;
+    background: #fafafa !important;
+}
+
+.impact-section {
+  margin: 50px 0;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+  border-radius: 16px;
+  border-left: 5px solid #e53e3e;
+  box-shadow: 0 10px 30px rgba(229, 62, 62, 0.05);
+}
+
+.impact-header-title {
+  color: #c53030;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.impact-intro-text {
+  color: #4a5568;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.impact-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Impact Card Design */
+.impact-card {
+  background: #ffffff;
+  border: 1px solid #fed7d7;
+  border-radius: 12px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Animation เริ่มต้นก่อน Scroll */
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+}
+
+.impact-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.impact-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff5f5;
+  color: #e53e3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.impact-card-title {
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 17px;
+  margin: 0;
+}
+
+.impact-card-body {
+  color: #718096;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.impact-card:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 0 15px 30px rgba(229, 62, 62, 0.15);
+  border-color: #feb2b2;
+}
+
+.impact-section.visible .impact-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* การเด้งขึ้นทีละการ์ด (Stagger Delay) */
+.impact-section.visible .impact-card:nth-child(1) { transition-delay: 0.1s; }
+.impact-section.visible .impact-card:nth-child(2) { transition-delay: 0.25s; }
+.impact-section.visible .impact-card:nth-child(3) { transition-delay: 0.4s; }
+.impact-section.visible .impact-card:nth-child(4) { transition-delay: 0.55s; }
+
+#resultList, 
+ul.result-card-props {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.result-timeline-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.result-timeline-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.12);
+  border-color: #10b981;
+}
+
+.result-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px dashed #f1f5f9;
+  flex-wrap: wrap;
+}
+
+.phase-badge {
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: 1px solid #a7f3d0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.result-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.result-card-props {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.result-card-props li::before {
+  content: none !important;
+  display: none !important;
+}
+
+ul.lv1 .result-card-props li,
+.result-card-props li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  background: #f8fafc;
+  padding: 12px 16px !important;
+  border-radius: 10px;
+  color: #334155;
+  font-size: 14.5px;
+  line-height: 1.6;
+  transition: 0.2s ease;
+}
+
+.result-card-props li:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.step-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.banner2-wrapper {
+  display: none;
+  text-align: center;
+  margin: 30px 0;
+}
+
+.banner2-img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: inline-block;
+}
+
+.custom-result-table.warning-table,
+.warning-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse;
+}
+
+.warning-table th:nth-child(1),
+.warning-table td:nth-child(1) {
+  width: 25% !important;
+  font-weight: 600;
+}
+
+.warning-table th:nth-child(2),
+.warning-table td:nth-child(2) {
+  width: 40% !important;
+}
+
+.warning-table th:nth-child(3),
+.warning-table td:nth-child(3) {
+  width: 35% !important;
+}
+
+.warning-table td, 
+.warning-table th {
+  vertical-align: top;
+  padding: 14px 16px;
+  word-wrap: break-word;
+}
+
+.results-flex-wrapper .results-left-cards {
+  width: 100%;
+  flex: 1;
+}
+
+.ingredient-image img {
+  
 }
