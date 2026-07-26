@@ -726,6 +726,57 @@ if (product) {
       impactSectionEl.style.display = "none";
     }
   }
+
+// ส่วนแสดงผลสินค้าอื่นๆ ที่น่าสนใจ (พร้อมปุ่มดูสินค้าทั้งหมด)
+  const relatedContainer = document.getElementById("relatedProductsContainer");
+
+  if (relatedContainer && typeof productsData !== "undefined") {
+    // 1. กรองเอาสินค้าตัวปัจจุบันออก
+    const otherProductKeys = Object.keys(productsData).filter(
+      (key) => key !== productId
+    );
+
+    // 2. สุ่มเลือกสินค้ามา 4 รายการ
+    const shuffledKeys = otherProductKeys.sort(() => 0.5 - Math.random());
+    const selectedKeys = shuffledKeys.slice(0, 4);
+
+    if (selectedKeys.length > 0) {
+      let relatedHTML = `
+        <div class="related-products-section reveal-on-scroll visible">
+          <div class="related-header">
+            <h2>สินค้าที่คุณอาจสนใจ</h2>
+            <a href="index.html" class="view-all-link">
+              ดูสินค้าทั้งหมด <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+          
+          <div class="products related-products-grid">
+      `;
+
+      selectedKeys.forEach((key) => {
+        const item = productsData[key];
+        const imgCover = (item.images && item.images.length > 0) 
+          ? item.images[0] 
+          : (item.banner1 || "");
+
+        relatedHTML += `
+          <div class="product-card animate-in" onclick="window.location.href='product.html?id=${key}';">
+            <div class="product-image">
+              <img src="${imgCover}" alt="${item.name}">
+            </div>
+            <h3 class="product-title">${item.name}</h3>
+            <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
+            <p class="product-price">
+              <span class="new-price">${item.newPrice}.00</span>
+              <span class="old-price">${item.oldPrice}.00</span>
+            </p>
+          </div>
+        `;
+      });
+      relatedContainer.innerHTML = relatedHTML;
+    }
+  }
+
 } else {
   // กรณีหาไม่พบสินค้า
   document.querySelector(".product-page").innerHTML =

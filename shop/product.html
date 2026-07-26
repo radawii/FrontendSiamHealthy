@@ -5,6 +5,7 @@
   <title id="page-title">Siam-Healthy - Product</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <link rel="stylesheet" href="../css/header.css">
   <link rel="stylesheet" href="./css/shop.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -206,10 +207,14 @@
 
     </div>
 
-    <!-- ปุ่มล่างสุด -->
     <div class="product-buy">
-      <button class="buy">สั่งซื้อทันที</button>
+      <button class="buy" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">
+        สั่งซื้อทันที
+      </button>
     </div>
+
+    <!-- เพิ่มคอนเทนเนอร์สำหรับใส่สินค้าแนะนำแบบ Dynamic -->
+    <div id="relatedProductsContainer"></div>
   </div>
 
   </div>

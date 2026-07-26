@@ -5,12 +5,40 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="./css/shop.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="../js/header.js" defer></script>
+
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Class ที่เอาไว้ใส่การ์ดสินค้าที่กำลังแสดง */
+        .product-card.animate-in {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* ซ่อนสินค้าก่อนเริ่มเล่น animation */
+        .product-card.hidden {
+            display: none !important;
+        }
+
+        .sidebar .category-btn {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,13 +49,14 @@
         <aside class="sidebar">
             <h3>เลือกจากความสนใจ</h3>
             <ul>
-                <li><a href="#" class="active">ทั้งหมด</a></li>
-                <li><a href="#">สุขภาพองค์รวม</a></li>
-                <li><a href="#">ดูแลระบบเลือด</a></li>
-                <li><a href="#">กระดูกและข้อ</a></li>
-                <li><a href="#">ฟื้นฟูพละกำลัง</a></li>
-                <li><a href="#">ดูแลรูปร่าง</a></li>
-                <li><a href="#">บำรุงสายตา</a></li>
+                <li><a href="#" class="category-btn active" data-category="all">ทั้งหมด</a></li>
+                <li><a href="#" class="category-btn" data-category="eyes-ears">สายตาและการได้ยิน</a></li>
+                <li><a href="#" class="category-btn" data-category="mens-health">สุขภาพผู้ชาย</a></li>
+                <li><a href="#" class="category-btn" data-category="skin-aging">ผิวพรรณและชะลอวัย</a></li>
+                <li><a href="#" class="category-btn" data-category="weight-metabolism">หุ่นและระบบเผาผลาญ</a></li>
+                <li><a href="#" class="category-btn" data-category="gut-digestive">ลำไส้และการขับถ่าย</a></li>
+                <li><a href="#" class="category-btn" data-category="bone-immunity">กระดูก ข้อ และภูมิคุ้มกัน</a></li>
+                <li><a href="#" class="category-btn" data-category="blood-sugar">เลือดและระดับน้ำตาล</a></li>
             </ul>
         </aside>
 
@@ -46,7 +75,8 @@
             <!-- Grid สินค้า -->
             <div class="products">
                 
-                <div class="product-card" onclick="window.location.href='product.html?id=andicellix';">
+                <!-- Andicellix (สายตาและการได้ยิน) -->
+                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=andicellix';">
                     <div class="product-image">
                         <img src="./img/andicellix/andicellix1.png" alt="Andicellix">
                     </div>
@@ -58,7 +88,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=astin';">
+                <!-- Astin (เลือดและระดับน้ำตาล) -->
+                <div class="product-card animate-in" data-category="blood-sugar" onclick="window.location.href='product.html?id=astin';">
                     <div class="product-image">
                         <img src="./img/astin/astin1.png" alt="Astin">
                     </div>
@@ -70,7 +101,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=backpro';">
+                <!-- Back Pro (สุขภาพผู้ชาย) -->
+                <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=backpro';">
                     <div class="product-image">
                         <img src="./img/backpro/backpro1.png" alt="Back Pro">
                     </div>
@@ -82,7 +114,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=blackrhino';">
+                <!-- Black Rhino (สุขภาพผู้ชาย) -->
+                <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=blackrhino';">
                     <div class="product-image">
                         <img src="./img/blackrhino/blackrhino1.png" alt="Black Rhino">
                     </div>
@@ -94,7 +127,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=carthisin';">
+                <!-- Carthisin (กระดูก ข้อ และภูมิคุ้มกัน) -->
+                <div class="product-card animate-in" data-category="bone-immunity" onclick="window.location.href='product.html?id=carthisin';">
                     <div class="product-image">
                         <img src="./img/carthisin/carthisin1.png" alt="Carthisin">
                     </div>
@@ -106,7 +140,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=elsie';">
+                <!-- Elsie (ผิวพรรณและชะลอวัย) -->
+                <div class="product-card animate-in" data-category="skin-aging" onclick="window.location.href='product.html?id=elsie';">
                     <div class="product-image">
                         <img src="./img/elsie/elsie1.png" alt="Elsie">
                     </div>
@@ -118,7 +153,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=extera';">
+                <!-- Extera (กระดูก ข้อ และภูมิคุ้มกัน) -->
+                <div class="product-card animate-in" data-category="bone-immunity" onclick="window.location.href='product.html?id=extera';">
                     <div class="product-image">
                         <img src="./img/extera/extera1.png" alt="Extera">
                     </div>
@@ -130,7 +166,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=genesis';">
+                <!-- Genesis Caps (สายตาและการได้ยิน) -->
+                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=genesis';">
                     <div class="product-image">
                         <img src="./img/genesis/genesis1.png" alt="Genesis Caps">
                     </div>
@@ -142,7 +179,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=geralox';">
+                <!-- Geralox (ลำไส้และการขับถ่าย) -->
+                <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=geralox';">
                     <div class="product-image">
                         <img src="./img/geralox/geralox1.png" alt="Geralox">
                     </div>
@@ -154,7 +192,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=helmina';">
+                <!-- Helmina (ลำไส้และการขับถ่าย) -->
+                <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=helmina';">
                     <div class="product-image">
                         <img src="./img/helmina/helmina1.png" alt="Helmina">
                     </div>
@@ -166,7 +205,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=oclarizin';">
+                <!-- Oclarizin (สายตาและการได้ยิน) -->
+                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=oclarizin';">
                     <div class="product-image">
                         <img src="./img/oclarizin/oclarizin1.png" alt="Oclarizin">
                     </div>
@@ -178,7 +218,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=onix';">
+                <!-- Onix (หุ่นและระบบเผาผลาญ) -->
+                <div class="product-card animate-in" data-category="weight-metabolism" onclick="window.location.href='product.html?id=onix';">
                     <div class="product-image">
                         <img src="./img/onix/onix1.png" alt="Onix">
                     </div>
@@ -190,7 +231,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=philola';">
+                <!-- Philola (สายตาและการได้ยิน) -->
+                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=philola';">
                     <div class="product-image">
                         <img src="./img/philola/philola1.png" alt="Philola">
                     </div>
@@ -202,7 +244,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=scomplex';">
+                <!-- S-Complex (ผิวพรรณและชะลอวัย) -->
+                <div class="product-card animate-in" data-category="skin-aging" onclick="window.location.href='product.html?id=scomplex';">
                     <div class="product-image">
                         <img src="./img/scomplex/scomplex1.png" alt="S-Complex">
                     </div>
@@ -214,7 +257,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=tchrome';">
+                <!-- T-Chrome (หุ่นและระบบเผาผลาญ) -->
+                <div class="product-card animate-in" data-category="weight-metabolism" onclick="window.location.href='product.html?id=tchrome';">
                     <div class="product-image">
                         <img src="./img/tchrome/tchrome1.png" alt="T-Chrome">
                     </div>
@@ -226,7 +270,8 @@
                     </p>
                 </div>
 
-                <div class="product-card" onclick="window.location.href='product.html?id=turbine';">
+                <!-- Turbine (สุขภาพผู้ชาย) -->
+                <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=turbine';">
                     <div class="product-image">
                         <img src="./img/turbine/turbine1.png" alt="Turbine">
                     </div>
@@ -241,5 +286,85 @@
             </div>
         </main>
     </div>
+
+    <!-- ส่วน Script ควบคุม Animation และ Stagger Effect -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const productCards = Array.from(document.querySelectorAll('.product-card'));
+        const productsContainer = document.querySelector('.products');
+        const productCountText = document.querySelector('.product-count');
+        const sortSelect = document.querySelector('.shop-header select');
+
+        // เก็บ ลำดับตั้งต้น (แนะนำ) เอาไว้ใช้เวลาเลือก "แนะนำ"
+        productCards.forEach((card, index) => {
+            card.dataset.originalIndex = index;
+            
+            // ดึงราคาจาก DOM (ตัด ฿ และ , ออก แปลงเป็นตัวเลข)
+            const priceText = card.querySelector('.new-price').textContent;
+            card.dataset.price = parseFloat(priceText.replace(/[^0.0-9.-]+/g, ''));
+        });
+
+        // ฟังก์ชันหลักในการกรองหมวดหมู่และเรียงลำดับ
+        function updateProductsUI() {
+            const activeBtn = document.querySelector('.category-btn.active');
+            const selectedCategory = activeBtn ? activeBtn.getAttribute('data-category') : 'all';
+            const sortValue = sortSelect ? sortSelect.value : '';
+
+            // 1. เรียงลำดับ Array ตามตัวเลือก
+            let sortedCards = [...productCards];
+
+            if (sortValue === 'price-low') {
+                sortedCards.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+            } else if (sortValue === 'price-high') {
+                sortedCards.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+            } else {
+                // เรียงตามลำดับเดิม (แนะนำ)
+                sortedCards.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+            }
+
+            // 2. นำ Element ที่เรียงแล้วจัดเข้า Container ใหม่
+            let visibleIndex = 0;
+            sortedCards.forEach(card => {
+                productsContainer.appendChild(card); // ย้ายตำแหน่งใน DOM
+
+                const cardCategories = card.getAttribute('data-category').split(' ');
+
+                // รีเซ็ต Animation
+                card.classList.remove('animate-in', 'hidden');
+                card.style.animationDelay = '0s';
+
+                if (selectedCategory === 'all' || cardCategories.includes(selectedCategory)) {
+                    card.style.animationDelay = `${visibleIndex * 0.05}s`;
+                    void card.offsetWidth; // Trigger reflow เพื่อรัน animation ใหม่
+                    card.classList.add('animate-in');
+                    visibleIndex++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // 3. อัปเดตตัวเลขจำนวนสินค้า
+            if (productCountText) {
+                productCountText.textContent = `${visibleIndex} ผลิตภัณฑ์`;
+            }
+        }
+
+        // Event Listener เมื่อเปลี่ยนหมวดหมู่
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                updateProductsUI();
+            });
+        });
+
+        // Event Listener เมื่อเปลี่ยนตัวเลือกเรียงราคา
+        if (sortSelect) {
+            sortSelect.addEventListener('change', updateProductsUI);
+        }
+    });
+</script>
 </body>
 </html>

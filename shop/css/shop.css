@@ -10,85 +10,6 @@ body {
     color: #333;
 }
 
-/* ตัว Header หลัก */
-.main-header {
-  width: 100%;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e5e5;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  height: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: #00581d;
-}
-
-.logo-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.brand-name {
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: -0.5px;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 30px;
-  height: 100%;
-}
-
-.nav-tab {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #00581d;
-  font-size: 16px;
-  font-weight: 500;
-  position: relative;
-  /* ใช้ตั้งค่าจุดอ้างอิงให้เส้นใต้ */
-  height: 100%;
-  transition: color 0.2s ease;
-}
-
-.nav-tab::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: #00581d;
-  transform: scaleX(0);
-  transition: transform 0.25s ease-out;
-}
-
-.nav-tab:hover::after,
-.nav-tab.active::after {
-  transform: scaleX(1);
-}
-
-.nav-tab:hover {
-  color: #008807;
-}
-
 .container {
     display: flex;
     max-width: 1440px;
@@ -1566,6 +1487,70 @@ ul.lv1 .result-card-props li,
   flex: 1;
 }
 
-.ingredient-image img {
-  
+/* สินค้าแนะนำ (สไตล์เดียวกับหน้า Shop / Index) */
+.related-products-section {
+  margin-top: 60px;
+  margin-bottom: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #eaeaea;
+}
+
+.related-products-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #111;
+  border-left: 4px solid #111;
+  padding-left: 12px;
+  line-height: 1.4;
+}
+
+.related-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .related-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+/* ส่วนหัวข้อและปุ่มดูสินค้าทั้งหมด (View All Products)*/
+.related-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.related-header h2 {
+  margin-bottom: 0 !important;
+}
+
+/* ลิงก์ข้อความมุมขวาบนหัวข้อ */
+.view-all-link {
+  color: #00581d;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.view-all-link:hover {
+  color: #008807;
+  transform: translateX(3px);
 }
