@@ -206,10 +206,14 @@
 
     </div>
 
-    <!-- ปุ่มล่างสุด -->
     <div class="product-buy">
-      <button class="buy">สั่งซื้อทันที</button>
+      <button class="buy" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">
+        สั่งซื้อทันที
+      </button>
     </div>
+
+    <!-- เพิ่มคอนเทนเนอร์สำหรับใส่สินค้าแนะนำแบบ Dynamic -->
+    <div id="relatedProductsContainer"></div>
   </div>
 
   </div>

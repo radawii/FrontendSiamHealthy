@@ -1566,6 +1566,70 @@ ul.lv1 .result-card-props li,
   flex: 1;
 }
 
-.ingredient-image img {
-  
+/* สินค้าแนะนำ (สไตล์เดียวกับหน้า Shop / Index) */
+.related-products-section {
+  margin-top: 60px;
+  margin-bottom: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #eaeaea;
+}
+
+.related-products-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #111;
+  border-left: 4px solid #111;
+  padding-left: 12px;
+  line-height: 1.4;
+}
+
+.related-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .related-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+/* ส่วนหัวข้อและปุ่มดูสินค้าทั้งหมด (View All Products)*/
+.related-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.related-header h2 {
+  margin-bottom: 0 !important;
+}
+
+/* ลิงก์ข้อความมุมขวาบนหัวข้อ */
+.view-all-link {
+  color: #00581d;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.view-all-link:hover {
+  color: #008807;
+  transform: translateX(3px);
 }
