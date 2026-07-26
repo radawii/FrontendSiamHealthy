@@ -1,7 +1,8 @@
 const track = document.getElementById('carouselTrack');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
-const container = document.querySelector('.carousel-container'); // เพิ่มตัวแปรสำหรับจับ Hover
+const container = document.querySelector('.carousel-container');
+const viewport = document.querySelector('.carousel-viewport');
 let items = document.querySelectorAll('.carousel-item');
 
 let currentIndex = 1;
@@ -10,11 +11,10 @@ let startX = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
 let animationId = 0;
-const gap = 20;
 
 // ตัวแปรสำหรับระบบ Autoplay
 let autoplayTimer = null;
-const autoplayInterval = 5000; // 10000 ms = 10 วินาที
+const autoplayInterval = 5000;
 
 // 1. ตั้งค่าระบบ Infinite (Clone elements)
 const firstClone = items[0].cloneNode(true);
@@ -31,32 +31,30 @@ function setSliderPosition() {
   track.style.transform = `translateX(${currentTranslate}px)`;
 }
 
+// คำนวณระยะสไลด์ตามความกว้างของกรอบ viewport (ไม่มี gap)
 function updateCarouselPosition() {
-  if (items.length === 0) return;
-  const itemWidth = items[0].getBoundingClientRect().width;
-  currentTranslate = -currentIndex * (itemWidth + gap);
+  if (items.length === 0 || !viewport) return;
+  const slideWidth = viewport.offsetWidth;
+  currentTranslate = -currentIndex * slideWidth;
   prevTranslate = currentTranslate;
   setSliderPosition();
 }
 
 function moveWithTransition() {
-  track.style.transition = 'transform 0.3s ease-out';
+  track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
   updateCarouselPosition();
 }
 
-// ฟังก์ชันเลื่อนไปข้างหน้า (ใช้สำหรับปุ่ม Next และ Autoplay)
+// ฟังก์ชันเลื่อนไปข้างหน้า
 function moveToNext() {
   if (currentIndex >= items.length - 1) return;
   currentIndex++;
   moveWithTransition();
 }
 
-// ----------------------------------------------------
-// 🤖 2. ระบบ Autoplay & Controls
-// ----------------------------------------------------
+// 2. ระบบ Autoplay & Controls
 
 function startAutoplay() {
-  // เคลียร์อันเก่าก่อนเพื่อป้องกันบั๊กจับเวลาซ้อนกัน
   stopAutoplay(); 
   autoplayTimer = setInterval(moveToNext, autoplayInterval);
 }
@@ -68,10 +66,10 @@ function stopAutoplay() {
 }
 
 // หยุดลูปเมื่อเอาเมาส์มาวางเหนือ Carousel และเล่นต่อเมื่อเอาเมาส์ออก
-container.addEventListener('mouseenter', stopAutoplay);
-container.addEventListener('mouseleave', startAutoplay);
-
-// ----------------------------------------------------
+if (container) {
+  container.addEventListener('mouseenter', stopAutoplay);
+  container.addEventListener('mouseleave', startAutoplay);
+}
 
 // วนลูปไร้รอยต่อตอนสิ้นสุด Transition
 track.addEventListener('transitionend', () => {
@@ -88,18 +86,22 @@ track.addEventListener('transitionend', () => {
   }
 });
 
-// Event ปุ่มกด (มีการรีเซ็ตเวลา Autoplay ใหม่เมื่อกด)
-nextBtn.addEventListener('click', () => {
-  moveToNext();
-  startAutoplay(); // รีเซ็ตตัวนับเวลา 5 วิใหม่
-});
+// Event ปุ่มกด
+if (nextBtn) {
+  nextBtn.addEventListener('click', () => {
+    moveToNext();
+    startAutoplay();
+  });
+}
 
-prevBtn.addEventListener('click', () => {
-  if (currentIndex <= 0) return;
-  currentIndex--;
-  moveWithTransition();
-  startAutoplay(); // รีเซ็ตตัวนับเวลา 5 วิใหม่
-});
+if (prevBtn) {
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex <= 0) return;
+    currentIndex--;
+    moveWithTransition();
+    startAutoplay();
+  });
+}
 
 // Event ลากเมาส์ / Touch screen
 track.addEventListener('mousedown', dragStart);
@@ -114,7 +116,7 @@ function dragStart(e) {
   isDragging = true;
   startX = getPositionX(e);
   track.style.transition = 'none';
-  stopAutoplay(); // หยุดวิ่งอัตโนมัติขณะที่กำลังลากเมาส์
+  stopAutoplay();
   if (e.type === 'mousedown') e.preventDefault(); 
 }
 
@@ -126,28 +128,31 @@ function dragAction(e) {
   animationId = requestAnimationFrame(setSliderPosition);
 }
 
+// คำนวณระยะการดึง/ลากเมาส์ตามขนาดกรอบ viewport
 function dragEnd() {
   if (!isDragging) return;
   isDragging = false;
   cancelAnimationFrame(animationId);
   
   const movedBy = currentTranslate - prevTranslate;
-  const itemWidth = items[0].getBoundingClientRect().width + gap;
+  const slideWidth = viewport.offsetWidth;
 
-  if (movedBy < -itemWidth * 0.2) {
+  // เลื่อนภาพถ้าลากเกิน 20% ของความกว้างกรอบ
+  if (movedBy < -slideWidth * 0.2) {
     currentIndex++;
-  } else if (movedBy > itemWidth * 0.2) {
+  } else if (movedBy > slideWidth * 0.2) {
     currentIndex--;
   }
 
   moveWithTransition();
-  startAutoplay(); // ลากเสร็จแล้ว ปล่อยเมาส์ -> เริ่มนับเวลา 10 วิใหม่
+  startAutoplay();
 }
 
 // สั่งทำงานครั้งแรก
 updateCarouselPosition();
-startAutoplay(); // เปิดใช้งาน Autoplay ทันทีที่โหลดหน้าเว็บ
+startAutoplay();
 
+// ปรับตำแหน่งตาม Responsive เมื่อมีการย่อ/ขยายหน้าจอ
 window.addEventListener('resize', () => {
   track.style.transition = 'none';
   updateCarouselPosition();
