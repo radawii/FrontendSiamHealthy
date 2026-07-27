@@ -1,0 +1,38 @@
+name: Deploy Frontend Siam Healthy
+
+on:
+  push:
+    branches:
+      - main
+      - feature/main-page
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd /var/www/siam-healthy-draft
+
+            # 1. ดึงโค้ดล่าสุดจาก GitHub
+            git fetch --all
+            git checkout ${{ github.ref_name }}
+            git pull origin ${{ github.ref_name }}
+
+            # 2. ปรับ Fix Path CSS อัตโนมัติ
+            find . -type f -name "*.html" -exec sed -i 's|href="./css/|href="/css/|g' {} +
+            find . -type f -name "*.html" -exec sed -i 's|href="../css/|href="/css/|g' {} +
+
+            # 3. คัดลอกไฟล์ CSS ย่อยมาไว้ที่โฟลเดอร์หลัก
+            cp shop/css/*.css css/ 2>/dev/null || true
+            cp articles/css/*.css css/ 2>/dev/null || true
+
+            # 4. ตั้งค่า Permission & Reload Nginx
+            chmod -R 755 /var/www/siam-healthy-draft
+            systemctl reload nginx
