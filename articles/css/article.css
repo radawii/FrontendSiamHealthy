@@ -1,276 +1,218 @@
-body {
-  margin: 0;
-  font-family: "Prompt", sans-serif;
-  background-color: #f0f0f0;
-  font-size: 18px;
+/* ===================================================
+   1. DESIGN SYSTEM & VARIABLES (Siam-Healthy Theme)
+=================================================== */
+:root {
+  --primary-color: #0d5c2e;
+  --primary-hover: #08401f;
+  --bg-main: #f8faf8;
+  --card-bg: #ffffff;
+  
+  --text-dark: #334155; 
+  --text-heading: #1e293b;
+  --text-muted: #64748b;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 14px 28px rgba(13, 92, 46, 0.1);
+  --radius-lg: 20px;
 }
 
-input,
-button {
-  font-family: "Prompt", sans-serif;
-}
-
-/* รีเซ็ตค่าเริ่มต้นและกำหนดฟอนต์ */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: 'Prompt', sans-serif;
-  /* เปลี่ยนเป็นฟอนต์ที่โปรเจกต์คุณใช้ได้เลย */
+  -webkit-font-smoothing: antialiased;
 }
 
-h2 {
-  font-size: 1.7em;
-  margin: 15px auto;
+body {
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.article-page-main {
+  padding: 50px 0 80px 0;
+}
+
+/* ===================================================
+   2. SECTION HEADER
+=================================================== */
+.section-header {
   text-align: center;
+  margin-bottom: 40px;
+  padding: 0 20px;
 }
 
-/* ตัว Header หลัก */
-.main-header {
-  width: 100%;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e5e5;
-  /* เส้นแบ่งจางๆ ด้านล่าง */
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+.section-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  background: #eef7f2;
+  padding: 4px 16px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
 }
 
-/* กล่องครอบที่ช่วยจำกัดความกว้างและจัดให้คอนเทนต์อยู่ตรงกลาง */
-.header-container {
-  max-width: 1200px;
-  /* ขยายหรือลดตามขนาดหน้าจอหลักของคุณ */
+.section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+/* ===================================================
+   3. ARTICLES GRID & CARDS (แบบเดียวกับหน้า Main)
+=================================================== */
+.article-container {
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 20px;
-  height: 80px;
-  /* ความสูงของแถบ Header */
-  display: flex;
-  justify-content: space-between;
-  /* ตัวเด็ด: ผลักโลโก้ไปซ้าย สุด เมนูไปขวาสุด */
-  align-items: center;
 }
 
-/* ส่วนของโลโก้ */
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: #00581d;
-}
-
-.logo-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.brand-name {
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: -0.5px;
-}
-
-/* ส่วนของเมนูฝั่งขวา */
-.nav-menu {
-  display: flex;
-  gap: 30px;
-  /* ระยะห่างระหว่างแท็บ */
-  height: 100%;
-  /* ให้ความสูงเต็มเท่ากลุ่มเนวิเกชัน */
-}
-
-/* ตัวลิงก์แต่ละแท็บ */
-.nav-tab {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #00581d;
-  font-size: 16px;
-  font-weight: 500;
-  position: relative;
-  /* ใช้ตั้งค่าจุดอ้างอิงให้เส้นใต้ */
-  height: 100%;
-  transition: color 0.2s ease;
-}
-
-/* เอฟเฟกต์เส้นใต้แท็บ (แอบซ่อนไว้ก่อน) */
-.nav-tab::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  /* ติดขอบล่างของแถบพอดี */
-  left: 0;
-  width: 100%;
-  height: 3px;
-  /* ความหนาของเส้นแท็บ */
-  background-color: #00581d;
-  /* สีของเส้นแท็บ */
-  transform: scaleX(0);
-  /* เริ่มต้นให้ความกว้างของเส้นเป็น 0 */
-  transition: transform 0.25s ease-out;
-}
-
-/* เมื่อเอาเมาส์มาวาง (Hover) หรือแท็บนั้นกำลังเปิดอยู่ (Active) */
-.nav-tab:hover::after,
-.nav-tab.active::after {
-  transform: scaleX(1);
-  /* ขยายเส้นใต้ออกมาเต็มความกว้างตัวอักษร */
-}
-
-.nav-tab:hover {
-  color: #008807;
-  /* เปลี่ยนสีตัวอักษรให้อ่อนลงนิดนึงตอนเมาส์ชี้ */
-}
-
-/* Articles */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px;
-    display: block;
-    background-color: #ffffff;
-}
-
-.container img {
-  max-width: 800px;
-  width: 100%;
-  display: block;
-  margin: 30px auto;
-}
-
-/* Health Articles */
 .articles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
 }
 
 .article-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #f0f4f1;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
-  /* เรียงจากบนลงล่าง */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  background-color: #fff;
 }
 
-.article-card.hidden {
-  display: none;
-  opacity: 0;
-  transform: translateY(15px); /* ให้การ์ดเด้งขึ้นมาจากด้านล่างนิดนึง */
-}
-
-/* คลาสที่จะใช้ตอนสั่งเปิดด้วย JS */
-.article-card.show-fade {
-  display: block !important;
-  animation: fadeInSoft 0.4s ease-out forwards;
-}
-
-@keyframes fadeInSoft {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.article-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(13, 92, 46, 0.2);
 }
 
 .article-image {
+  position: relative;
   width: 100%;
-  height: 250px;
-  background-color: #f0f0f0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
 }
 
 .article-image img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.article-title {
-  font-size: 18px;
-  margin: 15px 0 5px 0;
+.article-card:hover .article-image img {
+  transform: scale(1.06);
+}
+
+/* ป้าย Tag หมวดหมู่ลอยมุมซ้ายล่าง */
+.article-tag {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(13, 92, 46, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 50px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+}
+
+.article-content {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .article-date {
-  font-size: 14px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 400;
 }
 
-p {
-    margin-bottom: 15px;
+.article-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.2s ease;
 }
 
-h3 {
-    font-size: 1.3em;
-    margin-top: 30px;
+.article-card:hover .article-title {
+  color: var(--primary-color);
 }
 
-.lv1 {
-    margin: 15px 0 15px 15px;
-    padding: 15px;
-    list-style-position: inside;
+/* ===================================================
+   4. ANIMATIONS & FOOTER
+=================================================== */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-.lv1 li {
-    margin-bottom: 5px;
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.lv1 b {
-    font-size: 1.1em;
-    font-weight: 700;
+.articles .article-card.reveal-on-scroll {
+  transition-delay: calc(var(--card-index, 0) * 0.1s);
 }
 
-.lv2 {
-    margin: 15px 0 15px 50px;
-    list-style-position: outside;
-}
-
-.bblack {
-    border: 1px solid black;
-}
-
-p.topic {
-  margin-top: 20px;
-  font-size: 21px;
-  font-weight: 700;
-}
-
-.bshop {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin: 25px 0;
-  font-size: 22px;
-}
-
-.bshop .call {
-  background-color: #db0000;
-  color: white;
-  font-weight: 700;
-  padding: 25px;
-  max-width: 320px;
-  border-radius: 10px;
+.footer {
+  background-color: #082d16;
+  color: #94a3b8;
+  padding: 32px 20px;
+  margin-top: 60px;
   text-align: center;
-  text-decoration: none;
+  font-size: 0.9rem;
 }
 
-.bshop .buy {
-  background-color: #00912b;
-  color: white;
-  font-weight: 700;
-  padding: 25px;
-  max-width: 280px;
-  border-radius: 10px;
-  text-align: center;
-  text-decoration: none;
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .article-page-main {
+    padding: 30px 0 60px 0;
+  }
 
-.bshop .call span,
-.bshop .buy span {
-  color: yellow;
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .articles {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+  }
+
+  .article-content {
+    padding: 16px;
+  }
+
+  .article-title {
+    font-size: 0.98rem;
+  }
 }
