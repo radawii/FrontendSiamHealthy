@@ -31,21 +31,17 @@
                 <div class="carousel-viewport">
                     <div class="carousel-track" id="carouselTrack">
                         <div class="carousel-item">
-                            <div class="item-mockup">
-                                <img src="./img/banner1.png" alt="Siam-Healthy Banner 1">
-                            </div>
+                            <img src="./img/banner1.png" alt="Siam-Healthy Banner 1">
                         </div>
                         <div class="carousel-item">
-                            <div class="item-mockup">
-                                <img src="./img/banner2.png" alt="Siam-Healthy Banner 2">
-                            </div>
+                            <img src="./img/banner2.png" alt="Siam-Healthy Banner 2">
                         </div>
                         <div class="carousel-item">
-                            <div class="item-mockup">
-                                <img src="./img/banner3.png" alt="Siam-Healthy Banner 3">
-                            </div>
+                            <img src="./img/banner3.png" alt="Siam-Healthy Banner 3">
                         </div>
                     </div>
+
+                    <div class="carousel-dots" id="carouselDots"></div>
                 </div>
 
                 <button class="carousel-btn next-btn" id="nextBtn" aria-label="Next Slide">
@@ -54,104 +50,96 @@
             </div>
         </section>
 
-        <!-- Product Showcase Section -->
-        <section class="shop-section">
-            <div class="section-header">
-                <span class="section-tag">Recommended Products</span>
-                <h2 class="section-title">สินค้าเพื่อสุขภาพยอดนิยม</h2>
+        <!-- Product Showcase Section (Minimal Clean Style + Scroll Fade) -->
+        <section class="shop-section reveal-on-scroll">
+            <div class="shop-header-wrapper">
+                <div class="shop-brand-info">
+                    <a href="/shop" class="brand-tag">
+                        ผลิตภัณฑ์เสริมอาหาร
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                    <h2 class="brand-heading">คัดสรรสารสกัดคุณภาพสูง<br>ผ่านการรับรองมาตรฐาน</h2>
+                </div>
             </div>
 
             <div class="shop">
-                <!-- Product Card 1 -->
-                <article class="product-card">
-                    <div class="product-badge sale">ลด 50%</div>
-                    <div class="product-image">
-                        <img src="./img/product1.png" alt="ชื่อสินค้า ชิ้นที่ 1" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
+                <article class="product-card reveal-on-scroll" style="--card-index: 1;" onclick="window.location.href='/shop/elsie';">
+                    <div class="product-image-box">
+                        <div class="product-badge sale">ลด 50%</div>
+                        <img src="./shop/img/elsie/elsie1.png" alt="Elsie" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
                     </div>
                     <div class="product-info">
                         <div class="product-rating">
                             <span class="stars">★★★★★</span>
                             <span class="rating-count">(128)</span>
                         </div>
-                        <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 1</h3>
+                        <h3 class="product-title">Elsie</h3>
+                        <span class="product-hashtag">#ผลิตภัณฑ์เสริมอาหาร</span>
                         <div class="product-price">
-                            <span class="current-price">990 ฿</span>
-                            <span class="old-price">1,980 ฿</span>
+                            <span class="current-price">฿990.00</span>
+                            <span class="old-price">฿1,980.00</span>
                         </div>
-                        <button class="buy-button">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            ใส่ตะกร้า
-                        </button>
                     </div>
                 </article>
 
-                <!-- Product Card 2 -->
-                <article class="product-card">
-                    <div class="product-image">
-                        <img src="./img/product2.png" alt="ชื่อสินค้า ชิ้นที่ 2" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
+                <article class="product-card reveal-on-scroll" style="--card-index: 2;" onclick="window.location.href='/shop/extera';">
+                    <div class="product-image-box">
+                        <img src="./shop/img/extera/extera1.png" alt="Extera" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
                     </div>
                     <div class="product-info">
                         <div class="product-rating">
                             <span class="stars">★★★★★</span>
                             <span class="rating-count">(95)</span>
                         </div>
-                        <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 2</h3>
+                        <h3 class="product-title">Extera</h3>
+                        <span class="product-hashtag">#ผลิตภัณฑ์เสริมอาหาร</span>
                         <div class="product-price">
-                            <span class="current-price">1,250 ฿</span>
+                            <span class="current-price">฿1,250.00</span>
                         </div>
-                        <button class="buy-button">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            ใส่ตะกร้า
-                        </button>
                     </div>
                 </article>
 
-                <!-- Product Card 3 -->
-                <article class="product-card">
-                    <div class="product-badge sale">Hot Item</div>
-                    <div class="product-image">
-                        <img src="./img/product3.png" alt="ชื่อสินค้า ชิ้นที่ 3" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
+                <article class="product-card reveal-on-scroll" style="--card-index: 3;" onclick="window.location.href='/shop/oclarizin';">
+                    <div class="product-image-box">
+                        <div class="product-badge hot">Hot Item</div>
+                        <img src="./shop/img/oclarizin/oclarizin1.png" alt="Oclarizin" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
                     </div>
                     <div class="product-info">
                         <div class="product-rating">
                             <span class="stars">★★★★★</span>
                             <span class="rating-count">(210)</span>
                         </div>
-                        <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 3</h3>
+                        <h3 class="product-title">Oclarizin</h3>
+                        <span class="product-hashtag">#ผลิตภัณฑ์เสริมอาหาร</span>
                         <div class="product-price">
-                            <span class="current-price">450 ฿</span>
-                            <span class="old-price">1,980 ฿</span>
+                            <span class="current-price">฿450.00</span>
+                            <span class="old-price">฿1,980.00</span>
                         </div>
-                        <button class="buy-button">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            ใส่ตะกร้า
-                        </button>
                     </div>
                 </article>
 
-                <!-- Product Card 4 -->
-                <article class="product-card">
-                    <div class="product-image">
-                        <img src="./img/product4.png" alt="ชื่อสินค้า ชิ้นที่ 4" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
+                <article class="product-card reveal-on-scroll" style="--card-index: 4;" onclick="window.location.href='/shop/tchrome';">
+                    <div class="product-image-box">
+                        <img src="./shop/img/tchrome/tchrome1.png" alt="T-Chrome" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพสินค้า';">
                     </div>
                     <div class="product-info">
                         <div class="product-rating">
                             <span class="stars">★★★★☆</span>
                             <span class="rating-count">(64)</span>
                         </div>
-                        <h3 class="product-title">ชื่อสินค้า ชิ้นที่ 4</h3>
+                        <h3 class="product-title">T-Chrome</h3>
+                        <span class="product-hashtag">#ผลิตภัณฑ์เสริมอาหาร</span>
                         <div class="product-price">
-                            <span class="current-price">3,200 ฿</span>
+                            <span class="current-price">฿3,200.00</span>
                         </div>
-                        <button class="buy-button">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            ใส่ตะกร้า
-                        </button>
                     </div>
                 </article>
             </div>
 
-            <div class="view-all-container">
+            <div class="view-all-container reveal-on-scroll">
                 <button class="view-all-btn" onclick="window.location.href='/shop';">
                     ดูสินค้าทั้งหมด
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -160,14 +148,99 @@
         </section>
 
         <!-- Secondary Promotional Banner -->
-        <section class="banner2-section">
+        <section class="banner2-section reveal-on-scroll">
             <div class="banner2">
                 <img src="./img/banner4.png" alt="โปรโมชันพิเศษ Siam-Healthy">
             </div>
         </section>
 
+        <!-- Mesh Gradient Concern Section -->
+        <section class="health-concern-section reveal-on-scroll">
+            <div class="mesh-bg-container">
+                <div class="glow-ball glow-1"></div>
+                <div class="glow-ball glow-2"></div>
+                <div class="glow-ball glow-3"></div>
+
+                <div class="concern-header">
+                    <h2 class="concern-main-title">เลือกซื้อสินค้าที่ตอบโจทย์ปัญหาสุขภาพของคุณ</h2>
+                </div>
+
+                <div class="distributed-glass-grid">
+                    <a href="/shop?category=joints" class="glass-card card-1 float-anim-1">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">กระดูกและข้อต่อ</h3>
+                            <p class="card-desc">ฟื้นฟูข้อเข่า กระดูกเสื่อม เพิ่มน้ำเลี้ยงข้อ</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=heart" class="glass-card card-2 float-anim-2">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">หัวใจและหลอดเลือด</h3>
+                            <p class="card-desc">ดูแลความดัน ไขมันในเลือด สุขภาพหัวใจ</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=diabetes" class="glass-card card-3 float-anim-3">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">เบาหวาน</h3>
+                            <p class="card-desc">คุมระดับน้ำตาล เสริมการทำงานของอินซูลิน</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=weight" class="glass-card card-4 float-anim-2">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">ลดน้ำหนัก</h3>
+                            <p class="card-desc">เร่งการเผาผลาญ คุมหิว ปลอดภัยต่อร่างกาย</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=skin-nails" class="glass-card card-5 float-anim-1">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">ผิวหนังและเล็บ</h3>
+                            <p class="card-desc">บำรุงเซลล์ผิว แข็งแรง ไม่เปราะหักง่าย</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=eyes" class="glass-card card-6 float-anim-3">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">ดวงตา</h3>
+                            <p class="card-desc">ลดตาแห้ง ตาพร่ามัว กรองแสงสีฟ้า</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=hearing" class="glass-card card-7 float-anim-2">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">การได้ยิน</h3>
+                            <p class="card-desc">ฟื้นฟูประสาทหู ลดอาการหูอื้อตามวัย</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=gut" class="glass-card card-8 float-anim-1">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">ลำไส้และการขับถ่าย</h3>
+                            <p class="card-desc">ปรับสมดุลจุลินทรีย์ แก้ท้องผูก ท้องอืด</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=beauty" class="glass-card card-9 float-anim-3">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">ความงาม</h3>
+                            <p class="card-desc">ผิวกระจ่างใส ชะลอวัย ออร่าสุขภาพดี</p>
+                        </div>
+                    </a>
+
+                    <a href="/shop?category=men-health" class="glass-card card-10 float-anim-2">
+                        <div class="glass-card-content">
+                            <h3 class="card-title">สุขภาพเพศชาย</h3>
+                            <p class="card-desc">เพิ่มฟื้นฟูพละกำลัง สมดุลฮอร์โมนชาย</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- Trust Badges Section -->
-        <section class="sup-articles">
+        <section class="sup-articles reveal-on-scroll">
             <div class="section-header">
                 <span class="section-tag">Why Choose Us</span>
                 <h2 class="section-title">ยกระดับมาตรฐานสินค้าและบริการ<br>พร้อมก้าวขึ้นสู่การเป็นผู้นำด้านอาหารเสริม</h2>
@@ -217,14 +290,14 @@
         </section>
 
         <!-- Health Articles Section -->
-        <section class="article-container">
+        <section class="article-container reveal-on-scroll">
             <div class="section-header">
                 <span class="section-tag">Health Knowledge</span>
-                <h2 class="section-title">บทความสุขภาพน่ารู้</h2>
+                <h2 class="section-title">บทความสุขภาพ</h2>
             </div>
 
             <div class="articles">
-                <article class="article-card" onclick="window.location.href='articles/article1.html';">
+                <article class="article-card reveal-on-scroll" style="--card-index: 1;" onclick="window.location.href='articles/article1.html';">
                     <div class="article-image">
                         <img src="./articles/img/a1.png" alt="สัญญาณข้อเข่าเสื่อม">
                         <span class="article-tag">กระดูกและข้อ</span>
@@ -237,7 +310,7 @@
                     </div>
                 </article>
 
-                <article class="article-card" onclick="window.location.href='articles/article2.html';">
+                <article class="article-card reveal-on-scroll" style="--card-index: 2;" onclick="window.location.href='articles/article2.html';">
                     <div class="article-image">
                         <img src="./articles/img/a2.png" alt="ดูแลสุขภาพดวงตา">
                         <span class="article-tag">สุขภาพสายตา</span>
@@ -250,7 +323,7 @@
                     </div>
                 </article>
 
-                <article class="article-card" onclick="window.location.href='articles/article3.html';">
+                <article class="article-card reveal-on-scroll" style="--card-index: 3;" onclick="window.location.href='articles/article3.html';">
                     <div class="article-image">
                         <img src="./articles/img/a3.png" alt="สัญญาณเตือนประสาทหูเสื่อม">
                         <span class="article-tag">ฟื้นฟูร่างกาย</span>
@@ -264,7 +337,7 @@
                 </article>
             </div>
 
-            <div class="view-all-container">
+            <div class="view-all-container reveal-on-scroll">
                 <button class="view-all-btn" onclick="window.location.href='/articles';">
                     อ่านบทความทั้งหมด
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
