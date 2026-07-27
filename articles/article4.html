@@ -1,111 +1,223 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 
 <head>
-    <title>Siam-Healthy</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการริดสีดวงทวาร | Siam-Healthy</title>
+    
+    <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="./css/article.css">
+    <link rel="stylesheet" href="./css/article-detail.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="../js/header.js" defer></script>
 </head>
 
-<body>
-    <header class="main-header">
-        <div class="header-container">
-            <a href="../" class="logo-section">
-                <span class="brand-name">Siam-Healthy</span>
-            </a>
+<body class="article-detail-page">
+    <my-header></my-header>
 
-            <nav class="nav-menu">
-                <a href="../shop" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
-                <a href="../articles" class="nav-tab">บทความ</a>
-                <a href="#" class="nav-tab">ติดต่อเรา</a>
-                <a href="#" class="nav-tab">รถเข็นของคุณ</a>
-            </nav>
+    <main class="article-main-wrapper">
+        <article class="article-container">
+            <!-- Article Meta & Header -->
+            <header class="article-header reveal-on-scroll">
+                <div class="article-badge-group">
+                    <span class="article-category-tag"><i class="fa-solid fa-toilet"></i> ลำไส้และการขับถ่าย</span>
+                    <span class="article-read-time"><i class="fa-regular fa-clock"></i> อ่าน 3 นาที</span>
+                </div>
+                
+                <h1 class="article-main-title">
+                    พฤติกรรมนั่งเล่นมือถือในห้องน้ำ<br>
+                    <span>ตัวการกระตุ้นริดสีดวงทวารหนักโดยไม่รู้ตัว</span>
+                </h1>
+
+                <div class="article-author-meta">
+                    <div class="author-avatar">
+                        <i class="fa-solid fa-people-group"></i>
+                    </div>
+                    <div class="author-info">
+                        <span class="author-name">ทีมผู้เชี่ยวชาญ Siam-Healthy</span>
+                        <span class="publish-date">อัปเดตล่าสุด: 01 มิ.ย. 2026</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hero Image Banner -->
+            <div class="article-hero-image reveal-on-scroll">
+                <img src="./img/a4.png" alt="พฤติกรรมนั่งเล่นมือถือในห้องน้ำ" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x450?text=Siam-Healthy+Article';">
+            </div>
+
+            <!-- Main Body Content -->
+            <div class="article-body-content">
+                <p class="lead-paragraph reveal-on-scroll">
+                    วิถีชีวิตยุคดิจิทัลส่งผลให้พฤติกรรมการเข้าห้องน้ำของผู้คนในยุคปัจจุบันเปลี่ยนแปลงไปอย่างเห็นได้ชัด สมาร์ตโฟนได้กลายมาเป็นอุปกรณ์ที่ผู้คนมักนำติดตัวเข้าไปใช้งานระหว่างการทำภารกิจส่วนตัว ไม่ว่าจะเป็นการรับชมคอนเทนต์ การเช็กข้อความ หรือการอ่านข้อมูลข่าวสารต่าง ๆ
+                </p>
+
+                <div class="highlight-callout reveal-on-scroll">
+                    <i class="fa-solid fa-triangle-exclamation quote-icon"></i>
+                    <p>
+                        แม้ว่าการนั่งเล่นมือถือในห้องน้ำจะดูเป็นพฤติกรรมตามความเคยชิน แต่พฤติกรรมนี้คือหนึ่งในปัจจัยสำคัญที่กระตุ้นให้เกิด <strong>โรคริดสีดวงทวาร</strong> โดยที่ผู้ป่วยอาจไม่เคยมีประวัติการออกแรงเบ่งถ่ายอย่างรุนแรงมาก่อนเลยก็ตาม
+                    </p>
+                </div>
+
+                <h2 class="content-section-title reveal-on-scroll">
+                    <i class="fa-solid fa-circle-question"></i> ทำไมการใช้เวลาบนชักโครกนานจึงกระตุ้นการเกิดริดสีดวงทวาร?
+                </h2>
+
+                <p class="reveal-on-scroll">
+                    ก่อนหน้านี้หลายคนอาจเคยคิดว่าโรคริดสีดวงทวารจะเกิดขึ้นเฉพาะในผู้ที่มีภาวะท้องผูกเรื้อรังเท่านั้น แต่ในความเป็นจริง การนั่งแช่บนชักโครกเป็นเวลานานส่งผลกระทบโดยตรงต่อโครงสร้างหลอดเลือดส่วนปลาย ผ่าน 3 ปัจจัยหลัก:
+                </p>
+
+                <ul class="myths-list reveal-on-scroll">
+                    <li class="myth-item" style="background: #f8fafc; border-color: #cbd5e1;">
+                        <div class="myth-header">
+                            <strong class="myth-title" style="color: #0f172a;">ระยะเวลาการนั่งที่ยาวนานเกินไป</strong>
+                        </div>
+                        <div class="myth-body" style="padding-left: 28px;">
+                            ผลการศึกษาพบว่า ผู้ที่นำสมาร์ตโฟนเข้าไปใช้งานระหว่างเข้าห้องน้ำมักใช้เวลายาวนานมากกว่า 5 นาทีขึ้นไปต่อครั้ง ซึ่งเกินกว่าระยะเวลาที่เหมาะสมตามสุขอนามัยการขับถ่ายอย่างมีนัยสำคัญ ซึ่งเกินกว่าระยะเวลาที่เหมาะสมตามสุขอนามัยการขับถ่าย
+                        </div>
+                    </li>
+                    <li class="myth-item" style="background: #f8fafc; border-color: #cbd5e1;">
+                        <div class="myth-header">
+                            <strong class="myth-title" style="color: #0f172a;">การสะสมแรงกดทับบริเวณช่องท้องส่วนล่าง</strong>
+                        </div>
+                        <div class="myth-body" style="padding-left: 28px;">
+                            การนั่งค้างอยู่บนโถสุขภัณฑ์เป็นเวลานาน ส่งผลให้เกิดแรงดันภายในช่องท้องและแรงกดทับสะสม ขัดขวางการไหลเวียนโลหิตจนกลุ่มหลอดเลือดดำบริเวณทวารหนักต้องแบกรับน้ำหนักและแรงดันที่เพิ่มขึ้นอย่างต่อเนื่อง
+                        </div>
+                    </li>
+                    <li class="myth-item" style="background: #f8fafc; border-color: #cbd5e1;">
+                        <div class="myth-header">
+                            <strong class="myth-title" style="color: #0f172a;">ภาวะการไหลเวียนโลหิตผิดปกติและการสูญเสียความยืดหยุ่น</strong>
+                        </div>
+                        <div class="myth-body" style="padding-left: 28px;">
+                            การนั่งบนฝารองนั่งที่มีช่องเปิดตรงกลาง ทำให้เนื้อเยื่อรอบทวารหนักถูกดึงรั้งลงตามแรงโน้มถ่วงโดยไม่มีการพยุง ส่งผลให้เลือดคั่ง หลอดเลือดเกิดการบวม อักเสบ และสูญเสียความยืดหยุ่นในการหดตัวกลับได้อีกด้วย
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- ส่วนที่เพิ่มใหม่: เกณฑ์ประเมินระดับความรุนแรง 4 ระยะ -->
+                <h2 class="content-section-title reveal-on-scroll">
+                    <i class="fa-solid fa-list-check"></i> เกณฑ์ประเมินระดับความรุนแรงของโรคริดสีดวงทวารหนัก
+                </h2>
+
+                <p class="reveal-on-scroll">
+                    เช็กความรุนแรงและลักษณะอาการทางกายภาพ เพื่อหาทางดูแลได้อย่างทันท่วงที:
+                </p>
+
+                <div class="severity-4grid reveal-on-scroll">
+                    <div class="stage-card stage-1">
+                        <span class="stage-badge">ระยะที่ 1</span>
+                        <p>หลอดเลือดเริ่มโป่งพองภายใน มีเลือดออกขณะขับถ่ายหรือหลังเช็ดทำความสะอาด แต่ยังไม่มีติ่งเนื้อยื่นออกมา (ริดสีดวงภายใน)</p>
+                    </div>
+                    <div class="stage-card stage-2">
+                        <span class="stage-badge">ระยะที่ 2</span>
+                        <p>มีติ่งเนื้อยื่นโผล่ออกมานอกรูทวารขณะขับถ่ายหรือเบ่ง แต่ยังสามารถหดกลับเข้าไปด้านในได้เองตามธรรมชาติ</p>
+                    </div>
+                    <div class="stage-card stage-3">
+                        <span class="stage-badge">ระยะที่ 3</span>
+                        <p>ติ่งเนื้อยื่นโผล่ออกมาภายนอกขณะขับถ่าย ไม่สามารถหดกลับไปเองได้ ต้องใช้นิ้วช่วยดันกลับเข้าไป</p>
+                    </div>
+                    <div class="stage-card stage-4">
+                        <span class="stage-badge">ระยะที่ 4</span>
+                        <p>ติ่งเนื้อโป่งพองขนาดใหญ่ยื่นอยู่ภายนอกถาวร ไม่สามารถดันกลับเข้าไปได้ มีอาการอักเสบ ปวด เจ็บ และมีเลือดออกบ่อยครั้ง</p>
+                    </div>
+                </div>
+
+                <h2 class="content-section-title reveal-on-scroll">
+                    <i class="fa-solid fa-shield-heart"></i> 4 แนวทางปรับพฤติกรรม กู้คืนระบบขับถ่าย บอกลาริดสีดวงทวาร
+                </h2>
+
+                <ol class="solution-steps reveal-on-scroll">
+                    <li class="step-card">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>จำกัดเวลาการเข้าห้องน้ำ (5-10 นาที)</h3>
+                            <p>งดการนำสมาร์ตโฟนเข้าไปในห้องน้ำอย่างเด็ดขาด และจำกัดเวลาขับถ่ายให้อยู่ในช่วง 5-10 นาที หากยังขับถ่ายไม่เสร็จ ควรรีบลุกออกจากโถสุขภัณฑ์ทันทีเพื่อลดแรงดันสะสม</p>
+                        </div>
+                    </li>
+                    <li class="step-card">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>ปรับสรีระร่างกายด้วยท่านั่งที่ถูกต้อง</h3>
+                            <p>ใช้เก้าอี้เสริมรองเท้าเพื่อยกข้อเข่าให้อยู่เหนือสะโพก (ทำมุมประมาณ 35 องศา) ซึ่งเป็นองศาทางชีววิทยาที่ช่วยให้กล้ามเนื้อรอบรูทวารหนักคลายตัว จึงขับถ่ายง่ายขึ้นโดยไม่ต้องออกแรงเบ่งนาน</p>
+                        </div>
+                    </li>
+                    <li class="step-card">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>ดื่มน้ำในปริมาณที่เพียงพอต่อลำไส้</h3>
+                            <p>ดื่มน้ำสะอาดวันละ 8-10 แก้ว เพื่อรักษาความอ่อนนุ่มของมวลอุจจาระ ป้องกันไม่ให้กากอาหารที่แห้งแข็งเข้าไปเสียดสีกับผนังหลอดเลือดดำจนเกิดแผลหรือเลือดออก</p>
+                        </div>
+                    </li>
+                    <li class="step-card">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <h3>
+                                บำรุงและฟื้นฟูโครงสร้างหลอดเลือดจากภายในด้วย 
+                                <a href="../shop/product.html?id=geralox" class="product-inline-link">Geralox <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </h3>
+                            <p>
+                                สำหรับผู้ที่มีภาวะหลอดเลือดเริ่มบวม อักเสบ หรือมีติ่งเนื้อริดสีดวงแล้ว การรับประทานผลิตภัณฑ์เสริมอาหาร Geralox จะตรงเข้าฟื้นฟูความแข็งแรงและเพิ่มความยืดหยุ่นให้แก่ผนังหลอดเลือดดำส่วนปลาย บรรเทาอาการบวมอักเสบ ลดภาวะเลือดคั่ง ช่วยให้ติ่งเนื้อริดสีดวงค่อยๆ ยุบตัวลง และคืนความสมบูรณ์ให้ระบบขับถ่ายกลับมาทำงานปกติ
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+
+                <!-- Action CTA Section -->
+                <div class="cta-banner-box reveal-on-scroll">
+                    <div class="cta-header">
+                        <h2>ฟื้นฟูการขับถ่ายและลดความรุนแรงของริดสีดวงทวารตั้งแต่ตอนนี้!</h2>
+                        <p>ปรับพฤติกรรมพร้อมดูแลระบบทางเดินอาหารและหลอดเลือดส่วนปลายอย่างตรงจุด</p>
+                    </div>
+                    <div class="cta-button-group">
+                        <a href="#" class="btn-cta btn-consult">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            <div class="btn-text">
+                                <span class="sub">คลิกที่นี่</span>
+                                <span class="main">รับคำปรึกษาจากผู้เชี่ยวชาญฟรี</span>
+                            </div>
+                        </a>
+                        <a href="../shop/product.html?id=geralox" class="btn-cta btn-shop">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <div class="btn-text">
+                                <span class="sub">สั่งซื้อผลิตภัณฑ์</span>
+                                <span class="main">ในราคาส่วนลดพิเศษ</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>Copyright © 2026 Siam-Healthy. All rights reserved.</p>
         </div>
-    </header>
-    <div class="container">
-        <h2>
-            พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนักโดยไม่รู้ตัว
-        </h2>
-        <img src="./img/a4.png">
-        <p>
-            วิถีชีวิตยุคดิจิทัลส่งผลให้พฤติกรรมการเข้าห้องน้ำของผู้คนในยุคปัจจุบันเปลี่ยนแปลงไปอย่างเห็นได้ชัด
-            สมาร์ตโฟนได้กลายมาเป็นอุปกรณ์ที่ผู้คนมักนำติดตัวเข้าไปใช้งานระหว่างการทำภารกิจส่วนตัว
-            ไม่ว่าจะเป็นการรับชมคอนเทนต์ การเช็กข้อความ หรือการอ่านข้อมูลข่าวสารต่าง ๆ
-        </p>
-        <p>
-            แม้ว่าการนั่งเล่นมือถือในห้องน้ำจะดูเป็นพฤติกรรมตามความเคยชินของผู้คนทั่วไปในยุคปัจจุบัน
-            แต่พฤติกรรมนี้คือหนึ่งในปัจจัยสำคัญที่กระตุ้นให้เกิด <b>โรคริดสีดวงทวาร</b>
-            โดยที่ผู้ป่วยอาจไม่เคยมีประวัติการออกแรงเบ่งถ่ายอย่างรุนแรงมาก่อนเลยก็ตาม
-        </p>
+    </footer>
 
-        <h3>
-            ทำไมการใช้เวลาบนชักโครกนานจึงกระตุ้นการเกิดริดสีดวงทวาร?
-        </h3>
-        <p>
-            ก่อนหน้านี้หลายคนอาจเคยคิดว่าโรคริดสีดวงทวารจะเกิดขึ้นเฉพาะในผู้ที่มีภาวะท้องผูกเรื้อรังเท่านั้น
-            แต่ในความเป็นจริง การนั่งแช่บนชักโครกเป็นเวลานานก็ย่อมส่งผลกระทบโดยตรงต่อโครงสร้างหลอดเลือดส่วนปลาย ดังนี้:
-        </p>
-        <p class="topic">
-            1. ระยะเวลาการนั่งที่ยาวนานเกินไป
-        </p>
-        <p>
-            ผลการศึกษาพบว่า ผู้ที่นำสมาร์ตโฟนเข้าไปใช้งานระหว่างเข้าห้องน้ำมักใช้เวลายาวนานมากกว่า 5 นาทีขึ้นไป
-            ต่อการเข้าห้องน้ำในแต่ละครั้ง ซึ่งเป็นระยะเวลาที่นานกว่ากลุ่มผู้ที่ไม่ใช้สมาร์ตโฟนอย่างมีนัยสำคัญ
-            ซึ่งเกินกว่าระยะเวลาที่เหมาะสมตามสุขอนามัยการขับถ่าย
-        </p>
-        <p class="topic">
-            2. การสะสมแรงกดทับบริเวณช่องท้องส่วนล่าง
-        </p>
-        <p>
-            การนั่งค้างอยู่บนโถสุขภัณฑ์เป็นเวลานาน ส่งผลให้เกิดแรงดันภายในช่องท้องและแรงกดทับสะสม
-            ขัดขวางการไหลเวียนโลหิตจนกลุ่มหลอดเลือดดำบริเวณทวารหนักต้องแบกรับน้ำหนักและแรงดันที่เพิ่มขึ้นอย่างต่อเนื่อง
-        </p>
-        <p class="topic">
-            3. ภาวะการไหลเวียนโลหิตผิดปกติและการสูญเสียความยืดหยุ่นของหลอดเลือด
-        </p>
-        <p>
-            การนั่งบนฝารองนั่งชักโครกที่มีลักษณะแข็งและมีช่องเปิดตรงกลางเป็นเวลานาน
-            จะส่งผลให้เนื้อเยื่อรอบทวารหนักถูกดึงรั้งลงตามแรงโน้มถ่วงโดยไม่มีการพยุงใดๆ
-            ท่าการนั่งนี้นอกจากจะทำให้ระบบไหลเวียนโลหิตส่วนปลายชะลอตัวลงและเกิดการคั่งค้างของเลือดในบริเวณดังกล่าวแล้ว
-            ยังทำให้หลอดเลือดเกิดการบวม อักเสบ และสูญเสียความยืดหยุ่นในการหดตัวกลับได้อีกด้วย 
-        </p>
-        
+    <!-- Scroll Reveal Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
 
-        <h3>4 แนวทางปรับพฤติกรรม กู้คืนระบบขับถ่าย บอกลาริดสีดวงทวาร</h3>
-        <ol class="lv1">
-            <li>
-                <b>จำกัดเวลาการเข้าห้องน้ำ (5-10 นาที):</b>
-                ควรงดการนำสมาร์ตโฟนหรือสิ่งบันเทิงใดๆ เข้าไปในห้องน้ำอย่างเด็ดขาด และจำกัดเวลาในการขับถ่ายให้อยู่ในช่วง 5-10 นาที
-                หากยังไม่สามารถขับถ่ายได้ลุล่วง ควรรีบลุกออกจากโถสุขภัณฑ์ทันที เพื่อลดระยะเวลาที่หลอดเลือดต้องแบกรับแรงดันสะสม
-            </li>
-            <li>
-                <b>ปรับสรีระร่างกายด้วยท่านั่งที่ถูกต้อง:</b>
-                แนะนำให้ใช้เก้าอี้เสริมรองเท้าสำหรับขับถ่าย เพื่อยกข้อเข่าให้อยู่เหนือสะโพก (ทำมุมประมาณ 35 องศา)
-                ซึ่งเป็นองศาทางชีววิทยาที่ช่วยให้กล้ามเนื้อรอบรูทวารหนักคลายตัว จึงช่วยให้ขับถ่ายได้ง่ายขึ้น โดยไม่ต้องออกแรงเบ่งนาน 
-            </li>
-            <li>
-                <b>ดื่มน้ำในปริมาณที่เพียงพอต่อลำไส้:</b>
-                ดื่มน้ำสะอาดให้เพียงพอวันละ 8-10 แก้ว เพื่อรักษาความอ่อนนุ่มของมวลอุจจาระและเพิ่มความลื่นไหลในระบบทางเดินอาหาร
-                ป้องกันไม่ให้กากใยอาหารที่แห้งแข็งเข้าไปเสียดสีกับผนังหลอดเลือดดำที่กำลังเปราะบางจนเกิดแผลหรือมีเลือดออกได้
-            </li>
-            <li>
-                <b>บำรุงและฟื้นฟูโครงสร้างหลอดเลือดจากภายในด้วย Geralox:</b>
-                สำหรับผู้ที่มีภาวะหลอดเลือดเริ่มบวม อักเสบ หรือมีติ่งเนื้อริดสีดวงปรากฏแล้ว การปรับพฤติกรรมภายนอกเพียงอย่างเดียวอาจไม่เพียงพอ
-                ดังนั้นการรับประทานผลิตภัณฑ์เสริมอาหาร Geralox จึงเป็นอีกทางเลือกที่แนะนำ
-                โดยจะตรงเข้าฟื้นฟูความแข็งแรงและเพิ่มความยืดหยุ่นให้แก่ผนังหลอดเลือดดำส่วนปลาย บรรเทาอาการบวมอักเสบ
-                ลดภาวะเลือดคั่งบริเวณทวารหนัก ส่งผลให้ติ่งเนื้อริดสีดวงค่อยๆ ยุบตัวลงและคืนความสมบูรณ์ให้ระบบขับถ่ายกลับมาทำงานได้เป็นปกติอีกครั้ง 
-            </li>
-        </ol>
-        <h3 style="text-align: center;">ฟื้นฟูการขับถ่ายและลดความรุนแรงของริดสีดวงทวารตั้งแต่ตอนนี้!</h3>
-        <div class="bshop">
-            <a href="#" class="call"><span>คลิกที่นี่</span> เพื่อรับคำปรึกษาจาก <br>ผู้เชี่ยวชาญด้านสุขภาพฟรี</a>
-            <a href="#" class="buy">สั่งซื้อผลิตภัณฑ์ <br><span>ในราคาส่วนลดพิเศษ</span></a>
-        </div>
-    </div>
+            document.querySelectorAll(".reveal-on-scroll").forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
 </body>
+
 </html>

@@ -1,123 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 
 <head>
-    <title>Siam-Healthy</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทความสุขภาพ | Siam-Healthy</title>
+    
+    <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="./css/article.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Header Web Component -->
+    <script src="../js/header.js" defer></script>
 </head>
 
 <body>
-    <header class="main-header">
-        <div class="header-container">
-            <a onclick="window.location.href='/';" class="logo-section">
-                <span class="brand-name">Siam-Healthy</span>
-            </a>
+    <!-- Header Web Component -->
+    <my-header></my-header>
 
-            <nav class="nav-menu">
-                <a href="../shop" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
-                <a href="../articles" class="nav-tab">บทความ</a>
-                <a href="#" class="nav-tab">ติดต่อเรา</a>
-                <a href="#" class="nav-tab">รถเข็นของคุณ</a>
-            </nav>
+    <main class="article-page-main">
+        <!-- Header Section -->
+        <section class="section-header reveal-on-scroll">
+            <span class="section-tag">Health Knowledge</span>
+            <h1 class="section-title">บทความสุขภาพ</h1>
+        </section>
+
+        <!-- Articles Grid Container -->
+        <div class="article-container">
+            <div class="articles">
+                <!-- Article 1 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 1;" onclick="window.location.href='article1.html';">
+                    <div class="article-image">
+                        <img src="./img/a1.png" alt="สัญญาณข้อเข่าเสื่อม" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">กระดูกและข้อ</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            ลุกก็โอย นั่งก็โอย เจ็บหัวเข่าแปล๊บๆ ทุกครั้งที่ก้าวลงบันได สัญญาณข้อเข่าเสื่อมที่คนวัย 40+ ต้องฟื้นฟูอย่างไรก่อนจะสาย?
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 2;" onclick="window.location.href='article2.html';">
+                    <div class="article-image">
+                        <img src="./img/a2.png" alt="ดูแลสุขภาพดวงตา" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">สุขภาพสายตา</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            หน้าจอมือถือทำลายดวงตามากกว่าที่คิด: วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง ภัยเงียบจากแสงสีฟ้าที่คนยุคปัจจุบันมองข้ามไม่ได้
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 3;" onclick="window.location.href='article3.html';">
+                    <div class="article-image">
+                        <img src="./img/a3.png" alt="สัญญาณเตือนประสาทหูเสื่อม" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">ฟื้นฟูร่างกาย</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย ภัยเงียบที่บั่นทอนความสุขในครอบครัว
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 4 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 4;" onclick="window.location.href='article4.html';">
+                    <div class="article-image">
+                        <img src="./img/a4.png" alt="ริดสีดวงทวารหนัก" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">ลำไส้และการขับถ่าย</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนักโดยไม่รู้ตัว
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 5 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 5;" onclick="window.location.href='article5.html';">
+                    <div class="article-image">
+                        <img src="./img/a5.png" alt="วิธีแก้ท้องผูก" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">ปรับสมดุลลำไส้</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            เช็ก 3 พฤติกรรมยิ่งแก้ ยิ่งท้องผูก! เผยวิธีใหม่ช่วยให้ขับถ่ายง่าย ไร้สารพิษตกค้าง และปรับจุลินทรีย์ในลำไส้ให้สมดุล
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 6 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 6;" onclick="window.location.href='article6.html';">
+                    <div class="article-image">
+                        <img src="./img/a6.png" alt="สมุนไพรลดน้ำตาล" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">คุมเบาหวาน</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            ไม่อยากกินยาคุมเบาหวานไปตลอดชีวิต? เผย 5 สมุนไพรธรรมชาติ ตัวช่วยฟื้นฟูตับอ่อน ลดระดับน้ำตาลในเลือด ดูแลเบาหวานจากภายใน
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 7 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 7;" onclick="window.location.href='article7.html';">
+                    <div class="article-image">
+                        <img src="./img/a7.png" alt="ความดันโลหิตสูง" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">หัวใจและหลอดเลือด</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            สัญญาณเตือนความดันโลหิตสูง: วิธีสังเกตอาการ โดยไม่ต้องใช้เครื่องวัด
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 8 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 8;" onclick="window.location.href='article8.html';">
+                    <div class="article-image">
+                        <img src="./img/a8.png" alt="เบิร์นไขมัน" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">ลดน้ำหนัก</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            ลดน้ำหนักแบบคนขี้เกียจ: 5 เคล็ดลับเบิร์นไขมันเก่า ไม่ต้องออกกำลังกายหนักก็ลีนได้
+                        </h3>
+                    </div>
+                </article>
+
+                <!-- Article 9 -->
+                <article class="article-card reveal-on-scroll" style="--card-index: 9;" onclick="window.location.href='article9.html';">
+                    <div class="article-image">
+                        <img src="./img/a9.png" alt="ต่อมลูกหมากโต" onerror="this.onerror=null; this.parentNode.innerText='รูปภาพบทความ';">
+                        <span class="article-tag">สุขภาพชาย</span>
+                    </div>
+                    <div class="article-content">
+                        <p class="article-date">01 มิ.ย. 2026</p>
+                        <h3 class="article-title">
+                            เสื่อมสมรรถภาพ ปัสสาวะแสบขัด ฉี่กระปริบกระปรอย เจาะลึกปัญหาต่อมลูกหมากโตที่ชายวัย 50+ ไม่ควรละเลย
+                        </h3>
+                    </div>
+                </article>
+            </div>
         </div>
-    </header>
-    <div class="container">
-        <div class="articles">
-            <div class="article-card" onclick="window.location.href='article1.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a1.png">
-                </div>
-                <h3 class="article-title">
-                    ลุกก็โอย นั่งก็โอย เจ็บหัวเข่าแปล๊บๆ ทุกครั้งที่ก้าวลงบันได
-                    สัญญาณข้อเข่าเสื่อมที่คนวัย 40+ ต้องฟื้นฟูอย่างไรก่อนจะสาย?
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article2.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a2.png">
-                </div>
-                <h3 class="article-title">
-                    หน้าจอมือถือทำลายดวงตามากกว่าที่คิด: วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง 
-                    ภัยเงียบจากแสงสีฟ้าที่คนยุคปัจจุบันมองข้ามไม่ได้
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article3.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a3.png">
-                </div>
-                <h3 class="article-title">
-                    หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย 
-                    ภัยเงียบที่บั่นทอนความสุขในครอบครัว
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article4.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a4.png">
-                </div>
-                <h3 class="article-title">
-                    พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนักโดยไม่รู้ตัว
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article5.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a5.png">
-                </div>
-                <h3 class="article-title">
-                    เช็ก 3 พฤติกรรมยิ่งแก้ ยิ่งท้องผูก! เผยวิธีใหม่ช่วยให้ขับถ่ายง่าย 
-                    ไร้สารพิษตกค้าง และปรับจุลินทรีย์ในลำไส้ให้สมดุล
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article6.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a6.png">
-                </div>
-                <h3 class="article-title">
-                    ไม่อยากกินยาคุมเบาหวานไปตลอดชีวิต? เผย 5 สมุนไพรธรรมชาติ 
-                    ตัวช่วยฟื้นฟูตับอ่อน ลดระดับน้ำตาลในเลือด ดูแลเบาหวานจากภายใน
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article7.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a7.png">
-                </div>
-                <h3 class="article-title">
-                    สัญญาณเตือนความดันโลหิตสูง: วิธีสังเกตอาการ โดยไม่ต้องใช้เครื่องวัด
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article8.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a8.png">
-                </div>
-                <h3 class="article-title">
-                    ลดน้ำหนักแบบคนขี้เกียจ: 5 เคล็ดลับเบิร์นไขมันเก่า ไม่ต้องออกกำลังกายหนักก็ลีนได้
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
-            <div class="article-card" onclick="window.location.href='article9.html';" style="cursor: pointer;">
-                <div class="article-image">
-                    <img src="./img/a9.png">
-                </div>
-                <h3 class="article-title">
-                    เสื่อมสมรรถภาพ ปัสสาวะแสบขัด ฉี่กระปริบกระปรอย
-                    เจาะลึกปัญหาต่อมลูกหมากโตที่ชายวัย 50+ ไม่ควรละเลย
-                </h3>
-                <p class="article-date">1/6/2026</p>
-            </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>Copyright © 2026 Siam-Healthy. All rights reserved.</p>
         </div>
-    </div>
+    </footer>
+
+    <!-- Script สำหรับ Scroll Reveal Animation -->
     <script src="./js/articlePage.js"></script>
 </body>
+
 </html>

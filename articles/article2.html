@@ -1,106 +1,205 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 
 <head>
-    <title>Siam-Healthy</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าจอมือถือทำลายดวงตามากกว่าที่คิด | Siam-Healthy</title>
+    
+    <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="./css/article.css">
+    <link rel="stylesheet" href="./css/article-detail.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="../js/header.js" defer></script>
 </head>
 
-<body>
-    <header class="main-header">
-        <div class="header-container">
-            <a href="../" class="logo-section">
-                <span class="brand-name">Siam-Healthy</span>
-            </a>
+<body class="article-detail-page">
+    <my-header></my-header>
 
-            <nav class="nav-menu">
-                <a href="../shop" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
-                <a href="../articles" class="nav-tab">บทความ</a>
-                <a href="#" class="nav-tab">ติดต่อเรา</a>
-                <a href="#" class="nav-tab">รถเข็นของคุณ</a>
-            </nav>
+    <main class="article-main-wrapper">
+        <article class="article-container">
+            <!-- Article Meta & Header -->
+            <header class="article-header reveal-on-scroll">
+                <div class="article-badge-group">
+                    <span class="article-category-tag"><i class="fa-solid fa-eye"></i> สุขภาพสายตา</span>
+                    <span class="article-read-time"><i class="fa-regular fa-clock"></i> อ่าน 3 นาที</span>
+                </div>
+                
+                <h1 class="article-main-title">
+                    หน้าจอมือถือทำลายดวงตามากกว่าที่คิด: วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง<br>
+                    <span>ภัยเงียบจากแสงสีฟ้าที่คนยุคปัจจุบันมองข้ามไม่ได้</span>
+                </h1>
+
+                <div class="article-author-meta">
+                    <div class="author-avatar">
+                        <i class="fa-solid fa-people-group"></i>
+                    </div>
+                    <div class="author-info">
+                        <span class="author-name">ทีมผู้เชี่ยวชาญ Siam-Healthy</span>
+                        <span class="publish-date">อัปเดตล่าสุด: 01 มิ.ย. 2026</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hero Image Banner -->
+            <div class="article-hero-image reveal-on-scroll">
+                <img src="./img/a2.png" alt="ภัยเงียบจากแสงสีฟ้า" onerror="this.onerror=null; this.src='https://via.placeholder.com/800x450?text=Siam-Healthy+Article';">
+            </div>
+
+            <!-- Main Body Content -->
+            <div class="article-body-content">
+                <p class="lead-paragraph reveal-on-scroll">
+                    ในยุคปัจจุบันเทคโนโลยีดิจิทัลอย่างสมาร์ตโฟนและคอมพิวเตอร์นั้นเปรียบเสมือนอวัยวะที่ 33 ของมนุษย์อย่างปฏิเสธไม่ได้ ตั้งแต่เสียงแจ้งเตือนในยามตื่นนอน การนั่งทำงานหน้าจอตลอดทั้งวัน ไปจนถึงพฤติกรรมการนอนไถหน้าจอมือถือในห้องที่มืดสนิทก่อนเข้านอน พฤติกรรมเหล่านี้ล้วนส่งผลให้ดวงตาของเราถูกใช้งานอย่างหนักหน่วงและต่อเนื่องยาวนานเกินขีดจำกัดตามธรรมชาติ
+                </p>
+
+                <div class="highlight-callout reveal-on-scroll">
+                    <i class="fa-solid fa-triangle-exclamation quote-icon"></i>
+                    <p>
+                        บ่อยครั้งที่อาการระคายเคืองเล็กๆ น้อยๆ เช่น แสบตา ตาพร่ามัว หรือปวดกระบอกตา มักถูกมองข้ามว่าเป็นเพียงความอ่อนเพลียชั่วคราว ทว่าในทางจักษุวิทยา สัญญาณเตือนเหล่านี้คือข้อบ่งชี้เด่นชัดว่า โครงสร้างดวงตากำลังถูก <strong>แสงสีฟ้า (Blue Light)</strong> โจมตีจนเกิดความเสื่อมสภาพในระดับเซลล์ก่อนวัยอันควร และอาจพัฒนากลายเป็นความเสียหายต่อดวงตาที่ยากจะฟื้นฟูได้ในอนาคต
+                    </p>
+                </div>
+
+                <h2 class="content-section-title reveal-on-scroll">
+                    <i class="fa-solid fa-circle-exclamation"></i> วิกฤตจากการใช้งานหน้าจอ: จากภาวะตาแห้งสู่โรคจอประสาทตาเสื่อม
+                </h2>
+
+                <p class="reveal-on-scroll">
+                    การใช้งานสมาร์ตโฟนหรือคอมพิวเตอร์อย่างต่อเนื่อง ส่งผลให้แสงสีฟ้าชนิดความถี่สูงและพฤติกรรมการเพ่งมองจอเป็นเวลานาน ตรงเข้าทำลายโครงสร้างดวงตาผ่าน 2 กลไกหลัก ดังนี้:
+                </p>
+
+                <!-- Box แสดงกลไกความเสื่อม (สวยงาม เป็นระเบียบ) -->
+                <div class="mechanism-box reveal-on-scroll">
+                    <div class="mechanism-item">
+                        <strong>[ พฤติกรรมการจ้องจอ ]</strong> 
+                        <span class="mechanism-arrow">➔</span> กะพริบตาลดลง 50% 
+                        <span class="mechanism-arrow">➔</span> ตาแห้ง ตาอักเสบเรื้อรัง
+                    </div>
+                    <div class="mechanism-item">
+                        <strong>[ แสงสีฟ้าทะลุผ่าน ]</strong> 
+                        <span class="mechanism-arrow">➔</span> กระตุ้นอนุมูลอิสระ 
+                        <span class="mechanism-arrow">➔</span> เซลล์จอประสาทตาฝ่อ (ตาพร่ามัว)
+                    </div>
+                </div>
+
+                <ul class="myths-list reveal-on-scroll">
+                    <li class="myth-item" style="background: #f8fafc; border-color: #cbd5e1;">
+                        <div class="myth-header">
+                            <span class="myth-icon" style="color: #0284c7;"><i class="fa-solid fa-droplet"></i></span>
+                            <strong class="myth-title" style="color: #0f172a;">วิกฤตที่ 1: ความชุ่มชื้นในดวงตาลดลง จากอัตราการกะพริบตาที่ลดลง</strong>
+                        </div>
+                        <div class="myth-body" style="padding-left: 28px;">
+                            ปกติมนุษย์จำเป็นต้องกะพริบตาประมาณ 15–20 ครั้งต่อนาที เพื่อกระตุ้นการหลั่งน้ำตาออกมาปกป้องผิวกระจกตา แต่เมื่อใช้สายตาเพ่งมองหน้าจออุปกรณ์ดิจิทัล อัตราการกะพริบตาจะลดลงมากกว่าร้อยละ 50 ส่งผลให้น้ำตาบนผิวดวงตาระเหยออกไปอย่างรวดเร็ว ก่อให้เกิดภาวะตาแห้งเรื้อรัง อาการระคายเคือง และรู้สึกแสบตาคล้ายมีสิ่งแปลกปลอมติดอยู่ตลอดเวลา
+                        </div>
+                    </li>
+                    <li class="myth-item" style="background: #f8fafc; border-color: #cbd5e1;">
+                        <div class="myth-header">
+                            <span class="myth-icon" style="color: #0284c7;"><i class="fa-solid fa-bolt"></i></span>
+                            <strong class="myth-title" style="color: #0f172a;">วิกฤตที่ 2: การเสื่อมสภาพของเซลล์รับแสงจากการถูกทำลายโดยตรง</strong>
+                        </div>
+                        <div class="myth-body" style="padding-left: 28px;">
+                            แสงสีฟ้าสามารถทะลุผ่านกระจกตาและเลนส์ตาเข้าไปถึงจอประสาทตาได้โดยตรง คลื่นแสงพลังงานสูงนี้จะเข้าไปกระตุ้นให้เกิดภาวะความเครียดจากออกซิเดชัน ก่อให้เกิดสารอนุมูลอิสระสะสมและเข้าทำลายเซลล์รับแสง จนค่อยๆ ฝ่อตัวลง ซึ่งเป็นสาเหตุหลักที่ทำให้เกิดอาการตาพร่ามัว และความคมชัดในการมองภาพลดลงอย่างต่อเนื่อง
+                        </div>
+                    </li>
+                </ul>
+
+                <h2 class="content-section-title reveal-on-scroll">
+                    <i class="fa-solid fa-shield-heart"></i> 4 แนวทางปรับเปลี่ยนพฤติกรรมสู้แสงสีฟ้า
+                </h2>
+
+                <ol class="solution-steps reveal-on-scroll">
+                    <li class="step-card">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>กฎ 20-20-20 (พักสายตาระหว่างวัน)</h3>
+                            <p>ทุกๆ 20 นาทีของการทำงาน ให้ละสายตาจากหน้าจอแล้วมองออกไปที่ระยะ 20 ฟุต เป็นเวลา 20 วินาที เพื่อลดแรงเพ่งของกล้ามเนื้อดวงตา</p>
+                        </div>
+                    </li>
+                    <li class="step-card">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>ห้ามไถจอมือถือในที่มืด</h3>
+                            <p>ปรับความสว่างหน้าจอให้สมดุลกับแสงในห้องเสมอ ม่านตาจะได้ไม่ต้องขยายกว้างเพื่อรับแสงสีฟ้ามากเกินไป</p>
+                        </div>
+                    </li>
+                    <li class="step-card">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>กะพริบตาให้ถี่ขึ้นแบบตั้งใจ</h3>
+                            <p>ระหว่างวันให้ตระหนักไว้เสมอว่าต้องกะพริบตาถี่ๆ เพื่อกระตุ้นต่อมน้ำตาและต่อมไขมันที่เปลือกตาให้ทำงาน</p>
+                        </div>
+                    </li>
+                    <li class="step-card">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <h3>
+                                ฟื้นฟูเชิงลึกและปกป้องดวงตาจากภายใน ด้วย 
+                                <a href="../shop/product.html?id=philola" class="product-inline-link">Philola <i class="fa-solid fa-arrow-up-right-from-square"></i></a> 
+                                และ 
+                                <a href="../shop/product.html?id=oclarizin" class="product-inline-link">Oclarizin <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </h3>
+                            <p>
+                                การหยอดน้ำตาเทียมหรือใส่แว่นกรองแสงเป็นการแก้ปัญหาที่ปลายเหตุและอาจไม่เพียงพอ การเลือกทานผลิตภัณฑ์บำรุงสายตาจากภายในและฟื้นฟูการมองเห็นในระดับเซลล์ที่อุดมไปด้วยสารสกัดธรรมชาติที่เหมาะสมต่อดวงตา มีส่วนช่วยลดความอักเสบระคายเคืองในผิวดวงตา สะท้อนแสงสีฟ้าไม่ให้เข้าไปทำลายเซลล์รับแสง แก้ปัญหาตาพร่ามัวอย่างตรงจุด และลดความเสี่ยงการเกิดโรคทางสายตาเรื้อรังในอนาคต ทั้งสองผลิตภัณฑ์นี้จึงเป็นคำตอบที่ยั่งยืนสำหรับการดูแลดวงตาในระยะยาว
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+
+                <!-- Action CTA Section -->
+                <div class="cta-banner-box reveal-on-scroll">
+                    <div class="cta-header">
+                        <h2>คืนความคมชัดทุกการมองเห็น ปกป้องดวงตาคู่สำคัญของคุณได้แล้ววันนี้!</h2>
+                        <p>อย่าปล่อยให้แสงสีฟ้าและอาการตาพร่ามัวทำลายคุณภาพชีวิตของคุณ</p>
+                    </div>
+                    <div class="cta-button-group">
+                        <a href="#" class="btn-cta btn-consult">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            <div class="btn-text">
+                                <span class="sub">คลิกที่นี่</span>
+                                <span class="main">รับคำปรึกษาจากผู้เชี่ยวชาญฟรี</span>
+                            </div>
+                        </a>
+                        <a href="../shop" class="btn-cta btn-shop">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <div class="btn-text">
+                                <span class="sub">สั่งซื้อผลิตภัณฑ์</span>
+                                <span class="main">ในราคาส่วนลดพิเศษ</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>Copyright © 2026 Siam-Healthy. All rights reserved.</p>
         </div>
-    </header>
-    <style>
-        ol.lv1 li {
-            margin-bottom: 15px;
-        }
-    </style>
-    <div class="container">
-        <h2>
-            หน้าจอมือถือทำลายดวงตามากกว่าที่คิด: วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง<br>
-            ภัยเงียบจากแสงสีฟ้าที่คนยุคปัจจุบันมองข้ามไม่ได้
-        </h2>
-        <img src="./img/a2.png">
-        <p>
-            ในยุคปัจจุบันเทคโนโลยีดิจิทัลอย่างสมาร์ตโฟนและคอมพิวเตอร์นั้นเปรียบเสมือนอวัยวะที่ 33 ของมนุษย์อย่างปฏิเสธไม่ได้
-            ตั้งแต่เสียงแจ้งเตือนในยามตื่นนอน การนั่งทำงานหน้าจอตลอดทั้งวัน ไปจนถึงพฤติกรรมการนอนไถหน้าจอมือถือในห้องที่มืดสนิทก่อนเข้านอน
-            พฤติกรรมเหล่านี้ล้วนส่งผลให้ดวงตาของเราถูกใช้งานอย่างหนักหน่วงและต่อเนื่องยาวนานเกินขีดจำกัดตามธรรมชาติ
-        </p>
-        <p>
-            บ่อยครั้งที่อาการระคายเคืองเล็กๆ น้อยๆ เช่น แสบตา ตาพร่ามัว หรือปวดกระบอกตา มักถูกมองข้ามว่าเป็นเพียงความอ่อนเพลียชั่วคราว
-            ทว่าในทางจักษุวิทยา สัญญาณเตือนเหล่านี้คือข้อบ่งชี้เด่นชัดว่า โครงสร้างดวงตากำลังถูก <b>แสงสีฟ้า (Blue Light)</b>
-            โจมตีจนเกิดความเสื่อมสภาพในระดับเซลล์ก่อนวัยอันควร และอาจพัฒนากลายเป็นความเสียหายต่อดวงตาที่ยากจะฟื้นฟูได้ในอนาคต
-        </p>
+    </footer>
 
-        <h3>
-            วิกฤตจากการใช้งานหน้าจอ: จากภาวะตาแห้งสู่โรคจอประสาทตาเสื่อม
-        </h3>
-        <p>
-            การใช้งานสมาร์ตโฟนหรือคอมพิวเตอร์อย่างต่อเนื่อง ส่งผลให้แสงสีฟ้าชนิดความถี่สูงและพฤติกรรมการเพ่งมองจอเป็นเวลานาน
-            ตรงเข้าทำลายโครงสร้างดวงตาผ่าน 2 กลไกหลัก ดังนี้:
-        </p>
-        <div class="lv1" style="border: 1px solid black; text-align: center;">
-            <p><b>[ พฤติกรรมการจ้องจอ ] ──> กะพริบตาลดลง 50% ──> ตาแห้ง ตาอักเสบเรื้อรัง</b></p>
-            <p><b>[ แสงสีฟ้าทะลุผ่าน ]  ──> กระตุ้นอนุมูลอิสระ  ──> เซลล์จอประสาทตาฝ่อ (ตาพร่ามัว)</b></p>
-        </div>
-        <ul class="lv1">
-            <li style="margin-bottom: 35px;">
-                <b>วิกฤตที่ 1: ความชุ่มชื้นในดวงตาลดลง จากอัตราการกะพริบตาที่ลดลง</b> <br><br>
-                ปกติมนุษย์จำเป็นต้องกะพริบตาประมาณ 15–20 ครั้งต่อนาที เพื่อกระตุ้นการหลั่งน้ำตาออกมาปกป้องผิวกระจกตา
-                แต่เมื่อใช้สายตาเพ่งมองหน้าจออุปกรณ์ดิจิทัล อัตราการกะพริบตาจะลดลงมากกว่าร้อยละ 50 ส่งผลให้น้ำตาบนผิวดวงตาระเหยออกไปอย่างรวดเร็ว
-                ก่อให้เกิดภาวะตาแห้งเรื้อรัง อาการระคายเคือง และรู้สึกแสบตาคล้ายมีสิ่งแปลกปลอมติดอยู่ตลอดเวลา
-            </li>
-            <li>
-                <b>วิกฤตที่ 2: การเสื่อมสภาพของเซลล์รับแสงจากการถูกทำลายโดยตรง</b> <br><br>
-                แสงสีฟ้าสามารถทะลุผ่านกระจกตาและเลนส์ตาเข้าไปถึงจอประสาทตาได้โดยตรง
-                คลื่นแสงพลังงานสูงนี้จะเข้าไปกระตุ้นให้เกิดภาวะความเครียดจากออกซิเดชัน ก่อให้เกิดสารอนุมูลอิสระสะสมและเข้าทำลายเซลล์รับแสง
-                จนค่อยๆ ฝ่อตัวลง ซึ่งเป็นสาเหตุหลักที่ทำให้เกิดอาการตาพร่ามัว และความคมชัดในการมองภาพลดลงอย่างต่อเนื่อง
-            </li>
-        </ul>
+    <!-- Scroll Reveal Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
 
-        <h3 style="margin-top: 15px;">4 แนวทางปรับเปลี่ยนพฤติกรรมสู้แสงสีฟ้า</h3>
-        <ol class="lv1">
-            <li>
-                <b>กฎ 20-20-20 (พักสายตาระหว่างวัน):</b>
-                ทุกๆ 20 นาทีของการทำงาน ให้ละสายตาจากหน้าจอแล้วมองออกไปที่ระยะ 20 ฟุต เป็นเวลา 20 วินาที เพื่อลดแรงเพ่งของกล้ามเนื้อดวงตา
-            </li>
-            <li>
-                <b>ห้ามไถจอมือถือในที่มืด:</b> ปรับความสว่างหน้าจอให้สมดุลกับแสงในห้องเสมอ ม่านตาจะได้ไม่ต้องขยายกว้างเพื่อรับแสงสีฟ้ามากเกินไป
-            </li>
-            <li>
-                <b>กะพริบตาให้ถี่ขึ้นแบบตั้งใจ:</b> ระหว่างวันให้ตระหนักไว้เสมอว่าต้องกะพริบตาถี่ๆ เพื่อกระตุ้นต่อมน้ำตาและต่อมไขมันที่เปลือกตาให้ทำงาน
-            </li>
-            <li>
-                <b>ฟื้นฟูเชิงลึกและปกป้องดวงตาจากภายใน ด้วย Philola และ Oclarizin:</b>
-                การหยอดน้ำตาเทียมหรือใส่แว่นกรองแสงเป็นการแก้ปัญหาที่ปลายเหตุและอาจไม่เพียงพอ
-                การเลือกทานผลิตภัณฑ์บำรุงสายตาจากภายในและฟื้นฟูการมองเห็นในระดับเซลล์ที่อุดมไปด้วยสารสกัดธรรมชาติที่เหมาะสมต่อดวงตา
-                มีส่วนช่วยลดความอักเสบระคายเคืองในผิวดวงตา สะท้อนแสงสีฟ้าไม่ให้เข้าไปทำลายเซลล์รับแสง แก้ปัญหาตาพร่ามัวอย่างตรงจุด
-                และลดความเสี่ยงการเกิดโรคทางสายตาเรื้อรังในอนาคต ทั้งสองผลิตภัณฑ์นี้จึงเป็นคำตอบที่ยั่งยืนสำหรับการดูแลดวงตาในระยะยาว
-            </li>
-        </ol>
-
-        <h3 style="text-align: center;">คืนความคมชัดทุกการมองเห็น ปกป้องดวงตาคู่สำคัญของคุณได้แล้ววันนี้!</h3>
-        <div class="bshop">
-            <a href="#" class="call"><span>คลิกที่นี่</span> เพื่อรับคำปรึกษาจาก <br>ผู้เชี่ยวชาญด้านสุขภาพฟรี</a>
-            <a href="#" class="buy">สั่งซื้อผลิตภัณฑ์ <br><span>ในราคาส่วนลดพิเศษ</span></a>
-        </div>
-    </div>
+            document.querySelectorAll(".reveal-on-scroll").forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
 </body>
+
 </html>
