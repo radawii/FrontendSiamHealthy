@@ -1,20 +1,20 @@
-/* ตัว Header หลัก */
+/* HEADER MAIN LAYOUT*/
 .main-header {
   width: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
 }
 
 .header-container {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   height: 72px;
   display: flex;
   justify-content: space-between;
@@ -28,6 +28,7 @@
   align-items: center;
   text-decoration: none;
   z-index: 1001;
+  flex-shrink: 0;
 }
 
 .brand-name {
@@ -39,12 +40,19 @@
   -webkit-text-fill-color: transparent;
 }
 
+/* Right Section Actions */
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* Nav Menu (Desktop) */
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 28px;
-  height: 100%;
+  gap: 24px;
+  margin-right: 12px;
 }
 
 .nav-tab {
@@ -54,6 +62,7 @@
   font-weight: 500;
   position: relative;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .nav-tab::after {
@@ -80,7 +89,202 @@
   font-weight: 600;
 }
 
-/* ปุ่ม Hamburger (ซ่อนไว้ตอน Desktop) */
+/* ซ่อนเมนูไอคอนบน Mobile เมื่ออยู่บน Desktop */
+.mobile-nav-icons {
+  display: none;
+}
+
+/* Desktop Action Icons */
+.desktop-action-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: #eef7f2;
+  color: #0d5c2e;
+  transform: translateY(-2px);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #ff2b56;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+}
+
+/* Sliding Search Overlay */
+.search-overlay-bar {
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.search-overlay-bar.active {
+  max-height: 350px;
+  opacity: 1;
+  padding: 16px 0 24px 0;
+}
+
+.search-overlay-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.search-input-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f4f5f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 10px 20px;
+  gap: 12px;
+  transition: all 0.25s ease;
+}
+
+.search-input-box:focus-within {
+  background: #ffffff;
+  border-color: #0d5c2e;
+  box-shadow: 0 0 0 4px rgba(13, 92, 46, 0.08);
+}
+
+.search-icon {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.search-input-box input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 15px;
+  color: #1e293b;
+  font-family: inherit;
+}
+
+.search-input-box input::placeholder {
+  color: #94a3b8;
+}
+
+.search-close-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.search-close-btn:hover {
+  color: #0d5c2e;
+}
+
+.search-results-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.search-results-dropdown {
+  margin-top: 12px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.search-results-dropdown.active {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  text-decoration: none;
+  color: #1e293b;
+  font-size: 14px;
+  border-bottom: 1px solid #f8faf8;
+  transition: background 0.2s ease;
+}
+
+.search-item:hover {
+  background: #eef7f2;
+}
+
+.item-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 50px;
+  font-weight: 500;
+}
+
+.item-badge.product {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.item-badge.category {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.search-no-result {
+  padding: 16px;
+  font-size: 13px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+/* Hamburger Btn */
 .hamburger-btn {
   display: none;
   flex-direction: column;
@@ -91,7 +295,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 1001;
+  flex-shrink: 0;
 }
 
 .hamburger-btn span {
@@ -102,21 +306,25 @@
   transition: all 0.3s ease;
 }
 
+/* MOBILE RESPONSIVE*/
 @media (max-width: 768px) {
-  .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 9999;
-    background: #ffffff;
+  .header-container {
+    padding: 0 16px;
+    height: 64px;
   }
 
-  .header-container {
-    position: relative;
+  .brand-name {
+    font-size: 20px;
+  }
+
+  /* ซ่อนชุดไอคอนนอกเมนูบน Mobile */
+  .desktop-action-icons {
+    display: none !important;
   }
 
   .hamburger-btn {
     display: flex;
-    z-index: 10001;
+    margin-left: 4px;
   }
 
   .hamburger-btn.active span:nth-child(1) {
@@ -129,29 +337,27 @@
     transform: translateY(-8px) rotate(-45deg);
   }
 
+  /* เมนูเบอร์เกอร์พับลงมา */
   .nav-menu {
     position: absolute !important;
     top: 100% !important;
     left: 0 !important;
     width: 100% !important;
-    height: auto !important;
     background-color: #ffffff !important;
     flex-direction: column !important;
     align-items: flex-start !important;
-    padding: 12px 24px 20px 24px !important;
+    padding: 12px 20px 20px 20px !important;
     gap: 0 !important;
+    margin-right: 0 !important;
     border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    z-index: 10000 !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
 
-    /* สถานะก่อนเปิด */
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.25s ease-in-out;
   }
 
-  /* เมื่อเปิดเมนู */
   .nav-menu.active {
     opacity: 1 !important;
     visibility: visible !important;
@@ -160,13 +366,9 @@
 
   .nav-tab {
     font-size: 15px;
-    font-weight: 500;
-    color: #1e293b !important;
     width: 100% !important;
-    padding: 14px 0 !important;
+    padding: 12px 0 !important;
     border-bottom: 1px solid #f1f5f9;
-    background: transparent !important;
-    border-radius: 0 !important;
     display: block !important;
   }
 
@@ -174,7 +376,43 @@
     display: none !important;
   }
 
-  .nav-tab:last-child {
-    border-bottom: none;
+  /* แสดงกลุ่มไอคอนด้านในเมนูเบอร์เกอร์ */
+  .mobile-nav-icons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .mobile-icon-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1e293b;
+    font-size: 15px;
+    font-weight: 500;
+    background: #f8faf8;
+    transition: background 0.2s ease;
+  }
+
+  .mobile-icon-link:active {
+    background: #eef7f2;
+    color: #0d5c2e;
+  }
+
+  .icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-overlay-container {
+    padding: 0 16px;
   }
 }

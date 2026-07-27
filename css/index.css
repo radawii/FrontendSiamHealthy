@@ -1,448 +1,821 @@
-body {
-  margin: 0;
-  font-family: "Prompt", sans-serif;
+/* 1. DESIGN SYSTEM & VARIABLES*/
+:root {
+  --primary-color: #0d5c2e;
+  --primary-hover: #08401f;
+  --accent-gold: #f59e0b;
+  --price-red: #ff2b56;
+  --bg-main: #f8faf8;
+  --card-bg: #ffffff;
+  
+  --text-dark: #334155; 
+  --text-heading: #1e293b;
+  --text-muted: #64748b;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8px 20px rgba(13, 92, 46, 0.06);
+  --shadow-hover: 0 14px 28px rgba(13, 92, 46, 0.1);
+  
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
 }
 
-input,
-button {
-  font-family: "Prompt", sans-serif;
-}
-
-/* รีเซ็ตค่าเริ่มต้นและกำหนดฟอนต์ */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: 'Prompt', sans-serif;
-  /* เปลี่ยนเป็นฟอนต์ที่โปรเจกต์คุณใช้ได้เลย */
-}
-
-h2 {
-  font-size: 1.8em;
-  margin: 15px auto;
-  text-align: center;
-}
-
-/* ตัว Header หลัก */
-.main-header {
-  width: 100%;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e5e5;
-  /* เส้นแบ่งจางๆ ด้านล่าง */
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-/* กล่องครอบที่ช่วยจำกัดความกว้างและจัดให้คอนเทนต์อยู่ตรงกลาง */
-.header-container {
-  max-width: 1200px;
-  /* ขยายหรือลดตามขนาดหน้าจอหลักของคุณ */
-  margin: 0 auto;
-  padding: 0 20px;
-  height: 80px;
-  /* ความสูงของแถบ Header */
-  display: flex;
-  justify-content: space-between;
-  /* ตัวเด็ด: ผลักโลโก้ไปซ้าย สุด เมนูไปขวาสุด */
-  align-items: center;
-}
-
-/* ส่วนของโลโก้ */
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: #00581d;
-}
-
-.logo-icon {
-  width: 24px;
-  height: 24px;
-}
-
-.brand-name {
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: -0.5px;
-}
-
-/* ส่วนของเมนูฝั่งขวา */
-.nav-menu {
-  display: flex;
-  gap: 30px;
-  /* ระยะห่างระหว่างแท็บ */
-  height: 100%;
-  /* ให้ความสูงเต็มเท่ากลุ่มเนวิเกชัน */
-}
-
-/* ตัวลิงก์แต่ละแท็บ */
-.nav-tab {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #00581d;
-  font-size: 16px;
-  font-weight: 500;
-  position: relative;
-  /* ใช้ตั้งค่าจุดอ้างอิงให้เส้นใต้ */
-  height: 100%;
-  transition: color 0.2s ease;
-}
-
-/* เอฟเฟกต์เส้นใต้แท็บ (แอบซ่อนไว้ก่อน) */
-.nav-tab::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  /* ติดขอบล่างของแถบพอดี */
-  left: 0;
-  width: 100%;
-  height: 3px;
-  /* ความหนาของเส้นแท็บ */
-  background-color: #00581d;
-  /* สีของเส้นแท็บ */
-  transform: scaleX(0);
-  /* เริ่มต้นให้ความกว้างของเส้นเป็น 0 */
-  transition: transform 0.25s ease-out;
-}
-
-/* เมื่อเอาเมาส์มาวาง (Hover) หรือแท็บนั้นกำลังเปิดอยู่ (Active) */
-.nav-tab:hover::after,
-.nav-tab.active::after {
-  transform: scaleX(1);
-  /* ขยายเส้นใต้ออกมาเต็มความกว้างตัวอักษร */
-}
-
-.nav-tab:hover {
-  color: #008807;
-  /* เปลี่ยนสีตัวอักษรให้อ่อนลงนิดนึงตอนเมาส์ชี้ */
-}
-
-/* แบนเนอร์ */
-/* --- กล่องครอบทั้งหมด (กำหนดความกว้างสูงสุด 1440px) --- */
-.carousel-container {
-  position: relative;
-  max-width: 1440px;
-  margin: 40px auto;
-  display: flex;
-  align-items: center;
-  padding: 0 52px;
-  /* เว้นพื้นที่ด้านข้างไว้สำหรับวางปุ่มกด */
-  box-sizing: border-box;
-}
-
-/* --- หน้าต่างแสดงผล (ส่วนที่เกินจาก 1440px จะถูกซ่อน) --- */
-.carousel-viewport {
-  width: 100%;
-  overflow: hidden;
-  /* ซ่อนรูปภาพที่อยู่ถัดไป */
-}
-
-#carouselTrack {
-  display: flex;
-  gap: 20px;
-  /* ต้องตรงกับค่า gap ใน JS */
-  cursor: grab;
-  /* เปลี่ยนเมาส์เป็นรูปมือหยิบ */
-}
-
-#carouselTrack:active {
-  cursor: grabbing;
-  /* เปลี่ยนเป็นมือกำตอนกำลังลาก */
-}
-
-.carousel-item {
-  flex: 0 0 100%;
-  user-select: none;
-  /* ห้ามไฮไลต์ข้อความด้านในตัว slide */
-}
-
-.carousel-item img {
-  pointer-events: none;
-  /* ห้ามเมาส์ลากรูปภาพหลุดออกมา */
-  width: 100%;
-  display: block;
-}
-
-/* ตัวร่างจำลองรูปภาพ (Wireframe Mockup) */
-.item-mockup {
-  width: 100%;
-  height: 550px;
-  background-color: #e0e0e0;
-  /* border: 2px dashed #999; */
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #555;
-  font-weight: bold;
-}
-
-/* --- ปุ่มกดเลื่อนซ้าย-ขวา --- */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: white;
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-}
-
-/* .carousel-btn:hover {
-    background-color: #0056b3;
-} */
-
-.prev-btn {
-  left: 0;
-}
-
-.next-btn {
-  right: 0;
-}
-
-/* แบนเนอร์ */
-
-/* ร้านค้า */
-.shop {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  /* ระยะห่างระหว่างบล็อก */
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.product-card {
-  display: flex;
-  flex-direction: column;
-  /* เรียงจากบนลงล่าง */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  background-color: #fff;
-}
-
-/* 🚫 สั่งซ่อนการ์ดสินค้าที่มีคลาส hidden (ตัวที่ 5-16) */
-.product-card.hidden {
-  display: none;
-}
-
-.product-image {
-  width: 100%;
-  height: 200px;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-}
-
-.product-title {
-  font-size: 18px;
-  margin: 15px 0 5px 0;
-}
-
-.product-price {
-  font-weight: bold;
-  color: green;
-  font-size: 20px;
-  margin-bottom: 15px;
-  margin-top: auto;
-}
-
-.old-price {
   font-weight: 400;
-  color: black;
-  text-decoration: line-through;
-  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
 }
 
-.product-price:has(.old-price) {
-  color: #ff4d4f;
-}
-
-.buy-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-}
-
-.buy-button:hover {
-  background-color: #0056b3;
-}
-
-/* ตกแต่งปุ่มกดดูทั้งหมด */
-.view-all-container {
-  text-align: center;
-  /* จัดปุ่มให้อยู่กึ่งกลางหน้าจอ */
-  margin: 30px 0;
-}
-
-.view-all-btn {
-  background-color: #ffffff;
-  color: #007bff;
-  /* สีฟ้าโทนเดียวกับปุ่มใส่ตะกร้า */
-  border: 2px solid #007bff;
-  padding: 12px 40px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease-in-out;
-}
-
-/* เอฟเฟกต์ตอนเมาส์ชี้ปุ่ม */
-.view-all-btn:hover {
-  background-color: #007bff;
-  color: #ffffff;
-}
-
-/* ร้านค้า */
-
-/* Banner 2 */
-.banner2 {
-  max-width: 1340px;
-  margin: 40px auto;
-}
-
-.banner2 img {
-  width: 100%;
-}
-
-/* Banner 2 */
-
-/* Health Articles */
-.articles {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.article-card {
-  display: flex;
-  flex-direction: column;
-  /* เรียงจากบนลงล่าง */
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  background-color: #fff;
-}
-
-.article-card.hidden {
-  display: none;
+/* 2. PAGE LOAD & SCROLL REVEAL ANIMATIONS (SMOOTH FADE)*/
+body {
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  line-height: 1.6;
   opacity: 0;
-  transform: translateY(15px); /* ให้การ์ดเด้งขึ้นมาจากด้านล่างนิดนึง */
+  animation: pageFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* คลาสที่จะใช้ตอนสั่งเปิดด้วย JS */
-.article-card.show-fade {
-  display: block !important;
-  animation: fadeInSoft 0.4s ease-out forwards;
-}
-
-@keyframes fadeInSoft {
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.article-image {
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.shop .product-card.reveal-on-scroll,
+.articles .article-card.reveal-on-scroll {
+  transition-delay: calc(var(--card-index, 0) * 0.12s);
+}
+
+/* 3. SECTION TITLES & HEADINGS*/
+.section-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 0 16px;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  background: #eef7f2;
+  padding: 4px 16px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  line-height: 1.4;
+}
+
+/* 4. BANNER HERO CAROUSEL (FULL COVER & SMOOTH)*/
+.carousel-section {
+  padding: 30px 0;
   width: 100%;
-  height: 250px;
-  background-color: #f0f0f0;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 0 50px; 
+  box-sizing: border-box;
+}
+
+.carousel-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 30px rgba(13, 92, 46, 0.08);
+  background-color: #f1f5f9;
+  aspect-ratio: 16 / 6.5; 
+}
+
+.carousel-track {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  will-change: transform;
+}
+
+.carousel-item {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  user-select: none;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  pointer-events: none;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-color);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  z-index: 10;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: blur(4px);
+}
+
+.prev-btn { left: 12px; }
+.next-btn { right: 12px; }
+
+.carousel-btn:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+  border-color: var(--primary-color);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 8px 20px rgba(13, 92, 46, 0.25);
+}
+
+.carousel-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 6px 12px;
+  border-radius: 50px;
+  backdrop-filter: blur(6px);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  width: 24px;
+  border-radius: 50px;
+  background: #ffffff;
+}
+
+/* 5. PRODUCT SHOWCASE*/
+.shop-section {
+  max-width: 1240px;
+  margin: 85px auto 60px auto;
+  padding: 0 20px;
+}
+
+.shop-header-wrapper {
+  max-width: 1200px;
+  margin: 60px auto 36px auto; 
+  text-align: left;
+}
+
+.brand-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  text-decoration: none;
+  margin-bottom: 6px;
+  transition: all 0.25s ease;
+}
+
+.brand-tag svg {
+  transition: transform 0.25s ease;
+}
+
+.brand-tag:hover {
+  color: var(--primary-color);
+}
+
+.brand-tag:hover svg {
+  transform: translateX(4px);
+}
+
+.brand-tag:hover {
+  color: var(--primary-color);
+}
+
+.brand-heading {
+  font-size: 1.50rem;
+  font-weight: 500;
+  color: var(--text-heading);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.shop {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background: transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+}
+
+.product-image-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f4f5f7;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image-box img {
+  transform: scale(1.04);
+}
+
+.product-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 50px;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.product-badge.sale,
+.product-badge.hot {
+  background: var(--price-red);
+}
+
+.product-info {
+  padding: 14px 4px 4px 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-rating {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.product-rating .stars {
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+}
+
+.product-rating .rating-count {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.product-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-heading);
+  margin-bottom: 2px;
+}
+
+.product-hashtag {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.product-price {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.current-price {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000000;
+}
+
+.old-price {
+  font-size: 0.9rem;
+  color: #b7bfc9;
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+.view-all-container {
+  text-align: center;
+  margin-top: 36px;
+}
+
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 36px;
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.view-all-btn:hover {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 92, 46, 0.2);
+  transform: translateY(-2px);
+}
+
+/* 6. DISTRIBUTED GRID (3 - 2 - 3 - 2) & GLASSMORPHISM*/
+.health-concern-section {
+  max-width: 1240px;
+  margin: 70px auto;
+  padding: 0 20px;
+}
+
+.mesh-bg-container {
+  position: relative;
+  background: #fafcfb;
+  border-radius: 36px;
+  padding: 70px 40px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.glow-ball {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.55;
+  z-index: 0;
+  pointer-events: none;
+  animation: rotateGlow 18s infinite linear;
+}
+
+.glow-1 {
+  width: 420px;
+  height: 420px;
+  background: #dcfce7;
+  top: -80px;
+  left: -80px;
+}
+
+.glow-2 {
+  width: 450px;
+  height: 450px;
+  background: #b7eeff;
+  top: 35%;
+  right: -100px;
+  animation-delay: -6s;
+}
+
+.glow-3 {
+  width: 400px;
+  height: 400px;
+  background: #e0f2fe;
+  bottom: -100px;
+  left: 20%;
+  animation-delay: -12s;
+}
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg) translate(0, 0); }
+  50% { transform: rotate(180deg) translate(25px, 30px); }
+  100% { transform: rotate(360deg) translate(0, 0); }
+}
+
+.concern-header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.concern-main-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  letter-spacing: -0.5px;
+}
+
+.distributed-glass-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 32px 24px;
+  align-items: center;
+}
+
+.card-1, .card-2, .card-3 {
+  grid-column: span 2;
+}
+
+.card-4 {
+  grid-column: 1 / span 3;
+  max-width: 85%;
+  justify-self: end;
+}
+.card-5 {
+  grid-column: 4 / span 3;
+  max-width: 85%;
+  justify-self: start;
+}
+
+.card-6, .card-7, .card-8 {
+  grid-column: span 2;
+}
+
+.card-9 {
+  grid-column: 2 / span 2;
+}
+.card-10 {
+  grid-column: 4 / span 2;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  padding: 28px 24px;
+  text-decoration: none;
+  color: var(--text-dark);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 135px;
+}
+
+.glass-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.float-anim-1 { animation: floatSlow 5s infinite ease-in-out; }
+.float-anim-2 { animation: floatSlow 6.5s infinite ease-in-out -2s; }
+.float-anim-3 { animation: floatSlow 5.8s infinite ease-in-out -4s; }
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.glass-card:hover {
+  animation-play-state: paused;
+  background: #ffffff;
+  transform: translateY(-10px) scale(1.02) !important;
+  box-shadow: 0 20px 40px rgba(13, 92, 46, 0.12);
+  border-color: rgba(13, 92, 46, 0.3);
+}
+
+.glass-card:hover .card-title {
+  color: var(--primary-color);
+}
+
+/* 7. SECONDARY BANNER & TRUST BADGES (แบ่งแถว 3 3)*/
+.banner2-section {
+  max-width: 1240px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.banner2 img {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: block;
+}
+
+.sup-articles {
+  background-color: #ffffff;
+  padding: 60px 20px;
+  margin: 60px 0;
+  border-top: 1px solid #f0f4f1;
+  border-bottom: 1px solid #f0f4f1;
+}
+
+.icon-sup {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.icon-block {
+  background: var(--bg-main);
+  padding: 28px 16px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-block:hover {
+  transform: translateY(-4px);
+  background: #eef7f2;
+}
+
+.icon-image {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px auto;
+  background: #ffffff;
+  color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.icon-title {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-heading);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* 8. HEALTH ARTICLES & FOOTER*/
+.article-container {
+  max-width: 1240px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.articles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.article-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #f0f4f1;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.article-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+.article-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f1f5f9;
 }
 
 .article-image img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.article-title {
-  font-size: 18px;
-  margin: 15px 0 5px 0;
+.article-card:hover .article-image img {
+  transform: scale(1.05);
+}
+
+.article-tag {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background: rgba(13, 92, 46, 0.85);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.article-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .article-date {
-  font-size: 14px;
-}
-/* Health Articles */
-
-/* icon badges */
-.icon-sup {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
 }
 
-.icon-block {
-  display: flex;
-  flex-direction: column;
-  /* เรียงจากบนลงล่าง */
-  padding: 15px;
-  background-color: #fff;
+.article-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-heading);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.icon-image {
-  width: 100%;
-  height: 140px;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-}
-
-.icon-title {
-  font-size: 16px;
-  margin: 15px 0 5px 0;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* icon badges */
-
-/* Footer */
 .footer {
-  background-color: #004617;
-  padding: 30px;
-  display: block;
-  margin: 0 auto;
-}
-
-.footer p {
-  color: white;
+  background-color: #082d16;
+  color: #ffffff;
+  padding: 32px 20px;
+  margin-top: 60px;
   text-align: center;
+  font-size: 0.9rem;
 }
 
-/* Footer */
+/* 9. RESPONSIVE DESIGN*/
+@media (max-width: 992px) {
+  .distributed-glass-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .card-1, .card-2, .card-3, .card-4, .card-5,
+  .card-6, .card-7, .card-8, .card-9, .card-10 {
+    grid-column: span 1;
+    max-width: 100%;
+    justify-self: stretch;
+  }
+
+  .mesh-bg-container {
+    padding: 40px 20px;
+  }
+
+  .icon-title {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-section {
+    margin: 50px auto 40px auto;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .brand-heading {
+    font-size: 1.35rem;
+  }
+
+  .carousel-container {
+    padding: 0 16px;
+  }
+
+  .carousel-viewport {
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .prev-btn { left: 4px; }
+  .next-btn { right: 4px; }
+
+  .shop {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .product-image-box {
+    border-radius: 16px;
+  }
+
+  .product-title {
+    font-size: 0.95rem;
+  }
+
+  .current-price {
+    font-size: 1.05rem;
+  }
+
+  .icon-sup {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .icon-title {
+    white-space: normal;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .distributed-glass-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .concern-main-title {
+    font-size: 1.4rem;
+  }
+}
