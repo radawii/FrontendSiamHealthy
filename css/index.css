@@ -819,3 +819,16 @@ body {
     font-size: 1.4rem;
   }
 }
+
+/* ขยายขนาดรูปไอคอน SVG */
+.icon-sup .icon-image svg {
+    width: 48px;
+    height: 48px;
+}
+
+/* ปรับขนาดฟอนต์หัวข้อ h3 ให้ใหญ่ขึ้นและหนาชัดเจน */
+.icon-sup .icon-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 10px;
+}
