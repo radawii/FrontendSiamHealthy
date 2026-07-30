@@ -782,3 +782,76 @@ if (product) {
   document.querySelector(".product-page").innerHTML =
     "<h1>ขออภัย ไม่พบสินค้านี้</h1>";
 }
+
+// ฟังก์ชันเพิ่มสินค้าลงตะกร้า
+function addToCart(isBuyNow = false) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get("id") || "astin";
+
+  const product = productsData[productId];
+  const quantityInput = document.getElementById("quantityInput");
+  const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+
+  if (!product) return;
+
+  let cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
+
+  // เช็กว่ามีสินค้านี้ในตะกร้าหรือยัง
+  const existingItemIndex = cart.findIndex((item) => item.id === productId);
+
+  if (existingItemIndex > -1) {
+    cart[existingItemIndex].quantity += quantity;
+  } else {
+    cart.push({
+      id: productId,
+      name: product.name,
+      price: parseFloat(product.newPrice.replace(/[^0-9.]/g, "")),
+      oldPrice: product.oldPrice
+        ? parseFloat(product.oldPrice.replace(/[^0-9.]/g, ""))
+        : null,
+      image: product.images && product.images.length > 0 ? product.images[0] : "",
+      tag: (product.benefits && product.benefits[0]) || "#ผลิตภัณฑ์เสริมอาหาร",
+      quantity: quantity,
+      selected: true,
+    });
+  }
+
+  // 1. เซฟลง localStorage
+  localStorage.setItem("siam_healthy_cart", JSON.stringify(cart));
+
+  // 2. ยิง Custom Event บอกให้ Header อัปเดตตัวเลขสีแดงทันที!
+  window.dispatchEvent(new CustomEvent("cartUpdated"));
+
+  if (isBuyNow) {
+    window.location.href = "../cart/";
+  } else {
+    alert(`เพิ่ม ${product.name} จำนวน ${quantity} ชิ้นลงในตะกร้าเรียบร้อยแล้ว!`);
+  }
+}
+
+// อัปเดตตัวเลขแจ้งเตือนบนไอคอนตะกร้า
+function updateCartBadge() {
+  const cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
+  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  document.querySelectorAll(".cart-badge").forEach((badge) => {
+    if (totalCount > 0) {
+      badge.innerText = totalCount;
+      badge.style.display = "flex";
+    } else {
+      badge.innerText = "";
+      badge.style.display = "none";
+    }
+  });
+}
+
+// ผูกอีเวนต์ปุ่มสั่งซื้อ
+document.addEventListener("DOMContentLoaded", () => {
+  const cartBtn = document.querySelector(".cart-btn-minimal");
+  const buyBtn = document.querySelector(".buy-btn-black");
+
+  if (cartBtn) cartBtn.onclick = () => addToCart(false);
+  if (buyBtn) buyBtn.onclick = () => addToCart(true);
+
+  updateCartBadge();
+});
