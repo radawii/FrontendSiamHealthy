@@ -823,7 +823,7 @@ function addToCart(isBuyNow = false) {
   window.dispatchEvent(new CustomEvent("cartUpdated"));
 
   if (isBuyNow) {
-    window.location.href = "../cart/cart.html";
+    window.location.href = "../cart/";
   } else {
     alert(`เพิ่ม ${product.name} จำนวน ${quantity} ชิ้นลงในตะกร้าเรียบร้อยแล้ว!`);
   }
