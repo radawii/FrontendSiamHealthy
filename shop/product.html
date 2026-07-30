@@ -58,32 +58,28 @@
         <p id="productFda"></p>
 
         <!-- ส่วนเลือกจำนวนสินค้าและปุ่มสั่งซื้อ -->
-        <div class="product-action-container">
+          <div class="product-action-container">
+            <!-- ปุ่มเลือกจำนวนสินค้า -->
+            <div class="quantity-selector-wrapper" style="margin: 0;">
+              <div class="quantity-controller">
+                <button type="button" id="decreaseBtn">-</button>
+                <input type="text" id="quantityInput" value="1" readonly />
+                <button type="button" id="increaseBtn">+</button>
+              </div>
+            </div>
 
-          <!-- ปุ่มเลือกจำนวนสินค้า -->
-          <div class="quantity-selector-wrapper" style="margin: 0;">
-            <div class="quantity-controller">
-              <button type="button" id="decreaseBtn">-</button>
-              <input type="text" id="quantityInput" value="1" readonly />
-              <button type="button" id="increaseBtn">+</button>
+            <!-- ปุ่มเพิ่มลงตะกร้า & ซื้อเลย -->
+            <div class="action-buttons-wrapper">
+              <button class="cart-btn-minimal" type="button">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>เพิ่มลงตะกร้า</span>
+              </button>
+
+              <button class="buy-btn-black" type="button">
+                ซื้อเลย
+              </button>
             </div>
           </div>
-
-          <!-- ปุ่มเพิ่มลงตะกร้า (แบบย่อ มีไอคอน) -->
-          <div class="action-buttons-wrapper">
-            <!-- ปุ่มเพิ่มลงตะกร้า (ไอคอน+ข้อความ ไม่มีกรอบ) -->
-            <button class="cart-btn-minimal" onclick="alert('เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว!')">
-              <i class="fa-solid fa-cart-shopping"></i>
-              <span>เพิ่มลงตะกร้า</span>
-            </button>
-
-            <!-- ปุ่มซื้อเลย (สีดำล้วน ขยายเต็ม) -->
-            <button class="buy-btn-black" onclick="alert('ซื้อสินค้าเรียบร้อย!')">
-              ซื้อเลย
-            </button>
-          </div>
-
-        </div>
       </div>
     </div>
 

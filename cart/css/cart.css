@@ -1,0 +1,839 @@
+/* DESIGN SYSTEM & VARIABLES (Siam-Healthy Theme)*/
+:root {
+  --primary-color: #0d5c2e;
+  --primary-hover: #08401f;
+  --price-red: #ff2b56;
+  --bg-main: #f8faf8;
+  --card-bg: #ffffff;
+  
+  --text-dark: #334155; 
+  --text-heading: #1e293b;
+  --text-muted: #64748b;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8px 24px rgba(13, 92, 46, 0.06);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Prompt', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.cart-main {
+  max-width: 1240px;
+  margin: 40px auto 80px auto;
+  padding: 0 24px;
+}
+
+/* ===================================================
+   1. CHECKOUT STEPPER
+=================================================== */
+.checkout-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.step-item.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.step-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.step-item.active .step-badge {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+.step-line {
+  width: 60px;
+  height: 2px;
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+
+.step-label {
+  font-size: 0.95rem;
+}
+
+/* ===================================================
+   2. CART LAYOUT GRID (STEP-BASED)
+=================================================== */
+.cart-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.cart-container.checkout-layout {
+  grid-template-columns: 1fr 380px;
+}
+
+/* Checkbox Custom */
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.custom-checkbox:hover input ~ .checkmark {
+  border-color: var(--primary-color);
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Left Side: Items Section / Forms */
+.cart-items-section {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #f0f4f1;
+}
+
+.cart-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 20px;
+}
+
+.select-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.cart-header-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.text-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.text-action-btn:hover {
+  color: var(--primary-color);
+}
+
+.text-action-btn.delete-btn:hover {
+  color: var(--price-red);
+}
+
+/* Cart Item Card */
+.cart-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cart-item-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: #fafcfb;
+  border-radius: var(--radius-md);
+  border: 1px solid #f0f4f1;
+  transition: border-color 0.2s ease;
+}
+
+.cart-item-card:hover {
+  border-color: rgba(13, 92, 46, 0.2);
+}
+
+.item-checkbox {
+  margin-top: 40px;
+}
+
+.item-img-box {
+  width: 100px;
+  height: 100px;
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f1f5f9;
+}
+
+.item-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.item-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.remove-item-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px;
+  transition: color 0.2s ease;
+}
+
+.remove-item-btn:hover {
+  color: var(--price-red);
+}
+
+.item-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.item-tag-info {
+  font-size: 0.78rem;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+}
+
+.item-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.item-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.current-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.old-price {
+  font-size: 0.85rem;
+  color: #b7bfc9;
+  text-decoration: line-through;
+}
+
+/* Quantity Controls */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 2px 6px;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-dark);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.qty-btn:hover {
+  background: #f1f5f9;
+}
+
+.qty-input {
+  width: 36px;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: transparent;
+}
+
+.item-shipping-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #475569;
+  background: #eef7f2;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+/* ===================================================
+   3. RIGHT SIDE: ORDER SUMMARY
+=================================================== */
+.cart-summary-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.summary-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #f0f4f1;
+}
+
+.summary-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+/* Coupon Card */
+.coupon-tag-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eef7f2;
+  border: 1px dashed var(--primary-color);
+  padding: 10px 16px;
+  border-radius: 12px;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.add-coupon-btn {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-coupon-btn:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+.remove-coupon-btn {
+  background: transparent;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.coupon-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Gift Card */
+.gift-card {
+  background: linear-gradient(135deg, #f8faf8, #eef7f2);
+  border-color: rgba(13, 92, 46, 0.15);
+}
+
+.gift-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gift-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.gift-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.gift-icon {
+  color: var(--primary-color);
+}
+
+.add-gift-btn {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-gift-btn:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+/* Price Details Card */
+.price-details-card{
+    background: linear-gradient(135deg, #f8faf8, #eef7f2);
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.discount-text {
+  color: var(--price-red);
+  font-weight: 500;
+}
+
+.free-text {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.price-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 16px 0;
+}
+
+.total-row {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 20px;
+}
+
+.total-amount {
+  font-size: 1.4rem;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25);
+  transition: all 0.25s ease;
+}
+
+.checkout-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 92, 46, 0.35);
+}
+
+/* ===================================================
+   4. RESPONSIVE DESIGN
+=================================================== */
+@media (max-width: 992px) {
+  .cart-container.checkout-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .cart-summary-section {
+    position: sticky;
+    bottom: 20px;
+    z-index: 99;
+  }
+}
+
+@media (max-width: 640px) {
+  .cart-main {
+    padding: 0 16px;
+    margin-top: 20px;
+  }
+
+  .cart-item-card {
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+
+  .item-checkbox {
+    margin-top: 0;
+  }
+
+  .item-img-box {
+    width: 80px;
+    height: 80px;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .step-line {
+    width: 30px;
+  }
+}
+
+/* ===================================================
+   SHIPPING SUMMARY CARD COMPONENT
+=================================================== */
+.shipping-summary-card {
+  /* background: linear-gradient(135deg, #f8faf8, #eef7f2) !important; */
+  border: 1px solid rgba(13, 92, 46, 0.15) !important;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.shipping-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(13, 92, 46, 0.1);
+}
+
+.shipping-summary-title {
+  margin-bottom: 0 !important;
+  font-size: 1rem !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.shipping-edit-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.shipping-edit-btn:hover {
+  background: rgba(13, 92, 46, 0.08);
+}
+
+/* Address Detail Rows */
+.shipping-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shipping-row-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+
+.shipping-row-item svg {
+  color: var(--primary-color);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.shipping-user-info {
+  font-weight: 600;
+  color: var(--text-heading);
+  font-size: 0.95rem;
+}
+
+.shipping-phone-info {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-left: 6px;
+}
+
+.qty-input {
+  width: 32px;
+  height: 26px;
+  text-align: center;
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===================================================
+   4. RESPONSIVE DESIGN (ปรับปรุงใหม่ สมบูรณ์ทั้ง 3 Step บนมือถือ)
+=================================================== */
+@media (max-width: 992px) {
+  .cart-container.checkout-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .cart-summary-section {
+    position: relative;
+    bottom: auto;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .cart-main {
+    padding: 0 12px;
+    margin-top: 16px;
+  }
+
+  .cart-items-section {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  /* Stepper ด้านบน */
+  .checkout-stepper {
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .step-line {
+    width: 24px;
+  }
+
+  .step-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+
+  /* 🛒 Step 1: ตะกร้าสินค้าบนมือถือ */
+  .cart-item-card {
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .item-checkbox {
+    margin-top: 0;
+  }
+
+  .item-img-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+  }
+
+  .item-details {
+    width: calc(100% - 95px);
+  }
+
+  .item-bottom-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* จัดปุ่มด้านล่างใน Step 1 ให้เรียงซ้อนกันแนวตั้งเต็มจอ */
+  #step1-content > div[style*="display: flex"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  #step1-content button,
+  #step1-content div[style*="display: flex; align-items: center; gap: 20px"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #step1-content div[style*="display: flex; align-items: center; gap: 20px"] {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  #step1-content div[style*="text-align: right"] {
+    text-align: left !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* 📍 Step 2: ฟอร์มที่อยู่จัดส่งบนมือถือ */
+  .shipping-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .shipping-form-grid .form-group.full-width {
+    grid-column: span 1 !important;
+  }
+
+  #step2-content > div[style*="display: flex"] {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  #step2-content button {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* 💳 Step 3: ตรวจสอบสินค้าและชำระเงินบนมือถือ */
+  #checkoutItemsReviewList > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    padding: 12px !important;
+  }
+
+  #checkoutItemsReviewList > div > div:nth-child(2) {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+
+  #step3-content > div[style*="display: flex"] {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  #step3-content button {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* ฝั่งขวา (สรุปยอดคำสั่งซื้อ / ที่อยู่จัดส่ง) บนมือถือ */
+  .cart-summary-section {
+    gap: 16px;
+  }
+
+  .summary-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+}

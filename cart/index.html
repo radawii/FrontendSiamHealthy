@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า | Siam-Healthy</title>
+    
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="./css/cart.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Header Web Component -->
+    <script src="../js/header.js" defer></script>
+</head>
+
+<body>
+    <!-- Header Navigation -->
+    <my-header></my-header>
+
+    <main class="cart-main">
+        <!-- 1. Checkout Stepper -->
+        <div class="checkout-stepper reveal-on-scroll">
+            <div class="step-item active" onclick="goToTypeStep(1)" style="cursor: pointer;">
+                <div class="step-badge">1</div>
+                <span class="step-label">ตะกร้าสินค้า</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" onclick="goToTypeStep(2)" style="cursor: pointer;">
+                <div class="step-badge">2</div>
+                <span class="step-label">ที่อยู่จัดส่ง</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item" onclick="goToTypeStep(3)" style="cursor: pointer;">
+                <div class="step-badge">3</div>
+                <span class="step-label">ชำระเงิน</span>
+            </div>
+        </div>
+
+        <!-- 2. Cart Layout Container -->
+        <div class="cart-container">
+            <!-- Left Side: Items List & Form -->
+            <section class="cart-items-section reveal-on-scroll">
+
+                <!-- STEP 1: รายการสินค้าในตะกร้า -->
+                <div id="step1-content" class="checkout-step-page active">
+                    <div class="cart-list-header">
+                        <label class="custom-checkbox select-all-label">
+                            <input type="checkbox" id="selectAll" checked onchange="toggleSelectAll(this)">
+                            <span class="checkmark"></span>
+                            <span class="select-text">เลือกทั้งหมด</span>
+                        </label>
+                        <div class="cart-header-actions">
+                            <button class="text-action-btn delete-btn" onclick="clearSelectedItems()">ลบรายการที่เลือก</button>
+                        </div>
+                    </div>
+                    <div class="cart-items-list"></div>
+                </div>
+
+                <!-- STEP 2: ฟอร์มกรอกที่อยู่จัดส่ง -->
+                <div id="step2-content" class="checkout-step-page" style="display: none;">
+                    <h3 class="step-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; color: var(--text-dark);">ที่อยู่ในการจัดส่ง</h3>
+                    <form id="shipping-form" class="shipping-form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ชื่อ-นามสกุล *</label>
+                            <input type="text" id="fullname" placeholder="สมชาย ใจดี" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">เบอร์โทรศัพท์ *</label>
+                            <input type="tel" id="phone" placeholder="0812345678" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div class="form-group full-width" style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ที่อยู่จัดส่ง (บ้านเลขที่, ซอย, ถนน) *</label>
+                            <textarea id="address" rows="2" placeholder="123/4 ซอยพหลโยธิน 1 ถนนพหลโยธิน" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ตำบล / แขวง *</label>
+                            <input type="text" id="subdistrict" placeholder="เช่น สามเสนใน" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">อำเภอ / เขต *</label>
+                            <input type="text" id="district" placeholder="เช่น พญาไท" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">จังหวัด *</label>
+                            <input type="text" id="province" placeholder="เช่น กรุงเทพมหานคร" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">รหัสไปรษณีย์ *</label>
+                            <input type="text" id="zipcode" placeholder="เช่น 10400" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                    </form>
+
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                        <button onclick="goToTypeStep(1)" class="add-gift-btn" style="max-width: 180px; padding: 10px 20px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            <span>ย้อนกลับ</span>
+                        </button>
+                        <button onclick="validateAndGoToStep3()" class="checkout-btn" style="max-width: 240px; margin: 0; padding: 12px 24px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>ไปหน้าชำระเงิน</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: ช่องทางชำระเงินและสรุปรายการสินค้า -->
+                <div id="step3-content" class="checkout-step-page" style="display: none;">
+                    <!-- กล่องแสดงรายการสินค้าที่เลือก (ตรวจสอบ/ปรับจำนวนได้) -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 class="step-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; color: var(--text-dark);">ตรวจสอบรายการสินค้า</h3>
+                        <div id="checkoutItemsReviewList" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- ข้อมูลสินค้าจะถูกเรนเดอร์มาแสดงที่นี่อัตโนมัติ -->
+                        </div>
+                    </div>
+
+                    <h3 class="step-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; color: var(--text-dark);">เลือกช่องทางการชำระเงิน</h3>
+                    <div class="payment-options" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
+                        <label class="payment-card-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer;">
+                            <input type="radio" name="paymentMethod" value="promptpay" checked>
+                            <span class="payment-label" style="font-weight: 500;">สแกน QR Code / พร้อมเพย์</span>
+                        </label>
+                        <label class="payment-card-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer;">
+                            <input type="radio" name="paymentMethod" value="credit">
+                            <span class="payment-label" style="font-weight: 500;">บัตรเครดิต / บัตรเดบิต</span>
+                        </label>
+                        <label class="payment-card-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer;">
+                            <input type="radio" name="paymentMethod" value="cod">
+                            <span class="payment-label" style="font-weight: 500;">เก็บเงินปลายทาง (COD)</span>
+                        </label>
+                    </div>
+
+                    <!-- ปุ่มย้อนกลับ และ ปุ่มยกเลิก -->
+                    <div style="padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <button onclick="goToTypeStep(2)" class="add-gift-btn" style="max-width: 180px; padding: 10px 20px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            <span>ย้อนกลับ</span>
+                        </button>
+
+                        <button onclick="if(confirm('ต้องการยกเลิกการสั่งซื้อและกลับไปหน้าตะกร้าใช่หรือไม่?')) goToTypeStep(1);" style="background: transparent; border: none; color: var(--price-red); font-size: 0.9rem; font-weight: 500; cursor: pointer; padding: 8px 16px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
+                            ยกเลิกการสั่งซื้อ
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Right Side: Order Summary (แสดงเฉพาะ Step 3) -->
+            <aside class="cart-summary-section reveal-on-scroll" id="cartSummarySection" style="display: none;">
+                <!-- กล่องแสดงสรุปข้อมูลที่อยู่จัดส่ง -->
+                <div class="summary-card shipping-summary-card" id="shippingSummaryBox">
+                    <div class="shipping-summary-header">
+                        <h3 class="summary-title shipping-summary-title">
+                            ที่อยู่จัดส่ง
+                        </h3>
+                        <button onclick="goToTypeStep(2)" class="shipping-edit-btn">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            แก้ไข
+                        </button>
+                    </div>
+                    <div id="summaryAddressText" class="shipping-detail-list">
+                        <!-- ข้อมูลที่อยู่จะถูกเติมผ่าน JS -->
+                    </div>
+                </div>
+
+                <!-- Coupons Box -->
+                <div class="summary-card coupon-card">
+                    <h3 class="summary-title">คูปองส่วนลด</h3>
+                    <p class="coupon-desc">ใส่โค้ดรับส่วนลดพิเศษเพิ่มทันที</p>
+                    <div class="coupon-input-group">
+                        <button class="add-coupon-btn">+ ใช้โค้ดส่วนลด</button>
+                    </div>
+                </div>
+
+                <!-- Price Details Box -->
+                <div class="summary-card price-details-card">
+                    <h3 class="summary-title">สรุปยอดคำสั่งซื้อ</h3>
+                    
+                    <div class="price-row">
+                        <span>ยอดรวมสินค้า</span>
+                        <span id="subtotalAmount">฿0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span>ส่วนลดจากคูปอง</span>
+                        <span class="discount-text" id="discountAmount">฿0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span>ค่าจัดส่ง</span>
+                        <span class="free-text">ฟรี</span>
+                    </div>
+
+                    <div class="price-divider"></div>
+
+                    <div class="price-row total-row">
+                        <span>ยอดชำระสุทธิ</span>
+                        <span class="total-amount" id="grandTotalAmount">฿0.00</span>
+                    </div>
+
+                    <button class="checkout-btn" id="checkoutBtn">
+                        <span>ยืนยันการชำระเงิน</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Modal ใบเสร็จรับเงินจำลอง (Receipt Print Effect) -->
+    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: #ffffff; width: 100%; max-width: 420px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; position: relative; animation: modalPop 0.3s ease-out;">
+            
+            <div style="width: 64px; height: 64px; background: #eef7f2; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 6px;">ชำระเงินสำเร็จ!</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">ขอบคุณที่ไว้วางใจใช้บริการ Siam-Healthy</p>
+
+            <div id="receiptPaper" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 18px; text-align: left; font-size: 0.88rem; color: var(--text-dark); margin-bottom: 24px; max-height: 220px; overflow-y: auto;">
+                <!-- ข้อมูลใบเสร็จจะถูกเติมผ่าน JS -->
+            </div>
+
+            <button onclick="window.location.href='../index.html'" class="checkout-btn" style="width: 100%;">
+                <span>กลับสู่หน้าแรก</span>
+            </button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes modalPop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+
+    <!-- ดึงไฟล์ JavaScript ด้านนอก -->
+    <script src="./js/cart.js"></script>
+</body>
+
+</html>
