@@ -88,8 +88,8 @@ body {
 }
 
 .section-title {
-  font-size: 1.75rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 800;
   color: var(--text-heading);
   line-height: 1.4;
 }
@@ -824,11 +824,4 @@ body {
 .icon-sup .icon-image svg {
     width: 48px;
     height: 48px;
-}
-
-/* ปรับขนาดฟอนต์หัวข้อ h3 ให้ใหญ่ขึ้นและหนาชัดเจน */
-.icon-sup .icon-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-top: 10px;
 }
