@@ -362,6 +362,21 @@
             }
         }
 
+        // --- ส่วนรับค่า category จาก URL (แก้ไขใหม่ให้ทำงานตรงจุด) ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+
+        if (categoryParam) {
+            const targetBtn = document.querySelector(`.category-btn[data-category="${categoryParam}"]`);
+            if (targetBtn) {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                targetBtn.classList.add('active');
+            }
+        }
+
+        // สั่งอัปเดตการแสดงผลสินค้าครั้งแรกหลังโหลดหน้าเว็บ (จะกรองตามแท็บที่ active อยู่ทันที)
+        updateProductsUI();
+
         // Event Listener เมื่อเปลี่ยนหมวดหมู่
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
