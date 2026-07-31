@@ -14,6 +14,7 @@ class MyHeader extends HTMLElement {
             <nav class="nav-menu" id="navMenu">
               <a href="/shop/" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
               <a href="/articles/" class="nav-tab">บทความ</a>
+              <a href="/about/" class="nav-tab">เกี่ยวกับเรา</a>
               <a href="#" class="nav-tab">ติดต่อเรา</a>
 
               <!-- ไอคอนแสดงในเมนูเบอร์เกอร์ (Mobile) -->
@@ -234,5 +235,4 @@ class MyHeader extends HTMLElement {
     });
   }
 }
-
 customElements.define("my-header", MyHeader);
