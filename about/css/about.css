@@ -1,0 +1,446 @@
+/* ===================================================
+   1. DESIGN SYSTEM & VARIABLES
+=================================================== */
+:root {
+  --primary-color: #0d5c2e;
+  --primary-hover: #08401f;
+  --bg-main: #f8faf8;
+  --text-dark: #334155; 
+  --text-heading: #1e293b;
+  --text-muted: #64748b;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --radius-md: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Prompt', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  line-height: 1.6;
+  opacity: 0;
+  animation: pageFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.about-main {
+  padding: 60px 0 40px 0;
+}
+
+/* ===================================================
+   2. ANIMATIONS
+=================================================== */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.icon-block.reveal-on-scroll,
+.glass-card.reveal-on-scroll {
+  transition-delay: calc(var(--card-index, 0) * 0.12s);
+}
+
+/* ===================================================
+   3. HEADINGS, HERO IMAGE & INTRO TEXT
+=================================================== */
+.section-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 0 16px;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  background: #eef7f2;
+  padding: 4px 16px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.section-tag.light {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  line-height: 1.4;
+}
+
+/* About Hero Image (ปรับให้กว้างเต็มจอ และเห็นรูปครบ 100% ไม่โดนตัด) */
+.about-hero-image {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 60px auto; 
+  padding: 0; 
+}
+
+.about-hero-image img {
+  width: 100%;
+  height: auto;     /* ปล่อยให้ความสูงขยายตามสัดส่วนจริงของภาพ */
+  display: block;   /* ลบขอบขาว/ช่องว่างเล็กๆ ด้านล่างรูปที่มักจะเกิดจากแท็ก img */
+  border-radius: 0; 
+  box-shadow: 0 8px 24px rgba(13, 92, 46, 0.05);
+  
+  /* ลบ max-height, min-height และ object-fit: cover ออกทั้งหมด */
+}
+
+/* Brand Statement Style (Intro Text) */
+.about-intro-container {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto 60px auto;
+  padding: 40px 30px;
+  background: linear-gradient(145deg, #ffffff, #fcfdfc);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(13, 92, 46, 0.04);
+  text-align: center;
+  border: 1px solid rgba(13, 92, 46, 0.05);
+  z-index: 1;
+}
+
+.quote-icon {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8rem;
+  color: rgba(13, 92, 46, 0.05);
+  font-family: serif;
+  line-height: 1;
+  z-index: -1;
+  user-select: none;
+}
+
+.intro-lead {
+  font-size: 1.15rem;
+  color: var(--text-heading);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  font-weight: 400;
+}
+
+.intro-lead strong {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.intro-sub {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, var(--primary-color), #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+.highlight-line {
+  position: relative;
+  display: inline-block;
+  font-weight: 500;
+  color: var(--primary-color);
+  z-index: 1;
+  cursor: default;
+}
+
+.highlight-line::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-color: rgba(34, 197, 94, 0.2);
+  z-index: -1;
+  border-radius: 4px;
+  transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.about-intro-container:hover .highlight-line::after {
+  height: 100%;
+  bottom: 0;
+  background-color: rgba(34, 197, 94, 0.15);
+}
+
+/* ===================================================
+   4. STATISTICS / ICON BLOCKS
+=================================================== */
+.sup-articles {
+  background-color: #ffffff;
+  padding: 60px 20px;
+  margin: 60px 0;
+  border-top: 1px solid #f0f4f1;
+  border-bottom: 1px solid #f0f4f1;
+}
+
+.icon-sup {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.icon-block {
+  background: var(--bg-main);
+  padding: 28px 16px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  transition: transform 0.25s ease, background 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-block:hover {
+  transform: translateY(-6px);
+  background: #eef7f2;
+}
+
+.icon-image {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px auto;
+  background: #ffffff;
+  color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.icon-image svg {
+  width: 36px;
+  height: 36px;
+}
+
+.icon-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 4px;
+}
+
+.icon-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-heading);
+}
+
+/* ===================================================
+   5. GLASSMORPHISM (VISION & MISSION)
+=================================================== */
+.health-concern-section {
+  max-width: 1240px;
+  margin: 70px auto;
+  padding: 0 20px;
+}
+
+.mesh-bg-container {
+  position: relative;
+  background: #fafcfb;
+  border-radius: 36px;
+  padding: 70px 40px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Glow Background Animation */
+.glow-ball {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.55;
+  z-index: 0;
+  pointer-events: none;
+  animation: rotateGlow 18s infinite linear;
+}
+
+.glow-1 { width: 420px; height: 420px; background: #dcfce7; top: -80px; left: -80px; }
+.glow-2 { width: 450px; height: 450px; background: #b7eeff; top: 35%; right: -100px; animation-delay: -6s; }
+.glow-3 { width: 400px; height: 400px; background: #e0f2fe; bottom: -100px; left: 20%; animation-delay: -12s; }
+
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg) translate(0, 0); }
+  50% { transform: rotate(180deg) translate(25px, 30px); }
+  100% { transform: rotate(360deg) translate(0, 0); }
+}
+
+.concern-header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.concern-main-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  letter-spacing: -0.5px;
+  margin-top: 12px;
+}
+
+/* Glass Cards Grid */
+.distributed-glass-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  align-items: stretch;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  padding: 30px 20px;
+  color: var(--text-dark);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* การตั้งค่า Icon ในการ์ด Vision / Mission */
+.card-icon {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.card-icon svg {
+  width: 56px;
+  height: 56px;
+  /* ใส่เงาฟุ้งๆ สีเขียวให้ตัวไอคอนเพื่อเพิ่มมิติให้ดูน่าสนใจ */
+  filter: drop-shadow(0 4px 8px rgba(13, 92, 46, 0.25)); 
+  transition: transform 0.3s ease;
+}
+
+/* เพิ่มลูกเล่นเวลาเอาเมาส์ชี้การ์ด ให้ไอคอนขยับเด้งขึ้นเล็กน้อย */
+.glass-card:hover .card-icon svg {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.card-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+}
+
+.card-desc {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.float-anim-1 { animation: floatSlow 5s infinite ease-in-out; }
+.float-anim-2 { animation: floatSlow 6.5s infinite ease-in-out -2s; }
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.glass-card:hover {
+  animation-play-state: paused;
+  background: #ffffff;
+  transform: translateY(-10px) scale(1.02) !important;
+  box-shadow: 0 20px 40px rgba(13, 92, 46, 0.12);
+  border-color: rgba(13, 92, 46, 0.3);
+}
+
+.glass-card:hover .card-title {
+  color: var(--primary-color);
+}
+
+/* ===================================================
+   6. FOOTER
+=================================================== */
+.footer {
+  background-color: #082d16;
+  color: #94a3b8;
+  padding: 32px 20px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ===================================================
+   7. RESPONSIVE DESIGN
+=================================================== */
+@media (max-width: 992px) {
+  .mesh-bg-container {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Brand Statement Responsive */
+  .about-intro-container {
+    padding: 30px 20px;
+    margin: 0 20px 40px 20px;
+  }
+  .quote-icon {
+    font-size: 6rem;
+    top: -20px;
+  }
+  .intro-lead {
+    font-size: 1.05rem;
+  }
+  .intro-sub, .card-desc {
+    font-size: 0.95rem;
+  }
+  .section-title, .concern-main-title {
+    font-size: 1.6rem;
+  }
+  .card-title {
+    font-size: 1.2rem;
+  }
+  .icon-sup {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-sup {
+    grid-template-columns: 1fr;
+  }
+}
