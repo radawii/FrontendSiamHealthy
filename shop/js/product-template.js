@@ -342,23 +342,33 @@ if (product) {
       }
 
       product.warnings.forEach((warning) => {
-        let listItems = warning.items
-          .map((item) => `<li>${item}</li>`)
-          .join("");
-        const itemEl = document.createElement("div");
-        itemEl.className = `accordion-item`;
-
-        itemEl.innerHTML = `
-          <button class="accordion-header">
-            <span>${warning.title}</span>
-            <i class="fa-solid fa-chevron-down accordion-icon"></i>
-          </button>
+      // เช็กว่าถ้า disableToggle เป็น true ให้ซ่อนส่วนเนื้อหา (accordion-content)
+      const contentHTML = warning.disableToggle
+        ? "" // ถ้า disableToggle เป็น true ไม่ต้องใส่ div เนื้อหา
+        : `
           <div class="accordion-content" style="max-height: 0; padding-bottom: 0;">
-            <ul>${listItems}</ul>
+            <ul>${warning.items.map((item) => `<li>${item}</li>`).join("")}</ul>
           </div>
         `;
 
-        const header = itemEl.querySelector(".accordion-header");
+      const itemEl = document.createElement("div");
+      itemEl.className = `accordion-item`;
+
+      itemEl.innerHTML = `
+        <button class="accordion-header">
+          <span>${warning.title}</span>
+          <i class="fa-solid fa-chevron-down accordion-icon"></i>
+        </button>
+        ${contentHTML}
+      `;
+
+      const header = itemEl.querySelector(".accordion-header");
+      const icon = itemEl.querySelector(".accordion-icon");
+
+      if (warning.disableToggle) {
+        header.style.cursor = "default";
+        if (icon) icon.style.display = "none"; // ซ่อนลูกศรด้วย
+      } else {
         header.onclick = () => {
           const content = itemEl.querySelector(".accordion-content");
           itemEl.classList.toggle("active");
@@ -370,8 +380,10 @@ if (product) {
             content.style.paddingBottom = "0";
           }
         };
-        warningBox.appendChild(itemEl);
-      });
+      }
+
+      warningBox.appendChild(itemEl);
+    });
     }
   } else {
     // ถ้าไม่มีข้อมูล Warning ให้ซ่อนทั้ง Section ทันที
@@ -382,16 +394,18 @@ if (product) {
 
   // --- ส่วนการแก้ปัญหา / Solution ---
   const solutionTitleEl = document.getElementById("solutionTitle");
-  if (solutionTitleEl && product.solutionTitle) {
-    solutionTitleEl.textContent = product.solutionTitle;
-  }
-
   const solutionBox = document.getElementById("solutionBox");
-  if (solutionBox) {
-    solutionBox.innerHTML = "";
-    solutionBox.className = "accordion-container reveal-on-scroll";
+  
+  if (product.solutionTitle && product.solutionTexts && product.solutionTexts.length > 0) {
+    if (solutionTitleEl) {
+      solutionTitleEl.textContent = product.solutionTitle;
+      solutionTitleEl.style.display = "block";
+    }
+    if (solutionBox) {
+      solutionBox.style.display = "block";
+      solutionBox.innerHTML = "";
+      solutionBox.className = "accordion-container reveal-on-scroll";
 
-    if (product.solutionTexts && product.solutionTexts.length > 0) {
       let introP = document.getElementById("solutionIntro");
       if (!introP) {
         introP = document.createElement("p");
@@ -401,6 +415,7 @@ if (product) {
         solutionBox.parentNode.insertBefore(introP, solutionBox);
       }
       introP.innerHTML = product.solutionTexts[0];
+      introP.style.display = "block";
 
       const accordionTexts = product.solutionTexts.slice(1);
 
@@ -445,6 +460,12 @@ if (product) {
         solutionBox.appendChild(itemEl);
       });
     }
+  } else {
+    // ถ้าไม่มีข้อมูล Solution ให้ซ่อนหัวข้อและกล่องทิ้งทันที
+    if (solutionTitleEl) solutionTitleEl.style.display = "none";
+    if (solutionBox) solutionBox.style.display = "none";
+    const introP = document.getElementById("solutionIntro");
+    if (introP) introP.style.display = "none";
   }
 
   // --- ส่วนผลลัพธ์ที่คุณสัมผัสได้ (รองรับทั้ง Object, List การ์ด และ Table ตาราง) ---
@@ -454,8 +475,10 @@ if (product) {
   const resultTableContainer = document.getElementById("resultTableContainer");
   const resultsWrapper = document.querySelector(".results-flex-wrapper");
 
+  const hasResultData = (product.resultTable && product.resultTable.headers) || (product.results && product.results.length > 0);
+
   if (resultTitleEl) {
-    if (product.resultsTitle) {
+    if (hasResultData && product.resultsTitle) {
       resultTitleEl.textContent = product.resultsTitle;
       resultTitleEl.style.display = "block";
     } else {
@@ -475,100 +498,102 @@ if (product) {
   }
 
   if (resultsWrapper) {
-    // กรณีมีข้อมูลแบบตาราง (resultTable)
-    if (
-      product.resultTable &&
-      product.resultTable.headers &&
-      product.resultTable.rows
-    ) {
-      if (resultListEl) resultListEl.style.display = "none";
-      if (resultTableContainer) {
-        resultTableContainer.style.display = "block";
-
-        let tableHTML = `<table class="custom-result-table"><thead><tr>`;
-        product.resultTable.headers.forEach((header) => {
-          tableHTML += `<th>${header}</th>`;
-        });
-        tableHTML += `</tr></thead><tbody>`;
-
-        product.resultTable.rows.forEach((row) => {
-          tableHTML += `<tr>`;
-          row.forEach((cell) => {
-            let formattedCell = cell;
-            const colonIndex = cell.indexOf(":");
-
-            if (colonIndex !== -1) {
-              let titlePart = cell.substring(0, colonIndex).trim();
-              let descPart = cell.substring(colonIndex + 1).trim();
-              formattedCell = `<strong style="color: #111; display: block; margin-bottom: 6px; font-size: 14.5px;">${titlePart}:</strong> <span style="color: #555; line-height: 1.6;">${descPart}</span>`;
-            }
-
-            tableHTML += `<td>${formattedCell}</td>`;
-          });
-          tableHTML += `</tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-
-        resultTableContainer.innerHTML = tableHTML;
-      }
-    }
-    // กรณีมีข้อมูลแบบการ์ด/รายการ (results)
-    else if (product.results && product.results.length > 0) {
-      if (resultTableContainer) resultTableContainer.style.display = "none";
-      if (resultListEl) {
-        resultListEl.style.display = "flex";
-        resultListEl.innerHTML = "";
-
-        product.results.forEach((item, index) => {
-          // กรณีที่ 1: ข้อมูลเป็น Object แบบใหม่ { title: "...", props: [...] }
-          if (typeof item === "object" && item !== null) {
-            let propsItems = item.props
-              ? item.props.map((p) => `
-                  <li>
-                    <span class="step-dot"></span>
-                    <span>${p}</span>
-                  </li>
-                `).join("")
-              : "";
-
-            resultListEl.innerHTML += `
-              <li class="result-timeline-card">
-                <div class="result-card-header">
-                  <span class="phase-badge"><i class="fa-solid fa-calendar-check"></i> ${item.title.split(":")[0] || "ระยะที่ " + (index + 1)}</span>
-                  <h3 class="result-card-title">${item.title.includes(":") ? item.title.split(":")[1].trim() : item.title}</h3>
-                </div>
-                <ul class="result-card-props">
-                  ${propsItems}
-                </ul>
-              </li>
-            `;
-          }
-          // กรณีที่ 2: ข้อมูลเป็น String แบบเดิม
-          else if (typeof item === "string") {
-            let boldPart = "";
-            let textPart = item;
-
-            const match = item.match(/<b>(.*?)<\/b>/);
-            if (match && match[1]) {
-              boldPart = `<b>${match[1]}</b>`;
-              textPart = item
-                .replace(/<b>.*?<\/b>:\s*/, "")
-                .replace(/<b>.*?<\/b>/, "")
-                .trim();
-            }
-
-            resultListEl.innerHTML += `
-              <li>
-                ${boldPart}
-                <div class="card-detail-text">${textPart}</div>
-              </li>
-            `;
-          }
-        });
-      }
-    } else {
+    if (!hasResultData) {
       resultsWrapper.style.display = "none";
-      if (resultTitleEl) resultTitleEl.style.display = "none";
+    } else {
+      resultsWrapper.style.display = "flex";
+      // กรณีมีข้อมูลแบบตาราง (resultTable)
+      if (
+        product.resultTable &&
+        product.resultTable.headers &&
+        product.resultTable.rows
+      ) {
+        if (resultListEl) resultListEl.style.display = "none";
+        if (resultTableContainer) {
+          resultTableContainer.style.display = "block";
+
+          let tableHTML = `<table class="custom-result-table"><thead><tr>`;
+          product.resultTable.headers.forEach((header) => {
+            tableHTML += `<th>${header}</th>`;
+          });
+          tableHTML += `</tr></thead><tbody>`;
+
+          product.resultTable.rows.forEach((row) => {
+            tableHTML += `<tr>`;
+            row.forEach((cell) => {
+              let formattedCell = cell;
+              const colonIndex = cell.indexOf(":");
+
+              if (colonIndex !== -1) {
+                let titlePart = cell.substring(0, colonIndex).trim();
+                let descPart = cell.substring(colonIndex + 1).trim();
+                formattedCell = `<strong style="color: #111; display: block; margin-bottom: 6px; font-size: 14.5px;">${titlePart}:</strong> <span style="color: #555; line-height: 1.6;">${descPart}</span>`;
+              }
+
+              tableHTML += `<td>${formattedCell}</td>`;
+            });
+            tableHTML += `</tr>`;
+          });
+          tableHTML += `</tbody></table>`;
+
+          resultTableContainer.innerHTML = tableHTML;
+        }
+      }
+      // กรณีมีข้อมูลแบบการ์ด/รายการ (results)
+      else if (product.results && product.results.length > 0) {
+        if (resultTableContainer) resultTableContainer.style.display = "none";
+        if (resultListEl) {
+          resultListEl.style.display = "flex";
+          resultListEl.innerHTML = "";
+
+          product.results.forEach((item, index) => {
+            // กรณีที่ 1: ข้อมูลเป็น Object แบบใหม่ { title: "...", props: [...] }
+            if (typeof item === "object" && item !== null) {
+              let propsItems = item.props
+                ? item.props.map((p) => `
+                    <li>
+                      <span class="step-dot"></span>
+                      <span>${p}</span>
+                    </li>
+                  `).join("")
+                : "";
+
+              resultListEl.innerHTML += `
+                <li class="result-timeline-card">
+                  <div class="result-card-header">
+                    <span class="phase-badge"><i class="fa-solid fa-calendar-check"></i> ${item.title.split(":")[0] || "ระยะที่ " + (index + 1)}</span>
+                    <h3 class="result-card-title">${item.title.includes(":") ? item.title.split(":")[1].trim() : item.title}</h3>
+                  </div>
+                  <ul class="result-card-props">
+                    ${propsItems}
+                  </ul>
+                </li>
+              `;
+            }
+            // กรณีที่ 2: ข้อมูลเป็น String แบบเดิม
+            else if (typeof item === "string") {
+              let boldPart = "";
+              let textPart = item;
+
+              const match = item.match(/<b>(.*?)<\/b>/);
+              if (match && match[1]) {
+                boldPart = `<b>${match[1]}</b>`;
+                textPart = item
+                  .replace(/<b>.*?<\/b>:\s*/, "")
+                  .replace(/<b>.*?<\/b>/, "")
+                  .trim();
+              }
+
+              resultListEl.innerHTML += `
+                <li>
+                  ${boldPart}
+                  <div class="card-detail-text">${textPart}</div>
+                </li>
+              `;
+            }
+          });
+        }
+      }
     }
   }
 

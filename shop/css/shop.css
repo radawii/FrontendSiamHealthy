@@ -1,3 +1,20 @@
+:root {
+  --primary-color: #0d5c2e;
+  --primary-hover: #08401f;
+  --price-red: #ff2b56;
+  --bg-main: #f8faf8;
+  --card-bg: #ffffff;
+  
+  --text-dark: #334155; 
+  --text-heading: #1e293b;
+  --text-muted: #64748b;
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8px 24px rgba(13, 92, 46, 0.06);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -326,7 +343,6 @@ body {
 .product-info button {
     /* width: 100%; */
     padding: 15px;
-    border-radius: 8px;
     font-family: 'Prompt', sans-serif;
     font-size: 16px;
     font-weight: 600;
@@ -597,7 +613,6 @@ ul.lv1 li::before {
     cursor: pointer;
 }
 
-/* ปุ่มสั่งซื้อด้านล่างสุด */
 .product-buy {
     text-align: center;
     margin-top: 50px;
@@ -605,34 +620,30 @@ ul.lv1 li::before {
 }
 
 .product-buy button.buy {
-    background-color: #111;
+    background-color: var(--primary-color); /* เปลี่ยนเป็นสีเขียวธีม */
     color: #ffffff;
     border: none;
     padding: 15px 40px;
     font-size: 18px;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 50px; /* ปรับความโค้งมนเป็นทรงแคปซูล */
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.25s ease;
     font-family: 'Prompt', sans-serif;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25); /* เพิ่มเงาเขียวละมุน */
 }
 
 .product-buy button.buy:hover {
-    background-color: #333;
+    background-color: var(--primary-hover); /* เขียวเข้มขึ้นเมื่อเอาเมาส์ชี้ */
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 92, 46, 0.35);
 }
 
-.product-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: 25px;
-}
-.product-buttons button {
-    flex: 1;
-    margin-top: 0 !important;
+.product-buy button.buy:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(13, 92, 46, 0.2);
 }
 
 /* RESPONSIVE สำหรับมือถือ/แท็บเล็ต*/
@@ -1160,25 +1171,33 @@ ul.lv1 li b {
 }
 
 .buy-btn-black {
-    flex: 1;
-    background-color: #000000;
-    color: #ffffff;
-    border: none;
-    border-radius: 6px;
-    padding: 14px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    transition: all 0.2s ease;
+  flex: 1;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px; /* ปรับความโค้งให้เป็นทรงแคปซูลมนสวยงามเหมือนตัวอย่าง */
+  padding: 14px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25);
+  transition: all 0.25s ease;
 }
 
 .buy-btn-black:hover {
-    background-color: #333333;
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 92, 46, 0.35);
 }
 
 .buy-btn-black:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(13, 92, 46, 0.2);
 }
 
 /* QUANTITY SELECTOR*/
@@ -1553,4 +1572,76 @@ ul.lv1 .result-card-props li,
 .view-all-link:hover {
   color: #008807;
   transform: translateX(3px);
+}
+
+/* ===================================================
+   THEME COLOR ENHANCEMENT (เน้นสีเขียวธีม Siam-Healthy ให้โดดเด่น)
+=================================================== */
+
+/* 1. ชื่อผลิตภัณฑ์หลัก (Product Name) ใช้การไล่ระดับสีเขียวแบรนด์ */
+#productName {
+  font-size: 50px;
+  font-weight: 1000;
+  display: inline-block;
+}
+
+/* 2. หัวข้อหลักทั้งหมดที่เป็น h2 ในรายละเอียดสินค้า (เพิ่ม BG ออ่อนด้านหลัง + แถบเขียวซ้าย) */
+.container-detail > h2:not([style*="display: none"]),
+.product-page + h2:not([style*="display: none"]),
+.related-products-section h2,
+.warning-right-content h2:not(:empty),
+.review-container h2,
+#ingredientTitle,
+#resultTitle:not([style*="display: none"]),
+#solutionTitle:not([style*="display: none"]) {
+  color: #00581d !important;
+  border-left: 5px solid #00581d !important;
+  background: linear-gradient(90deg, #f0f7f4 0%, rgba(240, 247, 244, 0) 100%);
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 24px;
+  margin: 40px 0 20px 0;
+}
+
+/* 3. หัวข้อรีวิวและหัวข้อส่วนผสมหลัก (ใส่ BG อ่อนเช่นกันเพื่อให้สอดคล้องกัน) */
+.review-container h2,
+#ingredientTitle {
+  color: #00581d !important;
+  border-left: 5px solid #00581d !important;
+  background: linear-gradient(90deg, #f0f7f4 0%, rgba(240, 247, 244, 0) 100%);
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+.product-buy {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px 0 50px;
+}
+
+.product-buy button.buy {
+    background-color: var(--primary-color); /* เปลี่ยนเป็นสีเขียวธีม */
+    color: #ffffff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px; /* ปรับความโค้งมนเป็นทรงแคปซูล */
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: 'Prompt', sans-serif;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25); /* เพิ่มเงาเขียวละมุน */
+}
+
+.product-buy button.buy:hover {
+    background-color: var(--primary-hover); /* เขียวเข้มขึ้นเมื่อเอาเมาส์ชี้ */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 92, 46, 0.35);
+}
+
+.product-buy button.buy:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(13, 92, 46, 0.2);
 }

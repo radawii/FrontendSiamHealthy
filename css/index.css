@@ -88,8 +88,8 @@ body {
 }
 
 .section-title {
-  font-size: 1.75rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 800;
   color: var(--text-heading);
   line-height: 1.4;
 }
@@ -818,4 +818,10 @@ body {
   .concern-main-title {
     font-size: 1.4rem;
   }
+}
+
+/* ขยายขนาดรูปไอคอน SVG */
+.icon-sup .icon-image svg {
+    width: 48px;
+    height: 48px;
 }
