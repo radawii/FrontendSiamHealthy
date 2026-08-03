@@ -1,0 +1,321 @@
+/* Base Styles & Reset*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Prompt', sans-serif;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7rem 1rem;
+}
+
+/* Auth Card Container & Tabs*/
+.auth-container {
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.auth-tabs {
+    display: flex;
+    background: #f1f5f9;
+    padding: 6px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #64748b;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: #0d5c2e; /* Siam-Healthy Brand Emerald Green */
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Form Body & Panels*/
+.auth-body {
+    padding: 2rem;
+}
+
+.auth-panel {
+    display: none;
+    flex-direction: column;
+    gap: 1.25rem;
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.auth-panel.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.panel-header {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.panel-header p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* Form Inputs & Controls*/
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.forgot-pass {
+    font-size: 0.8rem;
+    color: #0d5c2e;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-pass:hover {
+    text-decoration: underline;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.input-wrapper input[type="password"] {
+    padding-right: 42px;
+}
+
+.input-wrapper input:focus {
+    border-color: #0f766e;
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.toggle-password:hover {
+    color: #475569;
+}
+
+/* Checkbox Options */
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0d5c2e;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.remember-me a {
+    color: #0d5c2e;
+    text-decoration: none;
+}
+
+.remember-me a:hover {
+    text-decoration: underline;
+}
+
+/* Submit & Social Buttons*/
+.submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: #0d5c2e;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-top: 0.5rem;
+}
+
+.submit-btn:hover {
+    background: #08401f;
+}
+
+.submit-btn:active {
+    transform: scale(0.99);
+}
+
+/* Divider Line */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.25rem 0 1rem 0;
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.auth-divider span {
+    padding: 0 10px;
+}
+
+/* Social Login Group */
+.social-login-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-social {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-social:active {
+    transform: scale(0.99);
+}
+
+/* Social Icon Sizing */
+.social-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* Google Login Button */
+.btn-social.btn-google {
+    background: #ffffff;
+    color: #334155;
+    border: 1.5px solid #e2e8f0;
+}
+
+.btn-social.btn-google:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Mobile Responsive*/
+@media (max-width: 480px) {
+    .auth-container {
+        border-radius: 16px;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+
+    .auth-body {
+        padding: 1.5rem 0.5rem;
+    }
+}

@@ -12,9 +12,25 @@ class MyFooter extends HTMLElement {
           font-family: 'Prompt', sans-serif;
         }
         
+        .footer-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 15px;
+        }
+
         .footer p {
           margin: 0;
           letter-spacing: 0.5px;
+          line-height: 1.5;
+        }
+
+        /* Responsive สำหรับมือถือ */
+        @media screen and (max-width: 576px) {
+          .footer {
+            padding: 24px 16px;
+            margin-top: 40px;
+            font-size: 0.85rem;
+          }
         }
       </style>
 
