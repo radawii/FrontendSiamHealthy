@@ -13,9 +13,10 @@ class MyHeader extends HTMLElement {
             <!-- Nav Menu -->
             <nav class="nav-menu" id="navMenu">
               <a href="/shop/" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
-              <a href="/articles/" class="nav-tab">บทความ</a>
               <a href="/about/" class="nav-tab">เกี่ยวกับเรา</a>
-              <a href="#" class="nav-tab">ติดต่อเรา</a>
+              <a href="/articles/" class="nav-tab">บทความ</a>
+              <!-- เพิ่ม id="contactNavBtn" ให้ปุ่มติดต่อเรา -->
+              <a href="#contact" class="nav-tab" id="contactNavBtn">ติดต่อเรา</a>
 
               <!-- ไอคอนแสดงในเมนูเบอร์เกอร์ (Mobile) -->
               <div class="mobile-nav-icons">
@@ -102,6 +103,7 @@ class MyHeader extends HTMLElement {
     this.initHamburgerMenu();
     this.initSearchToggle();
     this.initSearchSystem();
+    this.initContactScroll();
 
     // อัปเดตตัวเลขเมื่อโหลดหน้าเว็บ
     this.updateCartBadge();
@@ -110,6 +112,32 @@ class MyHeader extends HTMLElement {
     window.addEventListener("cartUpdated", () => {
       this.updateCartBadge();
     });
+  }
+
+  initContactScroll() {
+    const contactBtn = this.querySelector('#contactNavBtn');
+    
+    if (contactBtn) {
+      contactBtn.addEventListener('click', (e) => {
+        const targetSection = document.querySelector('contact-section') || document.querySelector('mega-footer');
+        
+        if (targetSection) {
+          e.preventDefault();
+          
+          // เลื่อนสมูทลงไปที่คอมโพเนนต์
+          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          // ปิดเมนูเบอร์เกอร์อัตโนมัติ (ถ้ากดบนมือถือ)
+          const btn = this.querySelector("#hamburgerBtn");
+          const menu = this.querySelector("#navMenu");
+          if (btn) btn.classList.remove("active");
+          if (menu) menu.classList.remove("active");
+        } else {
+          // ถ้าอยู่หน้าอื่นที่ไม่มี Footer นี้ ให้พาเด้งกลับไปหน้าแรกก่อน
+          window.location.href = '/index.html#contact';
+        }
+      });
+    }
   }
 
   // ฟังก์ชันคำนวณและอัปเดตป้ายตัวเลขสีแดง
@@ -235,4 +263,16 @@ class MyHeader extends HTMLElement {
     });
   }
 }
+
 customElements.define("my-header", MyHeader);
+
+window.addEventListener('load', () => {
+  if (window.location.hash === '#contact') {
+    const targetSection = document.querySelector('contact-section') || document.querySelector('mega-footer');
+    if (targetSection) {
+      setTimeout(() => {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
+    }
+  }
+});
