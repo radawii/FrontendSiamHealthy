@@ -15,8 +15,7 @@ class MyHeader extends HTMLElement {
               <a href="/shop/" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
               <a href="/about/" class="nav-tab">เกี่ยวกับเรา</a>
               <a href="/articles/" class="nav-tab">บทความ</a>
-              <!-- เพิ่ม id="contactNavBtn" ให้ปุ่มติดต่อเรา -->
-              <a href="#contact" class="nav-tab" id="contactNavBtn">ติดต่อเรา</a>
+              <a href="/contact/" class="nav-tab" id="contactNavBtn">ติดต่อเรา</a>
 
               <!-- ไอคอนแสดงในเมนูเบอร์เกอร์ (Mobile) -->
               <div class="mobile-nav-icons">
@@ -32,7 +31,7 @@ class MyHeader extends HTMLElement {
                   <span>รถเข็นของคุณ</span>
                 </a>
 
-                <a href="#" class="mobile-icon-link">
+                <a href="/login.html" class="mobile-icon-link">
                   <div class="icon-wrapper">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -63,7 +62,7 @@ class MyHeader extends HTMLElement {
                 <span class="cart-badge" style="display: none;"></span>
               </a>
 
-              <a href="#" class="icon-btn profile-btn" title="โปรไฟล์">
+              <a href="/login.html" class="icon-btn profile-btn" title="โปรไฟล์">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
