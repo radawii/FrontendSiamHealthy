@@ -825,3 +825,29 @@ body {
     width: 48px;
     height: 48px;
 }
+
+/* สำหรับหน้าจอ Mobile ให้แสดงเป็น 2 คอลัมน์ */
+@media screen and (max-width: 768px) {
+    .distributed-glass-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px; /* ปรับระยะห่างระหว่างการ์ดตามความเหมาะสม */
+        padding: 0 12px;
+    }
+
+    /* ปรับขนาดตัวอักษรหรือความสูงในการ์ดเล็กน้อยเพื่อให้พอดีกับ 2 คอลัมน์บนมือถือ */
+    .glass-card {
+        padding: 16px 12px;
+        min-height: 110px;
+    }
+
+    .glass-card .card-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .glass-card .card-desc {
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
+}

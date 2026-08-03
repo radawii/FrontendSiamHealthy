@@ -40,7 +40,6 @@ class ContactSection extends HTMLElement {
                 <li><a href="/articles">บทความสุขภาพ</a></li>
                 <li><a href="/about">เกี่ยวกับเรา</a></li>
                 <li><a href="/cart">ตะกร้าสินค้า</a></li>
-                <li><a href="#">โปรไฟล์</a></li>
               </ul>
             </div>
 
