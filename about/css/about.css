@@ -90,22 +90,20 @@ body {
   line-height: 1.4;
 }
 
-/* About Hero Image (ปรับให้กว้างเต็มจอ และเห็นรูปครบ 100% ไม่โดนตัด) */
+/* About Hero Image (ปรับให้ขนาดเล็กลงและอยู่กึ่งกลาง) */
 .about-hero-image {
   width: 100%;
-  max-width: 100%;
-  margin: 0 auto 60px auto; 
-  padding: 0; 
+  max-width: 1100px;
+  margin: 0 auto 60px auto;
+  padding: 0 20px;
 }
 
 .about-hero-image img {
   width: 100%;
-  height: auto;     /* ปล่อยให้ความสูงขยายตามสัดส่วนจริงของภาพ */
-  display: block;   /* ลบขอบขาว/ช่องว่างเล็กๆ ด้านล่างรูปที่มักจะเกิดจากแท็ก img */
-  border-radius: 0; 
-  box-shadow: 0 8px 24px rgba(13, 92, 46, 0.05);
-  
-  /* ลบ max-height, min-height และ object-fit: cover ออกทั้งหมด */
+  height: auto;
+  display: block;
+  border-radius: 24px;
+  box-shadow: 0 14px 36px rgba(13, 92, 46, 0.08);
 }
 
 /* Brand Statement Style (Intro Text) */
