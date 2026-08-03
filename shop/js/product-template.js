@@ -187,12 +187,11 @@ if (product) {
     updateButtonState();
   }
 
-  // --- คำเตือน / สัญญาณเตือน (ปรับปรุงใหม่: รองรับ Table, Accordion Text และ Accordion List) ---
+  // --- คำเตือน / สัญญาณเตือน ---
   const warningSectionEl = document.querySelector(".warning-layout-section");
   const warningTitleEl = document.getElementById("warningTitle");
   const warningBox = document.getElementById("warningBox");
 
-  // เช็กว่าสินค้าชิ้นนี้มีข้อมูล Warning หรือไม่
   const hasWarningData =
     product.warningTitle ||
     (product.warningTable && product.warningTable.headers) ||
@@ -200,17 +199,14 @@ if (product) {
     (product.warnings && product.warnings.length > 0);
 
   if (hasWarningData && warningBox) {
-    if (warningSectionEl) warningSectionEl.style.display = ""; // แสดงผลเมื่อมีข้อมูล
+    if (warningSectionEl) warningSectionEl.style.display = "";
 
     if (warningTitleEl && product.warningTitle) {
       warningTitleEl.textContent = product.warningTitle;
     }
 
-    warningBox.innerHTML = ""; // เคลียร์ของเก่า
+    warningBox.innerHTML = "";
 
-    // -------------------------------------------------------------
-    // กรณีที่ 1: ข้อมูลเป็นตาราง (warningTable)
-    // -------------------------------------------------------------
     if (
       product.warningTable &&
       product.warningTable.headers &&
@@ -231,7 +227,6 @@ if (product) {
         row.forEach((cell) => {
           let cellContent = "";
 
-          // ถ้าช่องนั้นเป็น Array (เช่น รายการผลกระทบย่อย) ให้สร้างเป็น <ul><li>
           if (Array.isArray(cell)) {
             let listItems = cell
               .map(
@@ -263,11 +258,7 @@ if (product) {
       tableHTML += `</tbody></table></div>`;
 
       warningBox.innerHTML = tableHTML;
-    }
-    // -------------------------------------------------------------
-    // กรณีที่ 2: ข้อมูลเป็น warningTexts (Array ข้อความที่มี <b>)
-    // -------------------------------------------------------------
-    else if (product.warningTexts && product.warningTexts.length > 0) {
+    } else if (product.warningTexts && product.warningTexts.length > 0) {
       warningBox.className = "accordion-container reveal-on-scroll";
 
       let introP = document.getElementById("warningIntro");
@@ -322,11 +313,7 @@ if (product) {
         };
         warningBox.appendChild(itemEl);
       });
-    }
-    // -------------------------------------------------------------
-    // กรณีที่ 3: ข้อมูลโครงสร้างเดิม (warningText + warnings)
-    // -------------------------------------------------------------
-    else if (product.warnings && product.warnings.length > 0) {
+    } else if (product.warnings && product.warnings.length > 0) {
       warningBox.className = "accordion-container reveal-on-scroll";
 
       if (product.warningText && product.warningText.length > 0) {
@@ -342,51 +329,49 @@ if (product) {
       }
 
       product.warnings.forEach((warning) => {
-      // เช็กว่าถ้า disableToggle เป็น true ให้ซ่อนส่วนเนื้อหา (accordion-content)
-      const contentHTML = warning.disableToggle
-        ? "" // ถ้า disableToggle เป็น true ไม่ต้องใส่ div เนื้อหา
-        : `
-          <div class="accordion-content" style="max-height: 0; padding-bottom: 0;">
-            <ul>${warning.items.map((item) => `<li>${item}</li>`).join("")}</ul>
-          </div>
+        const contentHTML = warning.disableToggle
+          ? ""
+          : `
+            <div class="accordion-content" style="max-height: 0; padding-bottom: 0;">
+              <ul>${warning.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+            </div>
+          `;
+
+        const itemEl = document.createElement("div");
+        itemEl.className = `accordion-item`;
+
+        itemEl.innerHTML = `
+          <button class="accordion-header">
+            <span>${warning.title}</span>
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+          </button>
+          ${contentHTML}
         `;
 
-      const itemEl = document.createElement("div");
-      itemEl.className = `accordion-item`;
+        const header = itemEl.querySelector(".accordion-header");
+        const icon = itemEl.querySelector(".accordion-icon");
 
-      itemEl.innerHTML = `
-        <button class="accordion-header">
-          <span>${warning.title}</span>
-          <i class="fa-solid fa-chevron-down accordion-icon"></i>
-        </button>
-        ${contentHTML}
-      `;
+        if (warning.disableToggle) {
+          header.style.cursor = "default";
+          if (icon) icon.style.display = "none";
+        } else {
+          header.onclick = () => {
+            const content = itemEl.querySelector(".accordion-content");
+            itemEl.classList.toggle("active");
+            if (itemEl.classList.contains("active")) {
+              content.style.maxHeight = content.scrollHeight + "px";
+              content.style.paddingBottom = "25px";
+            } else {
+              content.style.maxHeight = "0";
+              content.style.paddingBottom = "0";
+            }
+          };
+        }
 
-      const header = itemEl.querySelector(".accordion-header");
-      const icon = itemEl.querySelector(".accordion-icon");
-
-      if (warning.disableToggle) {
-        header.style.cursor = "default";
-        if (icon) icon.style.display = "none"; // ซ่อนลูกศรด้วย
-      } else {
-        header.onclick = () => {
-          const content = itemEl.querySelector(".accordion-content");
-          itemEl.classList.toggle("active");
-          if (itemEl.classList.contains("active")) {
-            content.style.maxHeight = content.scrollHeight + "px";
-            content.style.paddingBottom = "25px";
-          } else {
-            content.style.maxHeight = "0";
-            content.style.paddingBottom = "0";
-          }
-        };
-      }
-
-      warningBox.appendChild(itemEl);
-    });
+        warningBox.appendChild(itemEl);
+      });
     }
   } else {
-    // ถ้าไม่มีข้อมูล Warning ให้ซ่อนทั้ง Section ทันที
     if (warningSectionEl) {
       warningSectionEl.style.display = "none";
     }
@@ -461,14 +446,13 @@ if (product) {
       });
     }
   } else {
-    // ถ้าไม่มีข้อมูล Solution ให้ซ่อนหัวข้อและกล่องทิ้งทันที
     if (solutionTitleEl) solutionTitleEl.style.display = "none";
     if (solutionBox) solutionBox.style.display = "none";
     const introP = document.getElementById("solutionIntro");
     if (introP) introP.style.display = "none";
   }
 
-  // --- ส่วนผลลัพธ์ที่คุณสัมผัสได้ (รองรับทั้ง Object, List การ์ด และ Table ตาราง) ---
+  // --- ส่วนผลลัพธ์ที่คุณสัมผัสได้ ---
   const resultTitleEl = document.getElementById("resultTitle");
   const resultImageEl = document.getElementById("resultImage");
   const resultListEl = document.getElementById("resultList");
@@ -502,7 +486,6 @@ if (product) {
       resultsWrapper.style.display = "none";
     } else {
       resultsWrapper.style.display = "flex";
-      // กรณีมีข้อมูลแบบตาราง (resultTable)
       if (
         product.resultTable &&
         product.resultTable.headers &&
@@ -538,16 +521,13 @@ if (product) {
 
           resultTableContainer.innerHTML = tableHTML;
         }
-      }
-      // กรณีมีข้อมูลแบบการ์ด/รายการ (results)
-      else if (product.results && product.results.length > 0) {
+      } else if (product.results && product.results.length > 0) {
         if (resultTableContainer) resultTableContainer.style.display = "none";
         if (resultListEl) {
           resultListEl.style.display = "flex";
           resultListEl.innerHTML = "";
 
           product.results.forEach((item, index) => {
-            // กรณีที่ 1: ข้อมูลเป็น Object แบบใหม่ { title: "...", props: [...] }
             if (typeof item === "object" && item !== null) {
               let propsItems = item.props
                 ? item.props.map((p) => `
@@ -569,9 +549,7 @@ if (product) {
                   </ul>
                 </li>
               `;
-            }
-            // กรณีที่ 2: ข้อมูลเป็น String แบบเดิม
-            else if (typeof item === "string") {
+            } else if (typeof item === "string") {
               let boldPart = "";
               let textPart = item;
 
@@ -656,18 +634,15 @@ if (product) {
         ? `<img class="review-image" src="${review.img}" alt="Review Image" style="margin-top: 10px;" />`
         : "";
 
-      // ดึงค่าดาว (ถ้าไม่ได้ใส่ไว้ใน data ให้ default เป็น 5 ดาว)
       let starCount = review.rating || 5;
-
-      // สร้างดวงดาวตามจำนวน rating
       let starsHTML = `<div class="stars-orange" style="font-size: 18px; margin-top: -2px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">`;
 
       let starsIcon = "";
       for (let i = 1; i <= 5; i++) {
         if (i <= starCount) {
-          starsIcon += "★"; // ดาวเต็ม
+          starsIcon += "★";
         } else {
-          starsIcon += "☆"; // ดาวว่างเปล่า
+          starsIcon += "☆";
         }
       }
 
@@ -690,14 +665,12 @@ if (product) {
   const impactTitleEl = document.getElementById("impactTitle");
   const impactGridEl = document.getElementById("impactGrid");
 
-  // เช็กว่าสินค้าชิ้นนี้มีข้อมูลส่วน Impact หรือไม่
   const hasImpactData =
     product.impactTitle &&
     product.impactTexts &&
     product.impactTexts.length > 0;
 
   if (hasImpactData) {
-    // 1. ถ้ามีข้อมูล สั่งให้ส่วน Impact แสดงผล
     if (impactSectionEl) impactSectionEl.style.display = "block";
 
     if (impactTitleEl) {
@@ -707,20 +680,17 @@ if (product) {
     if (impactGridEl) {
       impactGridEl.innerHTML = "";
 
-      // ข้อความแรกนำมาเป็น Intro
       let introP = document.getElementById("impactIntro");
       if (introP) {
         introP.innerHTML = product.impactTexts[0];
       }
 
-      // รายการข้อความที่เหลือ นำมาแปลงเป็น Impact Cards
       const cardsData = product.impactTexts.slice(1);
 
       cardsData.forEach((text, index) => {
         let cardTitle = `ผลกระทบที่ ${index + 1}`;
         let cardBody = text;
 
-        // สกัดแท็ก <b>...</b> ออกมาทำเป็นชื่อการ์ด
         const match = text.match(/<b>(.*?)<\/b>/);
         if (match && match[1]) {
           cardTitle = match[1].replace(":", "").trim();
@@ -746,22 +716,19 @@ if (product) {
       });
     }
   } else {
-    // 2. ถ้าไม่มีข้อมูล ให้ซ่อนทั้ง Section ทันที ไม่ให้เกิดกรอบหรือพื้นที่ว่างค้างไว้
     if (impactSectionEl) {
       impactSectionEl.style.display = "none";
     }
   }
 
-// ส่วนแสดงผลสินค้าอื่นๆ ที่น่าสนใจ (พร้อมปุ่มดูสินค้าทั้งหมด)
+  // --- ส่วนแสดงผลสินค้าอื่นๆ ที่น่าสนใจ ---
   const relatedContainer = document.getElementById("relatedProductsContainer");
 
   if (relatedContainer && typeof productsData !== "undefined") {
-    // 1. กรองเอาสินค้าตัวปัจจุบันออก
     const otherProductKeys = Object.keys(productsData).filter(
       (key) => key !== productId
     );
 
-    // 2. สุ่มเลือกสินค้ามา 4 รายการ
     const shuffledKeys = otherProductKeys.sort(() => 0.5 - Math.random());
     const selectedKeys = shuffledKeys.slice(0, 4);
 
@@ -803,12 +770,39 @@ if (product) {
   }
 
 } else {
-  // กรณีหาไม่พบสินค้า
   document.querySelector(".product-page").innerHTML =
     "<h1>ขออภัย ไม่พบสินค้านี้</h1>";
 }
 
-// ฟังก์ชันเพิ่มสินค้าลงตะกร้า
+// --- ฟังก์ชัน Toast Popup ---
+function showToast(productName, quantity) {
+  let toast = document.getElementById("cartToast");
+  
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "cartToast";
+    toast.innerHTML = `
+      <i class="fa-solid fa-circle-check"></i>
+      <div class="toast-content">
+        <h4 id="toastTitle">เพิ่มลงตะกร้าแล้ว</h4>
+        <p id="toastDesc"></p>
+      </div>
+    `;
+    document.body.appendChild(toast);
+  }
+
+  document.getElementById("toastTitle").textContent = "เพิ่มลงตะกร้าสำเร็จ";
+  document.getElementById("toastDesc").textContent = `${productName} (x${quantity})`;
+
+  setTimeout(() => toast.classList.add("show"), 10);
+
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+// --- ฟังก์ชันเพิ่มสินค้าลงตะกร้า ---
 function addToCart(isBuyNow = false) {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get("id") || "astin";
@@ -821,7 +815,6 @@ function addToCart(isBuyNow = false) {
 
   let cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
 
-  // เช็กว่ามีสินค้านี้ในตะกร้าหรือยัง
   const existingItemIndex = cart.findIndex((item) => item.id === productId);
 
   if (existingItemIndex > -1) {
@@ -841,20 +834,17 @@ function addToCart(isBuyNow = false) {
     });
   }
 
-  // 1. เซฟลง localStorage
   localStorage.setItem("siam_healthy_cart", JSON.stringify(cart));
-
-  // 2. ยิง Custom Event บอกให้ Header อัปเดตตัวเลขสีแดงทันที!
   window.dispatchEvent(new CustomEvent("cartUpdated"));
 
   if (isBuyNow) {
     window.location.href = "../cart/";
   } else {
-    alert(`เพิ่ม ${product.name} จำนวน ${quantity} ชิ้นลงในตะกร้าเรียบร้อยแล้ว!`);
+    showToast(product.name, quantity);
   }
 }
 
-// อัปเดตตัวเลขแจ้งเตือนบนไอคอนตะกร้า
+// --- อัปเดตตัวเลขแจ้งเตือนบนไอคอนตะกร้า ---
 function updateCartBadge() {
   const cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
   const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -870,7 +860,7 @@ function updateCartBadge() {
   });
 }
 
-// ผูกอีเวนต์ปุ่มสั่งซื้อ
+// --- ผูกอีเวนต์ปุ่มสั่งซื้อและตะกร้าเมื่อโหลดหน้า ---
 document.addEventListener("DOMContentLoaded", () => {
   const cartBtn = document.querySelector(".cart-btn-minimal");
   const buyBtn = document.querySelector(".buy-btn-black");

@@ -1574,10 +1574,6 @@ ul.lv1 .result-card-props li,
   transform: translateX(3px);
 }
 
-/* ===================================================
-   THEME COLOR ENHANCEMENT (เน้นสีเขียวธีม Siam-Healthy ให้โดดเด่น)
-=================================================== */
-
 /* 1. ชื่อผลิตภัณฑ์หลัก (Product Name) ใช้การไล่ระดับสีเขียวแบรนด์ */
 #productName {
   font-size: 50px;
@@ -1644,4 +1640,48 @@ ul.lv1 .result-card-props li,
 .product-buy button.buy:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(13, 92, 46, 0.2);
+}
+
+/* Toast Notification - มุมขวาบน */
+#cartToast {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  background: #ffffff;
+  color: #2d3748;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-20px); /* เปลี่ยนทิศทางให้สไลด์ลงมาจากด้านบน */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  border-left: 5px solid #10b981;
+}
+
+#cartToast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#cartToast i {
+  color: #10b981;
+  font-size: 20px;
+}
+
+#cartToast .toast-content h4 {
+  margin: 0 0 2px 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#cartToast .toast-content p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #666;
 }

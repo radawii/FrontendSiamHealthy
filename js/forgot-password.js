@@ -9,13 +9,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayEmail = document.getElementById('displayEmail');
     const resendOtp = document.getElementById('resendOtp');
 
+    // ฟังก์ชันสร้างและแสดง Toast Popup
+    function showToast(title, message, type = 'success') {
+        let toast = document.getElementById('authToast');
+        
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'authToast';
+            document.body.appendChild(toast);
+        }
+
+        // กำหนดสีและไอคอนตามประเภท (success หรือ error)
+        const iconHTML = type === 'success' 
+            ? '<i class="fa-solid fa-circle-check" style="color: #10b981;"></i>' 
+            : '<i class="fa-solid fa-circle-exclamation" style="color: #ef4444;"></i>';
+
+        toast.className = type;
+        toast.innerHTML = `
+            ${iconHTML}
+            <div class="toast-content">
+                <h4>${title}</h4>
+                <p>${message}</p>
+            </div>
+        `;
+
+        // แสดง Toast
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        clearTimeout(window.toastTimer);
+        window.toastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 5000);
+    }
+
     // ขั้นตอนที่ 1: กดส่งอีเมลเพื่อขอรับ OTP
     sendEmailBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const emailInput = document.getElementById('forgotEmail');
 
         if (!emailInput.value || !emailInput.checkValidity()) {
-            alert('กรุณากรอกอีเมลให้ถูกต้อง');
+            showToast('กรุณากรอกข้อมูล', 'กรุณากรอกอีเมลให้ถูกต้องก่อนดำเนินการต่อ', 'error');
             emailInput.focus();
             return;
         }
@@ -26,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // สลับไปหน้าจอ Step 2 (กรอก OTP)
         stepEmail.style.display = 'none';
         stepOtp.style.display = 'block';
+
+        showToast('ส่งรหัส OTP สำเร็จ', 'กรุณาตรวจสอบรหัส 6 หลักในอีเมลของคุณ');
     });
 
     // ขั้นตอนที่ 2: กด Verify รหัส OTP
@@ -34,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const otpInput = document.getElementById('otpCode');
 
         if (otpInput.value.length < 6) {
-            alert('กรุณากรอกรหัส OTP ให้ครบ 6 หลัก');
+            showToast('รหัส OTP ไม่ถูกต้อง', 'กรุณากรอกรหัส OTP ให้ครบ 6 หลัก', 'error');
             otpInput.focus();
             return;
         }
@@ -42,12 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // จำลองตรวจสอบรหัส OTP สำเร็จ แล้วสลับไป Step 3 (ตั้งรหัสผ่านใหม่)
         stepOtp.style.display = 'none';
         stepNewPassword.style.display = 'block';
+
+        showToast('ยืนยันตัวตนสำเร็จ', 'สามารถตั้งรหัสผ่านใหม่ของคุณได้เลยครับ');
     });
 
     // ปุ่มกดส่งรหัส OTP อีกครั้ง
     resendOtp.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('ระบบได้ส่งรหัส OTP ไปยังอีเมลของคุณใหม่อีกครั้งแล้ว');
+        showToast('ส่งรหัสใหม่อีกครั้ง', 'ระบบได้ส่งรหัส OTP ไปยังอีเมลของคุณเรียบร้อยแล้ว');
     });
 
     // ขั้นตอนที่ 3: บันทึกรหัสผ่านใหม่
@@ -57,17 +94,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const confirmPassword = document.getElementById('confirmPassword').value;
 
         if (newPassword.length < 8) {
-            alert('รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร');
+            showToast('รหัสผ่านสั้นเกินไป', 'รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษรขึ้นไป', 'error');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            alert('รหัสผ่านทั้งสองช่องไม่ตรงกัน');
+            showToast('รหัสผ่านไม่ตรงกัน', 'กรุณากรอกยืนยันรหัสผ่านใหม่ให้ตรงกันทั้งสองช่อง', 'error');
             return;
         }
 
-        alert('เปลี่ยนรหัสผ่านสำเร็จ! กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่');
-        window.location.href = 'login.html';
+        showToast('เปลี่ยนรหัสผ่านสำเร็จ!', 'กำลังพาคุณกลับไปหน้าเข้าสู่ระบบ...');
+        
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1800);
     });
 
     // ระบบกดปุ่มลูกตาเพื่อเปิด/ปิด ซ่อนรหัสผ่าน
