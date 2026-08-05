@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการสั่งซื้อ | Siam-Healthy</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="./css/cart.css">
+    <link rel="stylesheet" href="../css/contact.css">
+    <link rel="stylesheet" href="./css/orders.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Header & Component Scripts -->
+    <script src="../js/header.js" defer></script>
+    <script src="../js/contact.js" defer></script>
+    <script src="../js/footer.js"></script>
+</head>
+
+<body>
+    <!-- Header Navigation -->
+    <my-header></my-header>
+
+    <main class="cart-main">
+        <div class="orders-container">
+            
+            <!-- Page Heading -->
+            <div class="orders-page-header">
+                <h1 class="page-title">ประวัติการสั่งซื้อของคุณ</h1>
+                <p class="page-subtitle">ตรวจสอบและติดตามสถานะคำสั่งซื้อทั้งหมดที่นี่</p>
+            </div>
+
+            <!-- Empty State (กรณีไม่มีรายการสั่งซื้อ) -->
+            <div id="emptyOrdersBox" class="empty-state" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" style="margin-bottom: 16px;">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <h3 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">ยังไม่มีประวัติการสั่งซื้อ</h3>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 20px;">คุณยังไม่มีรายการสั่งซื้อสินค้าในขณะนี้ เลือกซื้อผลิตภัณฑ์เพื่อสุขภาพของเราได้เลย</p>
+                <button onclick="window.location.href='../shop/'" class="checkout-btn" style="max-width: 200px; margin: 0 auto;">เลือกซื้อสินค้าเลย</button>
+            </div>
+
+            <!-- รายการคำสั่งซื้อจะเรนเดอร์ลงในนี้ -->
+            <div id="ordersListContainer" class="orders-list-wrapper"></div>
+
+        </div>
+    </main>
+
+    <contact-section></contact-section>
+    <my-footer></my-footer>
+
+    <!-- JavaScript สำหรับดึงรายการสั่งซื้อ -->
+    <script src="./js/orders.js"></script>
+</body>
+
+</html>

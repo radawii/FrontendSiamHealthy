@@ -141,6 +141,70 @@
   border: 2px solid #ffffff;
 }
 
+/* PROFILE DROPDOWN (DESKTOP & GENERAL) */
+.profile-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-menu-dropdown.active {
+  display: flex;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  color: #334155;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.profile-menu-item:hover {
+  background-color: #eef7f2;
+  color: #0d5c2e;
+}
+
+.profile-menu-item svg {
+  color: #64748b;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.profile-menu-item:hover svg {
+  color: #0d5c2e;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Sliding Search Overlay */
 .search-overlay-bar {
   width: 100%;
@@ -396,6 +460,11 @@
     font-size: 15px;
     font-weight: 500;
     background: #f8faf8;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
     transition: background 0.2s ease;
   }
 
@@ -413,5 +482,19 @@
 
   .search-overlay-container {
     padding: 0 16px;
+  }
+
+  /* จัดตำแหน่ง Profile Dropdown เมื่อเปิดผ่าน Mobile Menu */
+  .mobile-nav-icons .profile-dropdown-wrapper {
+    width: 100%;
+  }
+
+  .mobile-nav-icons .profile-menu-dropdown {
+    position: static;
+    width: 100%;
+    margin-top: 6px;
+    box-shadow: none;
+    border: 1px solid #f1f5f9;
+    background: #fafafa;
   }
 }

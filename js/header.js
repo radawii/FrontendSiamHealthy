@@ -31,7 +31,8 @@ class MyHeader extends HTMLElement {
                   <span>ตะกร้าของคุณ</span>
                 </a>
 
-                <a href="/login.html" class="mobile-icon-link">
+                <!-- เปลี่ยนเป็น button เพื่อคุม Dropdown ของ Mobile -->
+                <button type="button" class="mobile-icon-link profile-toggle-btn">
                   <div class="icon-wrapper">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -39,7 +40,7 @@ class MyHeader extends HTMLElement {
                     </svg>
                   </div>
                   <span>โปรไฟล์</span>
-                </a>
+                </button>
               </div>
             </nav>
 
@@ -62,12 +63,27 @@ class MyHeader extends HTMLElement {
                 <span class="cart-badge" style="display: none;"></span>
               </a>
 
-              <a href="/login.html" class="icon-btn profile-btn" title="โปรไฟล์">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </a>
+              <!-- เปลี่ยน <a> เป็น <button> สำหรับ Profile Desktop -->
+              <div class="profile-dropdown-wrapper">
+                <button type="button" class="icon-btn profile-btn profile-toggle-btn" title="โปรไฟล์">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </button>
+
+                <!-- Dropdown Menu ที่เพิ่มเข้ามา -->
+                <div class="profile-menu-dropdown" id="profileDropdown">
+                  <a href="/login.html" class="profile-menu-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                    <span>เข้าสู่ระบบ / ลงทะเบียน</span>
+                  </a>
+                  <a href="/cart/orders.html" class="profile-menu-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>ดูประวัติการสั่งซื้อ</span>
+                  </a>
+                </div>
+              </div>
             </div>
 
             <!-- Mobile Hamburger Button -->
@@ -103,6 +119,7 @@ class MyHeader extends HTMLElement {
     this.initSearchToggle();
     this.initSearchSystem();
     this.initContactScroll();
+    this.initProfileMenu(); // เพิ่มการสแตนด์บายของ Profile Menu
 
     // อัปเดตตัวเลขเมื่อโหลดหน้าเว็บ
     this.updateCartBadge();
@@ -110,6 +127,28 @@ class MyHeader extends HTMLElement {
     // รอดักจับ Event เมื่อมีการกดเพิ่มสินค้าในหน้า product
     window.addEventListener("cartUpdated", () => {
       this.updateCartBadge();
+    });
+  }
+
+  // ระบบเปิด-ปิด Profile Menu
+  initProfileMenu() {
+    const toggleBtns = this.querySelectorAll(".profile-toggle-btn");
+    const dropdown = this.querySelector("#profileDropdown");
+
+    toggleBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("active");
+      });
+    });
+
+    // ปิด Menu เมื่อผู้ใช้กดคลิกที่บริเวณอื่นภายนอก Menu
+    document.addEventListener("click", (e) => {
+      if (dropdown && dropdown.classList.contains("active")) {
+        if (!this.contains(e.target)) {
+          dropdown.classList.remove("active");
+        }
+      }
     });
   }
 
@@ -123,23 +162,19 @@ class MyHeader extends HTMLElement {
         if (targetSection) {
           e.preventDefault();
           
-          // เลื่อนสมูทลงไปที่คอมโพเนนต์
           targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
           
-          // ปิดเมนูเบอร์เกอร์อัตโนมัติ (ถ้ากดบนมือถือ)
           const btn = this.querySelector("#hamburgerBtn");
           const menu = this.querySelector("#navMenu");
           if (btn) btn.classList.remove("active");
           if (menu) menu.classList.remove("active");
         } else {
-          // ถ้าอยู่หน้าอื่นที่ไม่มี Footer นี้ ให้พาเด้งกลับไปหน้าแรกก่อน
           window.location.href = '/index.html#contact';
         }
       });
     }
   }
 
-  // ฟังก์ชันคำนวณและอัปเดตป้ายตัวเลขสีแดง
   updateCartBadge() {
     const cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
