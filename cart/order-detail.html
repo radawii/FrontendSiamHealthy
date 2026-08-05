@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดคำสั่งซื้อ | Siam-Healthy</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="./css/cart.css">
+    <link rel="stylesheet" href="../css/contact.css">
+    <link rel="stylesheet" href="./css/order-detail.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Header & Component Scripts -->
+    <script src="../js/header.js" defer></script>
+    <script src="../js/contact.js" defer></script>
+    <script src="../js/footer.js"></script>
+</head>
+
+<body>
+    <!-- Header Navigation -->
+    <my-header></my-header>
+
+    <main class="cart-main">
+        <div class="order-detail-container">
+            
+            <!-- ปุ่มย้อนกลับ -->
+            <div class="btn-back-wrapper">
+                <button onclick="window.history.back()" class="add-gift-btn btn-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    <span>ย้อนกลับ</span>
+                </button>
+            </div>
+
+            <!-- กล่องแสดงข้อความกรณีไม่พบคำสั่งซื้อ -->
+            <div id="notFoundBox" class="empty-state" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" style="margin-bottom: 16px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <h3 style="font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 8px;">ไม่พบข้อมูลคำสั่งซื้อ</h3>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 20px;">กรุณาตรวจสอบหมายเลขคำสั่งซื้อ หรือเลือกซื้อสินค้าใหม่อีกครั้ง</p>
+                <button onclick="window.location.href='../shop/'" class="checkout-btn" style="max-width: 200px; margin: 0 auto;">เลือกซื้อสินค้าเลย</button>
+            </div>
+
+            <!-- เนื้อหารายละเอียดคำสั่งซื้อหลัก -->
+            <div id="orderDetailContent" style="display: none;">
+                
+                <!-- 1. Header สรุปสถานะ -->
+                <div class="order-header-card">
+                    <div>
+                        <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 4px;">หมายเลขคำสั่งซื้อ</div>
+                        <h2 id="orderIdText" style="font-size: 1.4rem; font-weight: 700; color: #0f172a;">ORD-XXXXXX</h2>
+                        <div id="orderDateText" style="font-size: 0.85rem; color: #94a3b8; margin-top: 4px;">สั่งซื้อเมื่อ: -</div>
+                    </div>
+                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                        <span id="orderStatusBadge" class="status-badge paid">
+                            <span id="statusText">ชำระเงินแล้ว</span>
+                        </span>
+                        <span id="shippingNoticeText" class="status-badge paid" style="font-weight: 500; font-size: 0.85rem;">
+                            กำลังจัดเตรียมพัสดุ: ท่านจะได้รับสินค้าภายใน 2-3 วัน
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 2. Grid แสดงรายละเอียด -->
+                <div class="detail-grid">
+                    <!-- ฝั่งซ้าย: สินค้า + ข้อมูลจัดส่ง -->
+                    <div>
+                        <!-- รายการสินค้า -->
+                        <div class="section-card">
+                            <h3 class="card-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                                รายการสินค้าที่สั่งซื้อ
+                            </h3>
+                            <div id="orderItemsList">
+                                <!-- สินค้าจะเรนเดอร์ผ่าน JS -->
+                            </div>
+                        </div>
+
+                        <!-- ข้อมูลผู้สั่งซื้อและการจัดส่ง -->
+                        <div class="section-card">
+                            <h3 class="card-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                ข้อมูลการจัดส่งและผู้รับ
+                            </h3>
+                            <div style="font-size: 0.95rem; line-height: 1.6; color: #334155;">
+                                <div><strong>ชื่อผู้รับ:</strong> <span id="customerName">-</span></div>
+                                <div><strong>เบอร์โทรศัพท์:</strong> <span id="customerPhone">-</span></div>
+                                <div><strong>อีเมล:</strong> <span id="customerEmail">-</span></div>
+                                <div style="margin-top: 8px;"><strong>ที่อยู่จัดส่ง:</strong> <span id="customerAddress">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ฝั่งขวา: สรุปชำระเงิน -->
+                    <div>
+                        <div class="section-card">
+                            <h3 class="card-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                สรุปการชำระเงิน
+                            </h3>
+                            <div class="info-row">
+                                <span>ช่องทางชำระเงิน:</span>
+                                <strong id="paymentMethodText" style="color: #1e293b;">-</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>เลขอ้างอิง (Ref):</span>
+                                <span id="transactionRefText" style="font-family: monospace; font-size: 0.85rem; color: #64748b;">-</span>
+                            </div>
+                            <hr style="border: 0; border-top: 1px dashed #e2e8f0; margin: 12px 0;">
+                            
+                            <div class="info-row">
+                                <span>ยอดรวมสินค้า:</span>
+                                <span id="subtotalText">฿0.00</span>
+                            </div>
+                            <div class="info-row">
+                                <span>ส่วนลด:</span>
+                                <span id="discountText" style="color: #ef4444;">-฿0.00</span>
+                            </div>
+                            <div class="info-row">
+                                <span>ค่าจัดส่ง:</span>
+                                <span style="color: #10b981;">ฟรี</span>
+                            </div>
+                            <div class="info-row">
+                                <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+                                <span id="vatText">฿0.00</span>
+                            </div>
+
+                            <div class="info-row total">
+                                <span>ยอดชำระสุทธิ:</span>
+                                <span id="grandTotalText">฿0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <contact-section></contact-section>
+    <my-footer></my-footer>
+
+    <!-- JS ดึงข้อมูล Order -->
+    <script src="./js/order-detail.js"></script>
+</body>
+
+</html>
