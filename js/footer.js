@@ -5,10 +5,9 @@ class MyFooter extends HTMLElement {
         .footer {
           background-color: #082d16;
           color: #ffffff;
-          padding: 32px 20px;
-          margin-top: 60px;
+          padding: 16px 20px;
           text-align: center;
-          font-size: 0.9rem;
+          font-size: 0.65rem;
           font-family: 'Prompt', sans-serif;
         }
         
@@ -20,16 +19,16 @@ class MyFooter extends HTMLElement {
 
         .footer p {
           margin: 0;
-          letter-spacing: 0.5px;
-          line-height: 1.5;
+          letter-spacing: 0.3px;
+          line-height: 1.3;
         }
 
         /* Responsive สำหรับมือถือ */
         @media screen and (max-width: 576px) {
           .footer {
-            padding: 24px 16px;
-            margin-top: 40px;
-            font-size: 0.85rem;
+            padding: 12px 16px;
+            margin-top: 20px;
+            font-size: 0.78rem;
           }
         }
       </style>

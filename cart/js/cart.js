@@ -1,3 +1,5 @@
+// ตัวแปรสำหรับเก็บ Order ID ล่าสุดเพื่อใช้ส่งต่อเข้าหน้า Order Detail
+let latestCreatedOrderId = '';
 let currentStep = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -54,79 +56,9 @@ function goToTypeStep(stepNumber) {
     }
   });
 
-  // ปุ่มยืนยันการชำระเงิน (แสดง Modal ใบเสร็จ)
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  if (checkoutBtn && stepNumber === 3) {
-    checkoutBtn.onclick = () => {
-      showReceiptModal();
-    };
-  }
-
   currentStep = stepNumber;
+  calculateSummary();
   window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ฟังก์ชันแสดงใบเสร็จสไตล์ปริ้นท์
-function showReceiptModal() {
-  const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
-  const selectedItems = cart.filter(i => i.selected);
-  const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = subtotal > 0 ? 100 : 0;
-  const grandTotal = Math.max(0, subtotal - discount);
-
-  const fullname = document.getElementById('fullname').value || 'คุณลูกค้า';
-  const phone = document.getElementById('phone').value || '-';
-  const address = document.getElementById('address').value || '-';
-  const subdistrict = document.getElementById('subdistrict').value || '';
-  const district = document.getElementById('district').value || '';
-  const province = document.getElementById('province').value || '';
-  const zipcode = document.getElementById('zipcode').value || '';
-
-  const receiptPaper = document.getElementById('receiptPaper');
-  if (receiptPaper) {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-    receiptPaper.innerHTML = `
-      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 10px;">
-        <strong>Siam-Healthy Official</strong><br>
-        <span style="font-size: 0.78rem; color: var(--text-muted);">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</span><br>
-        <span style="font-size: 0.75rem; color: var(--text-muted);">${dateStr}</span>
-      </div>
-      <div style="margin-bottom: 10px; font-size: 0.82rem;">
-        <strong>ผู้รับ:</strong> ${fullname} (${phone})<br>
-        <strong>ที่อยู่:</strong> ${address} ต.${subdistrict} อ.${district} จ.${province} ${zipcode}
-      </div>
-      <div style="border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 8px;">
-        ${selectedItems.map(i => `
-          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
-            <span>${i.name} (x${i.quantity})</span>
-            <span>฿${(i.price * i.quantity).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-          </div>
-        `).join('')}
-      </div>
-      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
-        <span>ยอดรวมสินค้า:</span>
-        <span>฿${subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px; color: var(--price-red);">
-        <span>ส่วนลดคูปอง:</span>
-        <span>-฿${discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; font-weight: 700; color: var(--primary-color); border-top: 1px solid #cbd5e1; padding-top: 6px; margin-top: 6px;">
-        <span>ยอดชำระสุทธิ:</span>
-        <span>฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-    `;
-  }
-
-  // เคลียร์ตะกร้าสินค้าที่เลือกออก
-  const remainingCart = cart.filter(i => !i.selected);
-  localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
-
-  // แสดง Modal
-  const modal = document.getElementById('receiptModal');
-  if (modal) modal.style.display = 'flex';
 }
 
 function validateAndGoToStep3() {
@@ -134,6 +66,7 @@ function validateAndGoToStep3() {
   if (form && form.checkValidity()) {
     const fullname = document.getElementById('fullname').value;
     const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email') ? document.getElementById('email').value : '';
     const address = document.getElementById('address').value;
     const subdistrict = document.getElementById('subdistrict').value;
     const district = document.getElementById('district').value;
@@ -146,6 +79,7 @@ function validateAndGoToStep3() {
         <div style="font-weight: 600; color: var(--text-heading); font-size: 0.95rem; margin-bottom: 6px;">
           ${fullname} <span style="font-weight: 400; color: var(--text-muted); margin: 0 8px;">|</span> <span style="font-weight: 400; color: var(--text-dark);">${phone}</span>
         </div>
+        ${email ? `<div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 4px;">${email}</div>` : ''}
         <div style="color: var(--text-dark); margin-bottom: 4px; line-height: 1.5;">
           ${address}
         </div>
@@ -161,7 +95,173 @@ function validateAndGoToStep3() {
   }
 }
 
-// ตรวจสอบรายการสินค้าใน Step 3
+// [ปรับปรุงฟังก์ชันคำนวณ]: คำนวณอัตโนมัติ ยอดรวมสินค้า + ค่าจัดส่ง - ส่วนลด + ภาษี VAT 7%
+function calculateSummary() {
+  const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
+  const selectedItems = cart.filter(i => i.selected);
+
+  const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discount = subtotal > 0 ? 100 : 0;
+  const shippingFee = 0; // จัดส่งฟรี
+  
+  // คำนวณภาษี VAT 7%
+  const taxableAmount = Math.max(0, subtotal - discount);
+  const vat = taxableAmount * 0.07;
+  const grandTotal = taxableAmount + shippingFee + vat;
+
+  const subtotalEl = document.getElementById('subtotalAmount');
+  const discountEl = document.getElementById('discountAmount');
+  const vatEl = document.getElementById('vatAmount');
+  const grandTotalEl = document.getElementById('grandTotalAmount');
+
+  if (subtotalEl) subtotalEl.innerText = `฿${subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  if (discountEl) discountEl.innerText = subtotal > 0 ? `-฿${discount.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '฿0.00';
+  if (vatEl) vatEl.innerText = `฿${vat.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  if (grandTotalEl) grandTotalEl.innerText = `฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+  return { subtotal, discount, shippingFee, vat, grandTotal };
+}
+
+// ==========================================
+// ฟังก์ชันกระบวนการชำระเงินและบันทึกลง CRM / Order System
+// ==========================================
+async function processPayment() {
+  const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
+  const selectedItems = cart.filter(i => i.selected);
+
+  if (selectedItems.length === 0) {
+    alert('ไม่พบรายการสินค้าที่เลือกชำระเงิน');
+    return;
+  }
+
+  // 1. ดึงข้อมูลผู้สั่งซื้อ
+  const fullname = document.getElementById('fullname')?.value || 'คุณลูกค้า';
+  const phone = document.getElementById('phone')?.value || '-';
+  const email = document.getElementById('email')?.value || 'customer@example.com';
+  const address = document.getElementById('address')?.value || '-';
+  const subdistrict = document.getElementById('subdistrict')?.value || '';
+  const district = document.getElementById('district')?.value || '';
+  const province = document.getElementById('province')?.value || '';
+  const zipcode = document.getElementById('zipcode')?.value || '';
+
+  // 2. ดึงช่องทางการชำระเงิน
+  const selectedPaymentEl = document.querySelector('input[name="paymentMethod"]:checked');
+  const paymentMethodVal = selectedPaymentEl ? selectedPaymentEl.value : 'promptpay';
+
+  const paymentTextMap = {
+    'promptpay': 'QR Code / PromptPay',
+    'credit': 'บัตรเครดิต / บัตรเดบิต',
+    'ewallet': 'E-Wallet (TrueMoney)',
+    'cod': 'เก็บเงินปลายทาง (COD)'
+  };
+  const paymentMethodText = paymentTextMap[paymentMethodVal] || 'โอนเงินชำระผ่านระบบ';
+
+  // 3. คำนวณยอดเงิน และสร้างเลขอ้างอิง
+  const summary = calculateSummary();
+  const transactionRef = 'TXN-' + Math.floor(10000000 + Math.random() * 90000000);
+  const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+  latestCreatedOrderId = orderId; // บันทึกไว้ใช้ลิงก์ไปยังหน้ารายละเอียด
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  // 4. สร้างข้อมูลคำสั่งซื้อ พร้อมเปลี่ยนสถานะเป็น "ชำระเงินแล้ว" อัตโนมัติ
+  const orderRecord = {
+    orderId: orderId,
+    transactionRef: transactionRef,
+    orderStatus: paymentMethodVal === 'cod' ? 'รอชำระเงินปลายทาง' : 'ชำระเงินแล้ว', // อัปเดตสถานะอัตโนมัติ
+    paymentMethod: paymentMethodText,
+    customer: {
+      fullname,
+      phone,
+      email,
+      address: `${address} ต.${subdistrict} อ.${district} จ.${province} ${zipcode}`
+    },
+    items: selectedItems,
+    summary: summary,
+    timestamp: now.toISOString()
+  };
+
+  // 5. บันทึกข้อมูลลงในระบบ CRM / Order Management (localStorage)
+  const crmOrders = JSON.parse(localStorage.getItem('siam_healthy_crm_orders')) || [];
+  crmOrders.push(orderRecord);
+  localStorage.setItem('siam_healthy_crm_orders', JSON.stringify(crmOrders));
+
+  // 6. แสดงผล UI ใบเสร็จ
+  const receiptPaper = document.getElementById('receiptPaper');
+  if (receiptPaper) {
+    receiptPaper.innerHTML = `
+      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 10px;">
+        <strong style="font-size: 1.05rem; color: #0f172a;">Siam-Healthy Official</strong><br>
+        <span style="font-size: 0.78rem; color: #64748b;">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</span><br>
+        <span style="font-size: 0.75rem; color: #94a3b8;">${dateStr}</span>
+      </div>
+
+      <div style="background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; line-height: 1.5;">
+        <div><strong>เลขที่คำสั่งซื้อ:</strong> ${orderId}</div>
+        <div><strong>เลขอ้างอิงชำระเงิน (Ref):</strong> ${transactionRef}</div>
+        <div><strong>ช่องทางชำระเงิน:</strong> ${paymentMethodText}</div>
+        <div style="margin-top: 4px;">
+          <strong>สถานะคำสั่งซื้อ:</strong> 
+          <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
+            ${orderRecord.orderStatus}
+          </span>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 10px; font-size: 0.82rem; line-height: 1.5;">
+        <strong>ผู้รับ:</strong> ${fullname} (${phone})<br>
+        <strong>ที่อยู่:</strong> ${address} ต.${subdistrict} อ.${district} จ.${province} ${zipcode}<br>
+        <strong style="color: #059669;">ส่งการยืนยันสำเร็จ:</strong> ทาง Email (${email}) และ SMS (${phone})
+      </div>
+
+      <div style="border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 8px;">
+        ${selectedItems.map(i => `
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+            <span>${i.name} (x${i.quantity})</span>
+            <span>฿${(i.price * i.quantity).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
+        <span>ยอดรวมสินค้า:</span>
+        <span>฿${summary.subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+      </div>
+      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px; color: #ef4444;">
+        <span>ส่วนลดคูปอง:</span>
+        <span>-฿${summary.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+      </div>
+      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
+        <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+        <span>฿${summary.vat.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+      </div>
+      <div style="font-size: 0.85rem; display: flex; justify-content: space-between; font-weight: 700; color: #059669; border-top: 1px solid #cbd5e1; padding-top: 6px; margin-top: 6px;">
+        <span>ยอดชำระสุทธิ:</span>
+        <span>฿${summary.grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+      </div>
+    `;
+  }
+
+  // 7. เคลียร์ตะกร้าสินค้า
+  const remainingCart = cart.filter(i => !i.selected);
+  localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
+  updateCartBadge();
+
+  // 8. แสดง Modal
+  const modal = document.getElementById('receiptModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+// ฟังก์ชันเปิดไปหน้าดูรายละเอียดคำสั่งซื้อ (Order Detail)
+function goToOrderDetailPage() {
+  if (latestCreatedOrderId) {
+    window.location.href = `./order-detail.html?orderId=${latestCreatedOrderId}`;
+  } else {
+    window.location.href = `./orders.html`;
+  }
+}
+
 function renderCheckoutReviewItems() {
   const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
   const container = document.getElementById('checkoutItemsReviewList');
@@ -190,36 +290,39 @@ function renderCheckoutReviewItems() {
     }
 
     return `
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; background: #fafcfb; border: 1px solid #f0f4f1; border-radius: 10px;">
-        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-          <img src="${imgPath}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #f1f5f9; flex-shrink: 0;">
-          <div style="flex: 1; min-width: 0;">
-            <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</h4>
-            <span style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600;">฿${item.price.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-          </div>
+      <div class="cart-item-card step3-item-card" data-index="${index}">
+        <div class="item-img-box">
+          <img src="${imgPath}" alt="${item.name}" onerror="this.onerror=null; this.src='../shop/img/elsie/elsie1.png';">
         </div>
 
-        <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0;">
-          <div class="quantity-control" style="display: flex; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 50px; padding: 2px 6px;">
-            <button class="qty-btn minus" onclick="updateReviewQty(${index}, -1)" style="width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; cursor: pointer; font-size: 0.9rem;">-</button>
-            <input type="text" class="qty-input" value="${item.quantity}" readonly>
-            <button class="qty-btn plus" onclick="updateReviewQty(${index}, 1)" style="width: 26px; height: 26px; border-radius: 50%; border: none; background: transparent; cursor: pointer; font-size: 0.9rem;">+</button>
+        <div class="item-details">
+          <div class="item-title-row">
+            <h3 class="item-name">${item.name}</h3>
+          </div>
+          <p class="item-subtitle">จัดจำหน่ายโดย: Siam-Healthy Official</p>
+          <p class="item-tag-info">${item.tag || '#ผลิตภัณฑ์เสริมอาหาร'}</p>
+
+          <div class="item-bottom-row">
+            <div class="item-price">
+              <span class="current-price">฿${item.price.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+              ${item.oldPrice ? `<span class="old-price">฿${item.oldPrice.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>` : ''}
+            </div>
+
+            <div class="quantity-control">
+              <button class="qty-btn minus" onclick="updateReviewQty(${index}, -1)">-</button>
+              <input type="text" class="qty-input" value="${item.quantity}" readonly>
+              <button class="qty-btn plus" onclick="updateReviewQty(${index}, 1)">+</button>
+            </div>
           </div>
 
-          <div style="font-weight: 600; color: var(--primary-color); font-size: 0.95rem; min-width: 95px; text-align: right;">
-            ฿${(item.price * item.quantity).toLocaleString('th-TH', {minimumFractionDigits: 2})}
+          <div class="item-shipping-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>จัดส่งด่วนฟรี รับสินค้าภายใน 1-2 วัน</span>
           </div>
         </div>
       </div>
     `;
   }).join('');
-
-  reviewHTML += `
-    <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #475569; background: #eef7f2; padding: 6px 14px; border-radius: 50px; width: fit-content; margin-top: 4px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      <span>จัดส่งด่วนฟรี รับสินค้าภายใน 1-2 วัน</span>
-    </div>
-  `;
 
   container.innerHTML = reviewHTML;
 }
@@ -250,7 +353,6 @@ function updateReviewQty(index, delta) {
   }
 }
 
-// Render สินค้าใน Step 1
 function renderCart() {
   const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
   const container = document.querySelector('.cart-items-list');
@@ -306,9 +408,6 @@ function renderCart() {
         <div class="item-details">
           <div class="item-title-row">
             <h3 class="item-name">${item.name}</h3>
-            <button class="remove-item-btn" onclick="removeItem(${index})" aria-label="Remove item">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
           </div>
           <p class="item-subtitle">จัดจำหน่ายโดย: Siam-Healthy Official</p>
           <p class="item-tag-info">${item.tag || '#ผลิตภัณฑ์เสริมอาหาร'}</p>
@@ -337,7 +436,7 @@ function renderCart() {
   const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   itemsHTML += `
-    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+    <div class="cart-step1-footer" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
       <button onclick="window.location.href='../shop/'" class="add-gift-btn" style="max-width: 200px; padding: 10px 20px; font-size: 0.95rem;">
         เลือกซื้อสินค้าเพิ่มเติม
       </button>
@@ -406,23 +505,6 @@ function toggleSelectAll(checkboxEl) {
   cart.forEach(item => item.selected = checkboxEl.checked);
   localStorage.setItem('siam_healthy_cart', JSON.stringify(cart));
   renderCart();
-}
-
-function calculateSummary() {
-  const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
-  const selectedItems = cart.filter(i => i.selected);
-
-  const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = subtotal > 0 ? 100 : 0;
-  const grandTotal = Math.max(0, subtotal - discount);
-
-  const subtotalEl = document.getElementById('subtotalAmount');
-  const discountEl = document.getElementById('discountAmount');
-  const grandTotalEl = document.getElementById('grandTotalAmount');
-
-  if (subtotalEl) subtotalEl.innerText = `฿${subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
-  if (discountEl) discountEl.innerText = subtotal > 0 ? `-฿${discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}` : '฿0.00';
-  if (grandTotalEl) grandTotalEl.innerText = `฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
 }
 
 function updateCartBadge() {

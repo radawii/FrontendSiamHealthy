@@ -28,7 +28,7 @@ class MyHeader extends HTMLElement {
                     </svg>
                     <span class="cart-badge" style="display: none;"></span>
                   </div>
-                  <span>รถเข็นของคุณ</span>
+                  <span>ตะกร้าของคุณ</span>
                 </a>
 
                 <a href="/login.html" class="mobile-icon-link">
@@ -53,7 +53,7 @@ class MyHeader extends HTMLElement {
 
             <!-- กลุ่มไอคอนบน Desktop -->
             <div class="desktop-action-icons">
-              <a href="/cart/" class="icon-btn cart-btn" title="รถเข็นของคุณ">
+              <a href="/cart/" class="icon-btn cart-btn" title="ตะกร้าของคุณ">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="9" cy="21" r="1"></circle>
                   <circle cx="20" cy="21" r="1"></circle>

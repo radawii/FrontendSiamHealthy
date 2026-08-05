@@ -1616,23 +1616,23 @@ ul.lv1 .result-card-props li,
 }
 
 .product-buy button.buy {
-    background-color: var(--primary-color); /* เปลี่ยนเป็นสีเขียวธีม */
+    background-color: var(--primary-color);
     color: #ffffff;
     border: none;
     padding: 15px 40px;
     font-size: 18px;
     font-weight: 600;
-    border-radius: 50px; /* ปรับความโค้งมนเป็นทรงแคปซูล */
+    border-radius: 50px;
     cursor: pointer;
     transition: all 0.25s ease;
     font-family: 'Prompt', sans-serif;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25); /* เพิ่มเงาเขียวละมุน */
+    box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25);
 }
 
 .product-buy button.buy:hover {
-    background-color: var(--primary-hover); /* เขียวเข้มขึ้นเมื่อเอาเมาส์ชี้ */
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(13, 92, 46, 0.35);
 }
@@ -1657,7 +1657,7 @@ ul.lv1 .result-card-props li,
   gap: 14px;
   z-index: 9999;
   opacity: 0;
-  transform: translateY(-20px); /* เปลี่ยนทิศทางให้สไลด์ลงมาจากด้านบน */
+  transform: translateY(-20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   pointer-events: none;
   border-left: 5px solid #10b981;
@@ -1684,4 +1684,57 @@ ul.lv1 .result-card-props li,
   margin: 0;
   font-size: 13.5px;
   color: #666;
+}
+
+@media (max-width: 768px) {
+  /* ปรับ Grid ให้เป็น 2 คอลัมน์ และลดระยะห่างระหว่างการ์ด */
+  .ingredient-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* ปรับขนาดกล่องการ์ดและระยะขอบด้านใน (Padding) */
+  .ingredient-card {
+    padding: 16px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  /* ย่อขนาดวงกลมและรูปภาพสารสกัดให้พอดีกับกล่อง */
+  .ingredient-image {
+    width: 50px !important;
+    height: 50px !important;
+    margin: 0 auto 10px !important;
+  }
+
+  .ingredient-image img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  /* ปรับขนาดชื่อสารสกัด (Heading) */
+  .ingredient-card h3 {
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+    line-height: 1.3 !important;
+  }
+
+  .ingredient-card ul {
+    font-size: 11.5px !important;
+    margin-left: 12px !important;
+    padding-left: 0 !important;
+    line-height: 1.4 !important;
+  }
+
+  .ingredient-card li {
+    margin-bottom: 4px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .ingredient-card h3 {
+    font-size: 13px !important;
+  }
+  .ingredient-card ul {
+    font-size: 10.5px !important;
+  }
 }

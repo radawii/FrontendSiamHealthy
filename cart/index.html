@@ -68,31 +68,35 @@
                     <h3 class="step-title" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; color: var(--text-dark);">ที่อยู่ในการจัดส่ง</h3>
                     <form id="shipping-form" class="shipping-form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div class="form-group">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ชื่อ-นามสกุล *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ชื่อ-นามสกุล <span class="required-star">*</span></label>
                             <input type="text" id="fullname" placeholder="สมชาย ใจดี" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
                         </div>
                         <div class="form-group">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">เบอร์โทรศัพท์ *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">เบอร์โทรศัพท์ (สำหรับแจ้ง SMS) <span class="required-star">*</span></label>
                             <input type="tel" id="phone" placeholder="0812345678" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
                         </div>
                         <div class="form-group full-width" style="grid-column: span 2;">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ที่อยู่จัดส่ง (บ้านเลขที่, ซอย, ถนน) *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">อีเมล (สำหรับรับใบยืนยันการชำระเงิน/ใบเสร็จ) <span class="required-star">*</span></label>
+                            <input type="email" id="email" placeholder="example@email.com" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+                        </div>
+                        <div class="form-group full-width" style="grid-column: span 2;">
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ที่อยู่จัดส่ง (บ้านเลขที่, ซอย, ถนน) <span class="required-star">*</span></label>
                             <textarea id="address" rows="2" placeholder="123/4 ซอยพหลโยธิน 1 ถนนพหลโยธิน" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; resize: vertical;"></textarea>
                         </div>
                         <div class="form-group">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ตำบล / แขวง *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">ตำบล / แขวง <span class="required-star">*</span></label>
                             <input type="text" id="subdistrict" placeholder="เช่น สามเสนใน" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
                         </div>
                         <div class="form-group">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">อำเภอ / เขต *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">อำเภอ / เขต <span class="required-star">*</span></label>
                             <input type="text" id="district" placeholder="เช่น พญาไท" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
                         </div>
                         <div class="form-group">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">จังหวัด *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">จังหวัด <span class="required-star">*</span></label>
                             <input type="text" id="province" placeholder="เช่น กรุงเทพมหานคร" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
                         </div>
                         <div class="form-group">
-                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">รหัสไปรษณีย์ *</label>
+                            <label style="display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: 500;">รหัสไปรษณีย์ <span class="required-star">*</span></label>
                             <input type="text" id="zipcode" placeholder="เช่น 10400" required style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
                         </div>
                     </form>
@@ -123,34 +127,31 @@
                     <div class="payment-options" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px;">
                         <label class="payment-card-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer;">
                             <input type="radio" name="paymentMethod" value="promptpay" checked>
-                            <span class="payment-label" style="font-weight: 500;">สแกน QR Code / พร้อมเพย์</span>
+                            <span class="payment-label" style="font-weight: 500;">สแกน QR Code / PromptPay</span>
                         </label>
                         <label class="payment-card-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer;">
                             <input type="radio" name="paymentMethod" value="credit">
                             <span class="payment-label" style="font-weight: 500;">บัตรเครดิต / บัตรเดบิต</span>
                         </label>
+                        <!-- เพิ่มตัวเลือก E-Wallet ตามที่ Payment Gateway รองรับ -->
                         <label class="payment-card-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #cbd5e1; border-radius: 10px; cursor: pointer;">
-                            <input type="radio" name="paymentMethod" value="cod">
-                            <span class="payment-label" style="font-weight: 500;">เก็บเงินปลายทาง (COD)</span>
+                            <input type="radio" name="paymentMethod" value="ewallet">
+                            <span class="payment-label" style="font-weight: 500;">E-Wallet (TrueMoney)</span>
                         </label>
                     </div>
 
                     <!-- ปุ่มย้อนกลับ และ ปุ่มยกเลิก -->
-                    <div style="padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-                        <button onclick="goToTypeStep(2)" class="add-gift-btn" style="max-width: 180px; padding: 10px 20px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                            <span>ย้อนกลับ</span>
-                        </button>
-
-                        <button onclick="if(confirm('ต้องการยกเลิกการสั่งซื้อและกลับไปหน้าตะกร้าใช่หรือไม่?')) goToTypeStep(1);" style="background: transparent; border: none; color: var(--price-red); font-size: 0.9rem; font-weight: 500; cursor: pointer; padding: 8px 16px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
-                            ยกเลิกการสั่งซื้อ
-                        </button>
-                    </div>
+                    <div class="step3-back-box" style="padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <button onclick="goToTypeStep(2)" class="add-gift-btn" style="max-width: 180px; padding: 10px 20px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        <span>ย้อนกลับ</span>
+                    </button>
+                </div>
                 </div>
 
             </section>
 
-            <!-- Right Side: Order Summary (แสดงเฉพาะ Step 3) -->
+            <!-- Right Side: Order Summary -->
             <aside class="cart-summary-section reveal-on-scroll" id="cartSummarySection" style="display: none;">
                 <!-- กล่องแสดงสรุปข้อมูลที่อยู่จัดส่ง -->
                 <div class="summary-card shipping-summary-card" id="shippingSummaryBox">
@@ -191,7 +192,11 @@
                     </div>
                     <div class="price-row">
                         <span>ค่าจัดส่ง</span>
-                        <span class="free-text">ฟรี</span>
+                        <span id="shippingFee" class="free-text">ฟรี</span>
+                    </div>
+                    <div class="price-row">
+                        <span>ภาษีมูลค่าเพิ่ม (VAT 7%)</span>
+                        <span id="vatAmount">฿0.00</span>
                     </div>
 
                     <div class="price-divider"></div>
@@ -201,8 +206,8 @@
                         <span class="total-amount" id="grandTotalAmount">฿0.00</span>
                     </div>
 
-                    <button class="checkout-btn" id="checkoutBtn">
-                        <span>ยืนยันการชำระเงิน</span>
+                    <button class="checkout-btn" id="checkoutBtn" onclick="processPayment()">
+                        <span>ชำระเงิน</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </button>
                 </div>
@@ -210,24 +215,34 @@
         </div>
     </main>
 
-    <!-- Modal ใบเสร็จรับเงินจำลอง (Receipt Print Effect) -->
-    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-        <div style="background: #ffffff; width: 100%; max-width: 420px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; position: relative; animation: modalPop 0.3s ease-out;">
+    <!-- Modal ใบเสร็จรับเงิน  -->
+    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; position: relative; animation: modalPop 0.3s ease-out;">
             
-            <div style="width: 64px; height: 64px; background: #eef7f2; color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+            <div style="width: 64px; height: 64px; background: #eef7f2; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 6px;">ชำระเงินสำเร็จ!</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">ขอบคุณที่ไว้วางใจใช้บริการ Siam-Healthy</p>
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">ชำระเงินสำเร็จ</h3>
+            <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">ระบบได้ส่งใบยืนยันการชำระเงินเรียบร้อยแล้ว</p>
 
-            <div id="receiptPaper" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 18px; text-align: left; font-size: 0.88rem; color: var(--text-dark); margin-bottom: 24px; max-height: 380px; overflow-y: auto;">
-                <!-- ข้อมูลใบเสร็จจะถูกเติมผ่าน JS -->
+            <div id="receiptPaper" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 18px; text-align: left; font-size: 0.88rem; color: #334155; margin-bottom: 20px; max-height: 380px; overflow-y: auto;">
+                <!-- ข้อมูลใบเสร็จและสถานะคำสั่งซื้อ จะถูกเติมผ่าน JS -->
             </div>
 
-            <button onclick="window.location.href='../index.html'" class="checkout-btn" style="width: 100%;">
-                <span>กลับสู่หน้าแรก</span>
-            </button>
+            <!-- กลุ่มปุ่มการทำงานหน้าใบเสร็จ -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- ปุ่มดึงไปยังหน้าดูรายละเอียดคำสั่งซื้อ -->
+                <button id="viewOrderDetailBtn" onclick="goToOrderDetailPage()" class="checkout-btn" style="width: 100%; background: var(--primary-color, #10b981); color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>ดูรายละเอียดคำสั่งซื้อ</span>
+                </button>
+
+                <!-- ปุ่มกลับสู่หน้าแรก -->
+                <button onclick="window.location.href='../index.html'" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; border-radius: 10px; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                    กลับสู่หน้าแรก
+                </button>
+            </div>
         </div>
     </div>
 
