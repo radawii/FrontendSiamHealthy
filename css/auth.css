@@ -19,7 +19,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 7rem 1rem;
+    padding: 2rem 1rem 7rem;
 }
 
 /* Auth Card Container & Tabs*/
@@ -61,9 +61,9 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* Form Body & Panels*/
+/* Form Body & Panels */
 .auth-body {
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .auth-panel {
@@ -135,15 +135,17 @@ body {
     text-decoration: underline;
 }
 
+/* Input Wrapper & Password Fixes */
 .input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .input-wrapper input {
     width: 100%;
-    padding: 12px 14px 12px 42px;
+    padding: 12px 44px 12px 42px;
     border: 1.5px solid #cbd5e1;
     border-radius: 12px;
     font-size: 0.95rem;
@@ -152,13 +154,15 @@ body {
     transition: all 0.2s ease;
 }
 
-.input-wrapper input[type="password"] {
-    padding-right: 42px;
-}
-
 .input-wrapper input:focus {
     border-color: #0f766e;
     box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+}
+
+/* ซ่อนไอคอนดวงตาเริ่มต้นของ Browser (Microsoft Edge / IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none !important;
 }
 
 .input-icon {
@@ -168,21 +172,87 @@ body {
     pointer-events: none;
 }
 
+/* จัดตำแหน่งปุ่ม Toggle Password ด้านขวา */
 .toggle-password {
     position: absolute;
     right: 12px;
-    background: none;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
     border: none;
+    outline: none;
     color: #94a3b8;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 4px;
+    transition: color 0.2s ease;
+    z-index: 2;
 }
 
 .toggle-password:hover {
+    color: #0f766e;
+}
+
+/* Password Real-time Validation Rules */
+.password-rules {
+    margin-top: 8px;
+    font-size: 0.8rem;
     color: #475569;
+}
+
+.rules-title {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.rules-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    color: #475569;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    transition: color 0.25s ease, font-weight 0.25s ease;
+}
+
+.rule-bullet {
+    font-weight: bold;
+    display: inline-block;
+    width: 12px;
+    text-align: center;
+}
+
+/* สถานะเมื่อพิมพ์ถูกต้องตามเงื่อนไข */
+.rule-item.valid {
+    color: #0d5c2e;
+    font-weight: 600;
+}
+
+.rule-item.valid .rule-bullet {
+    color: #0d5c2e;
+}
+
+/* สถานะเมื่อพิมพ์ผิดเงื่อนไข */
+.rule-item.invalid {
+    color: #ef4444;
+    font-weight: 500;
+}
+
+.rule-item.invalid .rule-bullet {
+    color: #ef4444;
 }
 
 /* Checkbox Options */
@@ -287,7 +357,6 @@ body {
     transform: scale(0.99);
 }
 
-/* Social Icon Sizing */
 .social-icon {
     width: 20px;
     height: 20px;

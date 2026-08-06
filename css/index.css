@@ -244,10 +244,6 @@ body {
   transform: translateX(4px);
 }
 
-.brand-tag:hover {
-  color: var(--primary-color);
-}
-
 .brand-heading {
   font-size: 1.50rem;
   font-weight: 700;
@@ -401,7 +397,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* 6. DISTRIBUTED GRID (3 - 2 - 3 - 2) & GLASSMORPHISM*/
+/* 6. DISTRIBUTED GRID & GLASSMORPHISM */
 .health-concern-section {
   max-width: 1240px;
   margin: 70px auto;
@@ -566,7 +562,7 @@ body {
   color: var(--primary-color);
 }
 
-/* 7. SECONDARY BANNER & TRUST BADGES (แบ่งแถว 3 3)*/
+/* 7. SECONDARY BANNER & TRUST BADGES */
 .banner2-section {
   max-width: 1240px;
   margin: 50px auto;
@@ -624,6 +620,11 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-sm);
+}
+
+.icon-sup .icon-image svg {
+  width: 48px;
+  height: 48px;
 }
 
 .icon-title {
@@ -752,8 +753,43 @@ body {
 }
 
 @media (max-width: 768px) {
+  .carousel-section {
+    padding: 12px 0 !important;
+  }
+
+  .carousel-container {
+    max-width: 100% !important;
+    padding: 0 10px !important;
+  }
+
+  .carousel-viewport {
+    aspect-ratio: 16 / 7.2 !important;
+    border-radius: 16px !important;
+  }
+
+  .carousel-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+  }
+
+  .carousel-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .prev-btn { left: 6px !important; }
+  .next-btn { right: 6px !important; }
+
+  .carousel-dots {
+    bottom: 10px !important;
+    padding: 4px 10px !important;
+  }
+
+  /* SECTIONS & GRID */
   .shop-section {
-    margin: 50px auto 40px auto;
+    margin: 40px auto 30px auto;
   }
 
   .section-title {
@@ -763,23 +799,6 @@ body {
   .brand-heading {
     font-size: 1.35rem;
   }
-
-  .carousel-container {
-    padding: 0 16px;
-  }
-
-  .carousel-viewport {
-    aspect-ratio: 16 / 9;
-    border-radius: 16px;
-  }
-
-  .carousel-btn {
-    width: 36px;
-    height: 36px;
-  }
-
-  .prev-btn { left: 4px; }
-  .next-btn { right: 4px; }
 
   .shop {
     grid-template-columns: repeat(2, 1fr);
@@ -807,46 +826,32 @@ body {
     white-space: normal;
     font-size: 0.8rem;
   }
+
+  .distributed-glass-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 12px;
+  }
+
+  .glass-card {
+    padding: 16px 12px;
+    min-height: 110px;
+  }
+
+  .glass-card .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .glass-card .card-desc {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
 }
 
 @media (max-width: 576px) {
-  .distributed-glass-grid {
-    grid-template-columns: 1fr;
-  }
-  
   .concern-main-title {
     font-size: 1.4rem;
   }
-}
-
-/* ขยายขนาดรูปไอคอน SVG */
-.icon-sup .icon-image svg {
-    width: 48px;
-    height: 48px;
-}
-
-/* สำหรับหน้าจอ Mobile ให้แสดงเป็น 2 คอลัมน์ */
-@media screen and (max-width: 768px) {
-    .distributed-glass-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px; /* ปรับระยะห่างระหว่างการ์ดตามความเหมาะสม */
-        padding: 0 12px;
-    }
-
-    /* ปรับขนาดตัวอักษรหรือความสูงในการ์ดเล็กน้อยเพื่อให้พอดีกับ 2 คอลัมน์บนมือถือ */
-    .glass-card {
-        padding: 16px 12px;
-        min-height: 110px;
-    }
-
-    .glass-card .card-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-    }
-
-    .glass-card .card-desc {
-        font-size: 0.75rem;
-        line-height: 1.3;
-    }
 }

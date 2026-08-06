@@ -754,3 +754,23 @@ body {
     border-radius: 16px;
   }
 }
+
+/* ปุ่มย้อนกลับบนมือถือ */
+@media (max-width: 992px) {
+  .step3-back-box {
+    width: 100% !important;
+    margin-top: 12px;
+    padding-top: 0 !important;
+    border-top: none !important;
+  }
+
+  .step3-back-box .add-gift-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 20px !important;
+    font-size: 0.95rem !important;
+    background: #ffffff;
+    border: 1px solid var(--primary-color);
+    box-shadow: var(--shadow-sm);
+  }
+}

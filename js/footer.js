@@ -31,11 +31,22 @@ class MyFooter extends HTMLElement {
             font-size: 0.78rem;
           }
         }
+
+        .mobile-break { display: none; }
+
+        @media screen and (max-width: 576px) {
+          .mobile-break { display: inline; }
+          .footer {
+            padding: 12px 16px;
+            margin-top: 20px;
+            font-size: 0.75rem;
+          }
+        }
       </style>
 
       <footer class="footer">
         <div class="footer-container">
-          <p>Copyright © 2026 Siam-Healthy. All rights reserved.</p>
+          <p>Copyright © 2026 Siam-Healthy.<br class="mobile-break"> All rights reserved.</p>
         </div>
       </footer>
     `;

@@ -721,6 +721,7 @@ ul.lv1 li::before {
     font-weight: 600;
     cursor: pointer;
     text-align: left;
+    color: #1e293b;
 }
 
 .accordion-item.solution-type .accordion-header {
@@ -1120,6 +1121,12 @@ ul.lv1 li b {
     transform: translateY(-50%) scale(1.1) !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
     color: #00581d;
+}
+
+#prevImgBtn, 
+#nextImgBtn {
+    color: #333 !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* PRODUCT ACTION BUTTONS (ปุ่มสั่งซื้อและตะกร้า) */
@@ -1737,4 +1744,188 @@ ul.lv1 .result-card-props li,
   .ingredient-card ul {
     font-size: 10.5px !important;
   }
+}
+
+@media (max-width: 768px) {
+    /* 1. ชื่อสินค้าหลัก และ ราคาสินค้าด้านบน */
+    #productName {
+        font-size: 28px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 8px !important;
+    }
+
+    .product-info .price {
+        font-size: 24px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .product-info .price s {
+        font-size: 16px !important;
+    }
+
+    .product-info p,
+    .benefit-item {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* 2. หัวข้อหลักทั้งหมด (H2) เช่น สัญญาณเตือน, ผลกระทบ, ผลลัพธ์, ส่วนผสม, รีวิว */
+    .container-detail > h2:not([style*="display: none"]),
+    .product-page + h2:not([style*="display: none"]),
+    .related-products-section h2,
+    .warning-right-content h2:not(:empty),
+    .review-container h2,
+    #ingredientTitle,
+    #resultTitle:not([style*="display: none"]),
+    #solutionTitle:not([style*="display: none"]) {
+        font-size: 18px !important;
+        padding: 8px 12px !important;
+        margin: 25px 0 15px 0 !important;
+        line-height: 1.4 !important;
+    }
+
+    /* 3. กล่องสาเหตุ / สัญญาณเตือน และ ทางแก้ (Accordion) */
+    .warning-layout-section {
+        margin: 30px 0 20px 0 !important;
+        gap: 20px !important;
+    }
+
+    .accordion-header {
+        font-size: 15px !important;
+        padding: 14px 16px !important;
+    }
+
+    .accordion-content {
+        font-size: 13.5px !important;
+        line-height: 1.6 !important;
+    }
+
+    .accordion-content ul {
+        margin-left: 15px !important;
+    }
+
+    /* 4. ส่วนผลกระทบ (Impact Section) */
+    .impact-section {
+        margin: 30px 0 !important;
+        padding: 20px 15px !important;
+    }
+
+    .impact-header-title {
+        font-size: 18px !important;
+    }
+
+    .impact-intro-text {
+        font-size: 13.5px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .impact-card-title {
+        font-size: 15px !important;
+    }
+
+    .impact-card-body {
+        font-size: 13px !important;
+    }
+
+    /* 5. ส่วนผลลัพธ์การใช้งาน (Result Cards / List) */
+    ul.lv1 li {
+        padding: 12px 14px 12px 45px !important;
+        font-size: 13.5px !important;
+    }
+
+    ul.lv1 li::before {
+        left: 12px !important;
+        top: 12px !important;
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
+    }
+
+    .result-card-title {
+        font-size: 15px !important;
+    }
+
+    ul.lv1 .result-card-props li,
+    .result-card-props li {
+        font-size: 13px !important;
+        padding: 10px 12px !important;
+    }
+
+    /* 6. ส่วนรีวิวผู้ใช้งาน (Reviews) */
+    .review-container {
+        padding: 16px !important;
+    }
+
+    .rating-big-num {
+        font-size: 38px !important;
+    }
+
+    .shopee-text {
+        font-size: 12px !important;
+    }
+
+    .review-text {
+        font-size: 13.5px !important;
+    }
+
+    .user-name {
+        font-size: 14px !important;
+    }
+
+    /* 7. ปุ่มสั่งซื้อสินค้า */
+    .buy-btn-black,
+    .product-buy button.buy {
+        font-size: 15px !important;
+        padding: 12px 24px !important;
+    }
+}
+
+/*  (sort)เรียงลำดับสินค้า */
+.shop-header select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: transparent;
+    border: 2px solid var(--primary-color, #0d5c2e);
+    border-radius: 50px;
+    padding: 8px 38px 8px 20px;
+
+    font-family: 'Prompt', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-color, #0d5c2e);
+
+    outline: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230d5c2e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px;
+}
+.shop-header select:hover {
+    background-color: var(--primary-color, #0d5c2e);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(13, 92, 46, 0.2);
+    transform: translateY(-2px);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+.shop-header select option {
+    background-color: #ffffff;
+    color: #334155;
+    font-weight: 500;
+    padding: 10px;
+}
+
+.swal2-container,
+.swal2-popup,
+.swal2-title,
+.swal2-html-container,
+.swal2-content,
+.swal2-confirm,
+.swal2-cancel {
+    font-family: 'Prompt', sans-serif !important;
 }

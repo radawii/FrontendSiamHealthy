@@ -7,12 +7,42 @@ document.addEventListener('DOMContentLoaded', () => {
   goToTypeStep(1);
 });
 
+// ย้ายตำแหน่งปุ่มย้อนกลับของ Step 3 บน Mobile ให้ไปอยู่ล่างสุด
+function adjustStep3BackButton() {
+  const backBox = document.querySelector('.step3-back-box');
+  const cartContainer = document.querySelector('.cart-container');
+  const step3Content = document.getElementById('step3-content');
+
+  if (!backBox || !cartContainer || !step3Content) return;
+
+  if (window.innerWidth <= 992) {
+    cartContainer.appendChild(backBox);
+  } else {
+    step3Content.appendChild(backBox);
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (currentStep === 3) {
+    adjustStep3BackButton();
+  }
+});
+
 function goToTypeStep(stepNumber) {
   const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
   const selectedItems = cart.filter(i => i.selected);
 
   if (stepNumber > 1 && selectedItems.length === 0) {
-    alert('กรุณาเลือกสินค้าในตะกร้าอย่างน้อย 1 รายการก่อนดำเนินการต่อ');
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'ยังไม่ได้เลือกสินค้า',
+        text: 'กรุณาเลือกสินค้าในตะกร้าอย่างน้อย 1 รายการก่อนดำเนินการ',
+        confirmButtonColor: '#0d5c2e'
+      });
+    } else {
+      alert('กรุณาเลือกสินค้าในตะกร้าอย่างน้อย 1 รายการก่อนดำเนินการ');
+    }
     return;
   }
 
@@ -39,9 +69,16 @@ function goToTypeStep(stepNumber) {
     if (cartContainer) cartContainer.classList.add('checkout-layout');
     if (summarySection) summarySection.style.display = 'flex';
     renderCheckoutReviewItems();
+
+    adjustStep3BackButton();
   } else {
     if (cartContainer) cartContainer.classList.remove('checkout-layout');
     if (summarySection) summarySection.style.display = 'none';
+
+    const backBox = document.querySelector('.step3-back-box');
+    if (backBox && step3 && backBox.parentElement !== step3) {
+      step3.appendChild(backBox);
+    }
   }
 
   const targetStep = document.getElementById(`step${stepNumber}-content`);
@@ -95,7 +132,7 @@ function validateAndGoToStep3() {
   }
 }
 
-// [ปรับปรุงฟังก์ชันคำนวณ]: คำนวณอัตโนมัติ ยอดรวมสินค้า + ค่าจัดส่ง - ส่วนลด + ภาษี VAT 7%
+// [ฟังก์ชันคำนวณ]: คำนวณอัตโนมัติ ยอดรวมสินค้า + ค่าจัดส่ง - ส่วนลด + ภาษี VAT 7%
 function calculateSummary() {
   const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
   const selectedItems = cart.filter(i => i.selected);
@@ -104,7 +141,6 @@ function calculateSummary() {
   const discount = subtotal > 0 ? 100 : 0;
   const shippingFee = 0; // จัดส่งฟรี
   
-  // คำนวณภาษี VAT 7%
   const taxableAmount = Math.max(0, subtotal - discount);
   const vat = taxableAmount * 0.07;
   const grandTotal = taxableAmount + shippingFee + vat;
@@ -130,11 +166,19 @@ async function processPayment() {
   const selectedItems = cart.filter(i => i.selected);
 
   if (selectedItems.length === 0) {
-    alert('ไม่พบรายการสินค้าที่เลือกชำระเงิน');
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'ไม่พบรายการสินค้า',
+        text: 'ไม่พบรายการสินค้าที่เลือกชำระเงิน',
+        confirmButtonColor: '#0d5c2e'
+      });
+    } else {
+      alert('ไม่พบรายการสินค้าที่เลือกชำระเงิน');
+    }
     return;
   }
 
-  // 1. ดึงข้อมูลผู้สั่งซื้อ
   const fullname = document.getElementById('fullname')?.value || 'คุณลูกค้า';
   const phone = document.getElementById('phone')?.value || '-';
   const email = document.getElementById('email')?.value || 'customer@example.com';
@@ -144,7 +188,6 @@ async function processPayment() {
   const province = document.getElementById('province')?.value || '';
   const zipcode = document.getElementById('zipcode')?.value || '';
 
-  // 2. ดึงช่องทางการชำระเงิน
   const selectedPaymentEl = document.querySelector('input[name="paymentMethod"]:checked');
   const paymentMethodVal = selectedPaymentEl ? selectedPaymentEl.value : 'promptpay';
 
@@ -156,20 +199,18 @@ async function processPayment() {
   };
   const paymentMethodText = paymentTextMap[paymentMethodVal] || 'โอนเงินชำระผ่านระบบ';
 
-  // 3. คำนวณยอดเงิน และสร้างเลขอ้างอิง
   const summary = calculateSummary();
   const transactionRef = 'TXN-' + Math.floor(10000000 + Math.random() * 90000000);
   const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-  latestCreatedOrderId = orderId; // บันทึกไว้ใช้ลิงก์ไปยังหน้ารายละเอียด
+  latestCreatedOrderId = orderId;
 
   const now = new Date();
   const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-  // 4. สร้างข้อมูลคำสั่งซื้อ พร้อมเปลี่ยนสถานะเป็น "ชำระเงินแล้ว" อัตโนมัติ
   const orderRecord = {
     orderId: orderId,
     transactionRef: transactionRef,
-    orderStatus: paymentMethodVal === 'cod' ? 'รอชำระเงินปลายทาง' : 'ชำระเงินแล้ว', // อัปเดตสถานะอัตโนมัติ
+    orderStatus: paymentMethodVal === 'cod' ? 'รอชำระเงินปลายทาง' : 'ชำระเงินแล้ว',
     paymentMethod: paymentMethodText,
     customer: {
       fullname,
@@ -182,12 +223,10 @@ async function processPayment() {
     timestamp: now.toISOString()
   };
 
-  // 5. บันทึกข้อมูลลงในระบบ CRM / Order Management (localStorage)
   const crmOrders = JSON.parse(localStorage.getItem('siam_healthy_crm_orders')) || [];
   crmOrders.push(orderRecord);
   localStorage.setItem('siam_healthy_crm_orders', JSON.stringify(crmOrders));
 
-  // 6. แสดงผล UI ใบเสร็จ
   const receiptPaper = document.getElementById('receiptPaper');
   if (receiptPaper) {
     receiptPaper.innerHTML = `
@@ -243,17 +282,14 @@ async function processPayment() {
     `;
   }
 
-  // 7. เคลียร์ตะกร้าสินค้า
   const remainingCart = cart.filter(i => !i.selected);
   localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
   updateCartBadge();
 
-  // 8. แสดง Modal
   const modal = document.getElementById('receiptModal');
   if (modal) modal.style.display = 'flex';
 }
 
-// ฟังก์ชันเปิดไปหน้าดูรายละเอียดคำสั่งซื้อ (Order Detail)
 function goToOrderDetailPage() {
   if (latestCreatedOrderId) {
     window.location.href = `./order-detail.html?orderId=${latestCreatedOrderId}`;
@@ -271,8 +307,19 @@ function renderCheckoutReviewItems() {
   const selectedItems = cart.filter(i => i.selected);
 
   if (selectedItems.length === 0) {
-    alert('กรุณาเลือกสินค้าในตะกร้าอย่างน้อย 1 รายการ');
-    goToTypeStep(1);
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'ยังไม่ได้เลือกสินค้า',
+        text: 'กรุณาเลือกสินค้าในตะกร้าอย่างน้อย 1 รายการ',
+        confirmButtonColor: '#0d5c2e'
+      }).then(() => {
+        goToTypeStep(1);
+      });
+    } else {
+      alert('กรุณาเลือกสินค้าในตะกร้าอย่างน้อย 1 รายการ');
+      goToTypeStep(1);
+    }
     return;
   }
 
@@ -331,10 +378,33 @@ function updateReviewQty(index, delta) {
   let cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
   if (cart[index]) {
     if (cart[index].quantity === 1 && delta === -1) {
-      if (confirm(`คุณต้องการลบ "${cart[index].name}" ออกจากรายการสั่งซื้อใช่หรือไม่?`)) {
-        cart.splice(index, 1);
-      } else {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'ยืนยันการลบรายการ',
+          text: `คุณต้องการลบ "${cart[index].name}" ออกจากรายการสั่งซื้อใช่หรือไม่?`,
+          showCancelButton: true,
+          confirmButtonColor: '#0d5c2e',
+          cancelButtonColor: '#64748b',
+          confirmButtonText: 'ยืนยัน',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            cart.splice(index, 1);
+            localStorage.setItem('siam_healthy_cart', JSON.stringify(cart));
+            renderCheckoutReviewItems();
+            calculateSummary();
+            updateCartBadge();
+            if (typeof renderCart === 'function') renderCart();
+          }
+        });
         return;
+      } else {
+        if (confirm(`คุณต้องการลบ "${cart[index].name}" ออกจากรายการสั่งซื้อใช่หรือไม่?`)) {
+          cart.splice(index, 1);
+        } else {
+          return;
+        }
       }
     } else {
       cart[index].quantity += delta;

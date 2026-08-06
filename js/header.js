@@ -1,5 +1,7 @@
 class MyHeader extends HTMLElement {
   connectedCallback() {
+    this.ensureSweetAlert2();
+
     this.innerHTML = `
       <header class="main-header">
         <div class="header-container">
@@ -31,16 +33,20 @@ class MyHeader extends HTMLElement {
                   <span>ตะกร้าของคุณ</span>
                 </a>
 
-                <!-- เปลี่ยนเป็น button เพื่อคุม Dropdown ของ Mobile -->
-                <button type="button" class="mobile-icon-link profile-toggle-btn">
-                  <div class="icon-wrapper">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                  </div>
-                  <span>โปรไฟล์</span>
-                </button>
+                <!-- Dropdown สำหรับ Mobile -->
+                <div class="profile-dropdown-wrapper">
+                  <button type="button" class="mobile-icon-link profile-toggle-btn">
+                    <div class="icon-wrapper">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <span class="profile-label">โปรไฟล์</span>
+                  </button>
+
+                  <div class="profile-menu-dropdown" id="mobileProfileDropdown"></div>
+                </div>
               </div>
             </nav>
 
@@ -63,7 +69,6 @@ class MyHeader extends HTMLElement {
                 <span class="cart-badge" style="display: none;"></span>
               </a>
 
-              <!-- เปลี่ยน <a> เป็น <button> สำหรับ Profile Desktop -->
               <div class="profile-dropdown-wrapper">
                 <button type="button" class="icon-btn profile-btn profile-toggle-btn" title="โปรไฟล์">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -72,17 +77,7 @@ class MyHeader extends HTMLElement {
                   </svg>
                 </button>
 
-                <!-- Dropdown Menu ที่เพิ่มเข้ามา -->
-                <div class="profile-menu-dropdown" id="profileDropdown">
-                  <a href="/login.html" class="profile-menu-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                    <span>เข้าสู่ระบบ / ลงทะเบียน</span>
-                  </a>
-                  <a href="/cart/orders.html" class="profile-menu-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <span>ดูประวัติการสั่งซื้อ</span>
-                  </a>
-                </div>
+                <div class="profile-menu-dropdown" id="desktopProfileDropdown"></div>
               </div>
             </div>
 
@@ -115,55 +110,186 @@ class MyHeader extends HTMLElement {
       </header>
     `;
 
+    this.renderProfileDropdown();
     this.initHamburgerMenu();
     this.initSearchToggle();
     this.initSearchSystem();
     this.initContactScroll();
-    this.initProfileMenu(); // เพิ่มการสแตนด์บายของ Profile Menu
-
-    // อัปเดตตัวเลขเมื่อโหลดหน้าเว็บ
+    this.initProfileMenu();
     this.updateCartBadge();
 
-    // รอดักจับ Event เมื่อมีการกดเพิ่มสินค้าในหน้า product
     window.addEventListener("cartUpdated", () => {
       this.updateCartBadge();
     });
+
+    window.addEventListener("authStateChanged", () => {
+      this.renderProfileDropdown();
+    });
   }
 
-  // ระบบเปิด-ปิด Profile Menu
+  // ฟังก์ชันโหลด SweetAlert2 CDN อัตโนมัติ
+  ensureSweetAlert2() {
+    if (typeof Swal === "undefined" && !document.getElementById("swal2-cdn-script")) {
+      const script = document.createElement("script");
+      script.id = "swal2-cdn-script";
+      script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
+      document.head.appendChild(script);
+    }
+  }
+
+  renderProfileDropdown() {
+    const isLoggedIn =
+      localStorage.getItem("siam_healthy_is_logged_in") === "true" ||
+      sessionStorage.getItem("siam_healthy_is_logged_in") === "true";
+
+    const desktopDropdown = this.querySelector("#desktopProfileDropdown");
+    const mobileDropdown = this.querySelector("#mobileProfileDropdown");
+
+    let menuHTML = "";
+
+    if (isLoggedIn) {
+      menuHTML = `
+        <a href="/cart/orders.html" class="profile-menu-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>ดูประวัติการสั่งซื้อ</span>
+        </a>
+        <a href="javascript:void(0);" class="profile-menu-item logout-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>ลงชื่อออก</span>
+        </a>
+      `;
+    } else {
+      menuHTML = `
+        <a href="/login.html" class="profile-menu-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          <span>เข้าสู่ระบบ / ลงทะเบียน</span>
+        </a>
+      `;
+    }
+
+    if (desktopDropdown) desktopDropdown.innerHTML = menuHTML;
+    if (mobileDropdown) mobileDropdown.innerHTML = menuHTML;
+
+    this.initLogoutHandler();
+  }
+
+  initLogoutHandler() {
+    const logoutBtns = this.querySelectorAll(".logout-btn");
+
+    logoutBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        // ตรวจสอบจนแน่ใจว่า Swal โหลดเสร็จเรียบร้อย
+        const triggerSwal = () => {
+          Swal.fire({
+            icon: "warning",
+            title: "ยืนยันการลงชื่อออก",
+            text: "คุณต้องการลงชื่อออกจากระบบใช่หรือไม่?",
+            showCancelButton: true,
+            confirmButtonColor: "#0d5c2e",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "ยืนยัน",
+            cancelButtonText: "ยกเลิก"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.processLogout();
+            }
+          });
+        };
+
+        if (typeof Swal !== "undefined") {
+          triggerSwal();
+        } else {
+          setTimeout(() => {
+            if (typeof Swal !== "undefined") {
+              triggerSwal();
+            } else if (confirm("คุณต้องการลงชื่อออกจากระบบใช่หรือไม่?")) {
+              this.processLogout();
+            }
+          }, 200);
+        }
+      });
+    });
+  }
+
+  processLogout() {
+    localStorage.removeItem("siam_healthy_user");
+    localStorage.removeItem("siam_healthy_is_logged_in");
+    sessionStorage.removeItem("siam_healthy_user");
+    sessionStorage.removeItem("siam_healthy_is_logged_in");
+
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        icon: "success",
+        title: "ลงชื่อออกสำเร็จ",
+        text: "ระบบได้ทำการลงชื่อออกจากบัญชีของคุณเรียบร้อยแล้ว",
+        confirmButtonColor: "#0d5c2e",
+        timer: 1800,
+        showConfirmButton: false
+      }).then(() => {
+        window.location.href = "/index.html";
+      });
+    } else {
+      window.location.href = "/index.html";
+    }
+  }
+
   initProfileMenu() {
     const toggleBtns = this.querySelectorAll(".profile-toggle-btn");
-    const dropdown = this.querySelector("#profileDropdown");
 
     toggleBtns.forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
-        dropdown.classList.toggle("active");
+
+        const wrapper = btn.closest(".profile-dropdown-wrapper");
+        const dropdown = wrapper ? wrapper.querySelector(".profile-menu-dropdown") : null;
+
+        this.querySelectorAll(".profile-menu-dropdown").forEach((d) => {
+          if (d !== dropdown) d.classList.remove("active");
+        });
+
+        if (dropdown) {
+          dropdown.classList.toggle("active");
+        }
       });
     });
 
-    // ปิด Menu เมื่อผู้ใช้กดคลิกที่บริเวณอื่นภายนอก Menu
     document.addEventListener("click", (e) => {
-      if (dropdown && dropdown.classList.contains("active")) {
+      this.querySelectorAll(".profile-menu-dropdown.active").forEach((dropdown) => {
         if (!this.contains(e.target)) {
           dropdown.classList.remove("active");
         }
-      }
+      });
     });
   }
 
   initContactScroll() {
     const contactBtn = this.querySelector('#contactNavBtn');
-    
+
     if (contactBtn) {
       contactBtn.addEventListener('click', (e) => {
         const targetSection = document.querySelector('contact-section') || document.querySelector('mega-footer');
-        
+
         if (targetSection) {
           e.preventDefault();
-          
+
           targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          
+
           const btn = this.querySelector("#hamburgerBtn");
           const menu = this.querySelector("#navMenu");
           if (btn) btn.classList.remove("active");
@@ -200,7 +326,7 @@ class MyHeader extends HTMLElement {
         menu.classList.toggle("active");
       });
 
-      this.querySelectorAll(".nav-tab, .mobile-icon-link").forEach((link) => {
+      this.querySelectorAll(".nav-tab, a.mobile-icon-link, .profile-menu-item").forEach((link) => {
         link.addEventListener("click", () => {
           btn.classList.remove("active");
           menu.classList.remove("active");
@@ -300,12 +426,12 @@ class MyHeader extends HTMLElement {
 
 customElements.define("my-header", MyHeader);
 
-window.addEventListener('load', () => {
-  if (window.location.hash === '#contact') {
-    const targetSection = document.querySelector('contact-section') || document.querySelector('mega-footer');
+window.addEventListener("load", () => {
+  if (window.location.hash === "#contact") {
+    const targetSection = document.querySelector("contact-section") || document.querySelector("mega-footer");
     if (targetSection) {
       setTimeout(() => {
-        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 500);
     }
   }
