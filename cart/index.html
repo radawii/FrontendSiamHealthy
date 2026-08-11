@@ -216,31 +216,29 @@
     </main>
 
     <!-- Modal ใบเสร็จรับเงิน  -->
+    <!-- Modal แสดงสถานะการชำระเงิน (Dynamic Status Modal) -->
     <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
         <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; position: relative; animation: modalPop 0.3s ease-out;">
             
-            <div style="width: 64px; height: 64px; background: #eef7f2; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <!-- Icon สถานะ -->
+            <div id="modalIconBox" style="width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                <!-- Render SVG via JS -->
             </div>
 
-            <h3 style="font-size: 1.3rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">ชำระเงินสำเร็จ</h3>
-            <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">ระบบได้ส่งใบยืนยันการชำระเงินเรียบร้อยแล้ว</p>
+            <!-- หัวข้อสถานะ -->
+            <h3 id="modalTitle" style="font-size: 1.3rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;"></h3>
+            <p id="modalSubtitle" style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;"></p>
 
+            <!-- ใบเสร็จ / รายละเอียดข้อผิดพลาด -->
             <div id="receiptPaper" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 18px; text-align: left; font-size: 0.88rem; color: #334155; margin-bottom: 20px; max-height: 380px; overflow-y: auto;">
-                <!-- ข้อมูลใบเสร็จและสถานะคำสั่งซื้อ จะถูกเติมผ่าน JS -->
+                <!-- Render Content via JS -->
             </div>
 
-            <!-- กลุ่มปุ่มการทำงานหน้าใบเสร็จ -->
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="viewOrderDetailBtn" onclick="goToOrderDetailPage()" class="checkout-btn" style="width: 100%; background: var(--primary-color, #10b981); color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    <span>ดูรายละเอียดคำสั่งซื้อ</span>
-                </button>
-
-                <button onclick="window.location.href='../index.html'" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; border-radius: 10px; font-weight: 500; cursor: pointer; transition: all 0.2s;">
-                    กลับสู่หน้าแรก
-                </button>
+            <!-- ปุ่ม Action ด้านล่าง -->
+            <div id="modalActionButtons" style="display: flex; flex-direction: column; gap: 10px;">
+                <!-- Render Buttons via JS -->
             </div>
+
         </div>
     </div>
 

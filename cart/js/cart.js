@@ -220,74 +220,27 @@ async function processPayment() {
     },
     items: selectedItems,
     summary: summary,
-    timestamp: now.toISOString()
+    timestamp: now.toISOString(),
+    dateStr: dateStr
   };
 
-  const crmOrders = JSON.parse(localStorage.getItem('siam_healthy_crm_orders')) || [];
-  crmOrders.push(orderRecord);
-  localStorage.setItem('siam_healthy_crm_orders', JSON.stringify(crmOrders));
+  // กำหนดสถานะการชำระเงินที่ต้องการแสดง ('success' | 'pending' | 'failed')
+  // เมื่อเชื่อมต่อกับ API หลังบ้าน ให้ปรับตัวแปรนี้ตามผลลัพธ์จาก Response API
+  const paymentStatus = 'success'; 
+  const errorMessage = 'วงเงินในบัตรไม่พอ หรือการเชื่อมต่อขัดข้อง'; // ใช้กรณี status === 'failed'
 
-  const receiptPaper = document.getElementById('receiptPaper');
-  if (receiptPaper) {
-    receiptPaper.innerHTML = `
-      <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 10px;">
-        <strong style="font-size: 1.05rem; color: #0f172a;">Siam-Healthy Official</strong><br>
-        <span style="font-size: 0.78rem; color: #64748b;">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</span><br>
-        <span style="font-size: 0.75rem; color: #94a3b8;">${dateStr}</span>
-      </div>
+  if (paymentStatus === 'success' || paymentStatus === 'pending') {
+    const crmOrders = JSON.parse(localStorage.getItem('siam_healthy_crm_orders')) || [];
+    crmOrders.push(orderRecord);
+    localStorage.setItem('siam_healthy_crm_orders', JSON.stringify(crmOrders));
 
-      <div style="background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; line-height: 1.5;">
-        <div><strong>เลขที่คำสั่งซื้อ:</strong> ${orderId}</div>
-        <div><strong>เลขอ้างอิงชำระเงิน (Ref):</strong> ${transactionRef}</div>
-        <div><strong>ช่องทางชำระเงิน:</strong> ${paymentMethodText}</div>
-        <div style="margin-top: 4px;">
-          <strong>สถานะคำสั่งซื้อ:</strong> 
-          <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
-            ${orderRecord.orderStatus}
-          </span>
-        </div>
-      </div>
-
-      <div style="margin-bottom: 10px; font-size: 0.82rem; line-height: 1.5;">
-        <strong>ผู้รับ:</strong> ${fullname} (${phone})<br>
-        <strong>ที่อยู่:</strong> ${address} ต.${subdistrict} อ.${district} จ.${province} ${zipcode}<br>
-        <strong style="color: #059669;">ส่งการยืนยันสำเร็จ:</strong> ทาง Email (${email}) และ SMS (${phone})
-      </div>
-
-      <div style="border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 8px;">
-        ${selectedItems.map(i => `
-          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
-            <span>${i.name} (x${i.quantity})</span>
-            <span>฿${(i.price * i.quantity).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-          </div>
-        `).join('')}
-      </div>
-
-      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
-        <span>ยอดรวมสินค้า:</span>
-        <span>฿${summary.subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px; color: #ef4444;">
-        <span>ส่วนลดคูปอง:</span>
-        <span>-฿${summary.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-      <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
-        <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
-        <span>฿${summary.vat.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-      <div style="font-size: 0.85rem; display: flex; justify-content: space-between; font-weight: 700; color: #059669; border-top: 1px solid #cbd5e1; padding-top: 6px; margin-top: 6px;">
-        <span>ยอดชำระสุทธิ:</span>
-        <span>฿${summary.grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-      </div>
-    `;
+    const remainingCart = cart.filter(i => !i.selected);
+    localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
+    updateCartBadge();
   }
 
-  const remainingCart = cart.filter(i => !i.selected);
-  localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
-  updateCartBadge();
-
-  const modal = document.getElementById('receiptModal');
-  if (modal) modal.style.display = 'flex';
+  // เรียกใช้ Modal แสดงผลตามสถานะ
+  renderPaymentStatusModal(paymentStatus, orderRecord, errorMessage);
 }
 
 function goToOrderDetailPage() {
@@ -584,4 +537,166 @@ function updateCartBadge() {
   document.querySelectorAll('.cart-badge').forEach(badge => {
     badge.innerText = totalCount;
   });
+}
+
+// 1. ฟังก์ชันจัดการเปิดแสดง Modal ตามสถานะการชำระเงิน
+// Status Supported: 'success' | 'pending' | 'failed'
+function renderPaymentStatusModal(status, orderRecord, errorMessage = '') {
+  const modal = document.getElementById('receiptModal');
+  const iconBox = document.getElementById('modalIconBox');
+  const titleEl = document.getElementById('modalTitle');
+  const subtitleEl = document.getElementById('modalSubtitle');
+  const paperEl = document.getElementById('receiptPaper');
+  const actionBtnsBox = document.getElementById('modalActionButtons');
+
+  if (!modal) return;
+
+  if (status === 'success') {
+    // CASE 1: ชำระเงินสำเร็จ (แสดงใบเสร็จรับเงิน)
+    iconBox.style.background = '#eef7f2';
+    iconBox.style.color = '#10b981';
+    iconBox.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+    titleEl.innerText = 'ชำระเงินสำเร็จ';
+    subtitleEl.innerText = 'ระบบได้ส่งใบยืนยันการชำระเงินเรียบร้อยแล้ว';
+
+    paperEl.style.display = 'block';
+    paperEl.innerHTML = buildReceiptPaperHTML(orderRecord);
+
+    actionBtnsBox.innerHTML = `
+      <button id="viewOrderDetailBtn" onclick="goToOrderDetailPage()" class="checkout-btn" style="width: 100%; background: var(--primary-color, #0d5c2e); color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span>ดูรายละเอียดคำสั่งซื้อ</span>
+      </button>
+      <button onclick="window.location.href='../index.html'" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; border-radius: 10px; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+        กลับสู่หน้าแรก
+      </button>
+    `;
+
+  } else if (status === 'pending') {
+    // CASE 2: กำลังตรวจสอบการชำระเงิน
+    iconBox.style.background = '#fef3c7';
+    iconBox.style.color = '#d97706';
+    iconBox.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`;
+
+    titleEl.innerText = 'กำลังตรวจสอบการชำระเงิน';
+    subtitleEl.innerText = 'ระบบกำลังรอการยืนยันยอดเงินจากธนาคาร/ผู้ให้บริการ';
+
+    paperEl.style.display = 'block';
+    paperEl.innerHTML = buildReceiptPaperHTML(orderRecord);
+
+    actionBtnsBox.innerHTML = `
+      <button onclick="goToOrderDetailPage()" class="checkout-btn" style="width: 100%; background: var(--primary-color, #0d5c2e); color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <span>ติดตามสถานะคำสั่งซื้อ</span>
+      </button>
+      <button onclick="closeReceiptModal()" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; border-radius: 10px; font-weight: 500; cursor: pointer;">
+        ปิดหน้าต่างนี้
+      </button>
+    `;
+
+  } else if (status === 'failed') {
+    // CASE 3: ชำระเงินไม่สำเร็จ
+    iconBox.style.background = '#fef2f2';
+    iconBox.style.color = '#ef4444';
+    iconBox.innerHTML = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+
+    titleEl.innerText = 'ชำระเงินไม่สำเร็จ';
+    subtitleEl.innerText = 'ขออภัย ไม่สามารถทำรายการชำระเงินได้ในขณะนี้';
+
+    paperEl.style.display = 'block';
+    paperEl.innerHTML = `
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-weight: 600; color: #ef4444; font-size: 0.95rem; margin-bottom: 6px;">
+          สาเหตุที่ไม่สำเร็จ:
+        </div>
+        <div style="color: #475569; font-size: 0.88rem; background: #ffffff; padding: 10px 12px; border-radius: 8px;">
+          ${errorMessage || 'วงเงินในบัตรไม่พอ หรือการเชื่อมต่อกับระบบชำระเงินขัดข้อง (Timeout)'}
+        </div>
+        <div style="margin-top: 12px; font-size: 0.8rem; color: #94a3b8;">
+          เลขที่คำสั่งซื้ออ้างอิง: <strong>${orderRecord.orderId}</strong>
+        </div>
+      </div>
+    `;
+
+    actionBtnsBox.innerHTML = `
+      <button onclick="retryPaymentProcess()" class="checkout-btn" style="width: 100%; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        <span>ลองชำระเงินอีกครั้ง</span>
+      </button>
+      <button onclick="closeReceiptModal()" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; background: transparent; color: #64748b; border-radius: 10px; font-weight: 500; cursor: pointer;">
+        เปลี่ยนช่องทางชำระเงิน
+      </button>
+    `;
+  }
+
+  modal.style.display = 'flex';
+}
+
+// ฟังก์ชันสร้างข้อความ HTML ใบเสร็จ (ใช้ร่วมกันทั้ง Success และ Pending)
+function buildReceiptPaperHTML(orderRecord) {
+  const { orderId, transactionRef, paymentMethod, orderStatus, customer, items, summary, dateStr } = orderRecord;
+  
+  return `
+    <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 10px;">
+      <strong style="font-size: 1.05rem; color: #0f172a;">Siam-Healthy Official</strong><br>
+      <span style="font-size: 0.78rem; color: #64748b;">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</span><br>
+      <span style="font-size: 0.75rem; color: #94a3b8;">${dateStr}</span>
+    </div>
+
+    <div style="background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; line-height: 1.5;">
+      <div><strong>เลขที่คำสั่งซื้อ:</strong> ${orderId}</div>
+      <div><strong>เลขอ้างอิงชำระเงิน (Ref):</strong> ${transactionRef}</div>
+      <div><strong>ช่องทางชำระเงิน:</strong> ${paymentMethod}</div>
+      <div style="margin-top: 4px;">
+        <strong>สถานะคำสั่งซื้อ:</strong> 
+        <span style="background: ${orderStatus === 'ชำระเงินแล้ว' ? '#dcfce7' : '#fef3c7'}; color: ${orderStatus === 'ชำระเงินแล้ว' ? '#166534' : '#92400e'}; padding: 2px 8px; border-radius: 4px; font-weight: 600;">
+          ${orderStatus}
+        </span>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 10px; font-size: 0.82rem; line-height: 1.5;">
+      <strong>ผู้รับ:</strong> ${customer.fullname} (${customer.phone})<br>
+      <strong>ที่อยู่:</strong> ${customer.address}<br>
+      <strong style="color: #059669;">แจ้งเตือนระบบ:</strong> ทาง Email (${customer.email}) และ SMS (${customer.phone})
+    </div>
+
+    <div style="border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px; margin-bottom: 8px;">
+      ${items.map(i => `
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;">
+          <span>${i.name} (x${i.quantity})</span>
+          <span>฿${(i.price * i.quantity).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
+      <span>ยอดรวมสินค้า:</span>
+      <span>฿${summary.subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+    </div>
+    <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px; color: #ef4444;">
+      <span>ส่วนลดคูปอง:</span>
+      <span>-฿${summary.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+    </div>
+    <div style="font-size: 0.82rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
+      <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+      <span>฿${summary.vat.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+    </div>
+    <div style="font-size: 0.85rem; display: flex; justify-content: space-between; font-weight: 700; color: #059669; border-top: 1px solid #cbd5e1; padding-top: 6px; margin-top: 6px;">
+      <span>ยอดชำระสุทธิ:</span>
+      <span>฿${summary.grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+    </div>
+  `;
+}
+
+// Helper Functions สำหรับการปิดและลองชำระเงินใหม่
+function closeReceiptModal() {
+  const modal = document.getElementById('receiptModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function retryPaymentProcess() {
+  closeReceiptModal();
+  // รันกระบวนการชำระเงินอีกครั้ง
+  processPayment();
 }
