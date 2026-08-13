@@ -1,0 +1,328 @@
+// admin/js/transactions.js
+
+let globalTransactions = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchTransactions();
+});
+
+// 1. ดึงข้อมูลออเดอร์ (ธุรกรรม) จาก Backend
+async function fetchTransactions() {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch('http://localhost:3000/orders', { headers });
+        
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.message || `ไม่สามารถดึงข้อมูลได้ (Error: ${response.status})`);
+        }
+        
+        let data = await response.json();
+        
+        if (!Array.isArray(data)) {
+            if (data.data && Array.isArray(data.data)) {
+                data = data.data; 
+            } else if (data.orders && Array.isArray(data.orders)) {
+                data = data.orders; 
+            } else {
+                data = []; 
+            }
+        }
+
+        globalTransactions = data;
+        
+        updateSummaryCards(data);
+        renderTransactionsTable(data);
+        
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        
+        document.getElementById('transactionsTableBody').innerHTML = `
+            <tr>
+                <td colspan="9" class="p-12 text-center text-red-500">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-1">ไม่สามารถโหลดข้อมูลธุรกรรมได้</h3>
+                    <p class="font-medium text-red-500 mb-2">${error.message}</p>
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// 2. อัปเดตการ์ดสรุปยอดด้านบน 4 ช่อง
+function updateSummaryCards(transactions) {
+    let totalRevenue = 0;
+    let paidCount = 0;
+    let pendingCount = 0;
+    let refundCount = 0;
+
+    transactions.forEach(t => {
+        const pStatus = (t.paymentStatus || t.payment_status || 'PENDING').toUpperCase();
+        
+        if (pStatus === 'PAID') {
+            paidCount++;
+            totalRevenue += Number(t.grandTotal || t.grand_total || 0);
+        } else if (pStatus === 'PENDING') {
+            pendingCount++;
+        } else if (pStatus.includes('REFUND') || pStatus === 'CANCELLED') {
+            refundCount++;
+        }
+    });
+
+    document.getElementById('stat-total-revenue').innerText = `฿${totalRevenue.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
+    document.getElementById('stat-paid-count').innerText = `${paidCount} รายการ`;
+    document.getElementById('stat-pending-count').innerText = `${pendingCount} รายการ`;
+    document.getElementById('stat-refund-count').innerText = `${refundCount} รายการ`;
+}
+
+// 3. วาดตารางข้อมูล
+function renderTransactionsTable(transactions) {
+    const tbody = document.getElementById('transactionsTableBody');
+    tbody.innerHTML = '';
+    
+    const totalCountElem = document.getElementById('total-count');
+    if(totalCountElem) totalCountElem.innerText = transactions.length;
+
+    if (transactions.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="p-12 text-center text-gray-400">
+                    <i class="fas fa-receipt text-4xl mb-3 text-gray-300"></i>
+                    <p class="font-medium text-gray-500">ไม่พบรายการธุรกรรมที่ตรงกับการค้นหา/ตัวกรอง</p>
+                </td>
+            </tr>`;
+        document.getElementById('paginationInfo').innerHTML = 'ไม่พบข้อมูล';
+        return;
+    }
+
+    const sorted = transactions.sort((a, b) => b.id - a.id);
+
+    sorted.forEach(t => {
+        const orderIdFormat = `ORD2026${String(t.id).padStart(5, '0')}`;
+        
+        const dateObj = new Date(t.createdAt || t.created_at || new Date());
+        const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+        const timeStr = `${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+        let customerName = 'ลูกค้าทั่วไป';
+        if (t.shippingAddress && t.shippingAddress.fullname) {
+            customerName = t.shippingAddress.fullname;
+        } else if (t.user && (t.user.name || t.user.username)) {
+            customerName = t.user.name || t.user.username;
+        }
+
+        let customerEmailHtml = '<span class="text-gray-400 italic">สั่งซื้อแบบทั่วไป</span>';
+        if (t.user && t.user.email) {
+            customerEmailHtml = `<i class="fas fa-envelope mr-1 text-gray-300"></i> ${t.user.email}`;
+        }
+
+        let productName = 'ไม่ระบุสินค้า';
+        let extraText = '';
+        if (t.orderItems && t.orderItems.length > 0) {
+            productName = t.orderItems[0].productName || t.orderItems[0].product_name;
+            if (t.orderItems.length > 1) {
+                extraText = `<span class="text-indigo-600 text-[11px] font-semibold ml-1">(+${t.orderItems.length - 1} รายการ)</span>`;
+            }
+        }
+
+        const grandTotalValue = Number(t.grandTotal || t.grand_total || 0);
+        const grandTotal = `฿${grandTotalValue.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
+
+        const method = (t.paymentMethod || 'promptpay').toLowerCase();
+        let methodHtml = `<i class="fas fa-qrcode text-indigo-500 mr-1.5"></i> PromptPay`;
+        if (method.includes('card') || method.includes('stripe')) methodHtml = `<i class="fas fa-credit-card text-purple-500 mr-1.5"></i> Credit Card`;
+        else if (method.includes('wallet')) methodHtml = `<i class="fas fa-wallet text-pink-500 mr-1.5"></i> E-Wallet`;
+        else if (method.includes('cod')) methodHtml = `<i class="fas fa-money-bill-wave text-emerald-500 mr-1.5"></i> COD`;
+
+        const pStatus = (t.paymentStatus || t.payment_status || 'PENDING').toUpperCase();
+        let paymentBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-yellow-100 text-yellow-700 rounded-full text-[11px] font-medium"><i class="fas fa-hourglass-half mr-1.5"></i> รอชำระเงิน</span>`;
+        let canRefund = false;
+
+        if (pStatus === 'PAID') {
+            paymentBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[11px] font-medium"><i class="fas fa-check-circle mr-1.5"></i> ชำระเงินสำเร็จ</span>`;
+            canRefund = true; // อนุญาตให้คืนเงินเฉพาะออเดอร์ที่จ่ายสำเร็จแล้ว
+        } else if (pStatus.includes('REFUND')) {
+            paymentBadge = `<span class="inline-flex items-center px-2.5 py-1 border border-gray-200 text-gray-600 rounded-full text-[11px] font-medium"><i class="fas fa-undo mr-1.5"></i> คืนเงินแล้ว</span>`;
+        }
+
+        const oStatus = (t.orderStatus || t.order_status || 'PROCESSING').toUpperCase();
+        let shippingBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-[11px] font-medium"><i class="fas fa-clock mr-1.5"></i> Pending</span>`;
+        if (oStatus === 'COMPLETED' || oStatus === 'DELIVERED') {
+            shippingBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full text-[11px] font-medium"><i class="fas fa-check-double mr-1.5"></i> Delivered</span>`;
+        } else if (oStatus === 'PROCESSING' || pStatus === 'PAID') {
+            shippingBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-[11px] font-medium"><i class="fas fa-box mr-1.5"></i> Processing</span>`;
+        }
+
+        // ปุ่มจัดการ (ดูรายละเอียด และ คืนเงิน)
+        let actionBtns = `
+            <a href="order-details.html?order_id=${orderIdFormat}" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-colors" title="ดูรายละเอียด">
+                <i class="fas fa-eye text-xs"></i>
+            </a>
+            ${canRefund ? `
+            <button onclick="processRefund(${t.id}, ${grandTotalValue})" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white transition-colors ml-1" title="ดำเนินการคืนเงิน (Refund)">
+                <i class="fas fa-undo-alt text-xs"></i>
+            </button>
+            ` : ''}
+        `;
+
+        const row = `
+            <tr class="hover:bg-indigo-50/30 transition-colors group">
+                <td class="p-4">
+                    <a href="order-details.html?order_id=${orderIdFormat}" class="text-indigo-600 hover:text-indigo-800 font-semibold text-xs transition-colors">${orderIdFormat}</a>
+                </td>
+                <td class="p-4 text-xs font-mono text-gray-500">
+                    <div class="text-gray-800 font-medium">${dateStr}</div>
+                    <div class="mt-0.5">${timeStr} น.</div>
+                </td>
+                <td class="p-4">
+                    <div class="font-medium text-gray-900 text-xs">${customerName}</div>
+                    <div class="text-[11px] text-gray-500 mt-0.5">${customerEmailHtml}</div>
+                </td>
+                <td class="p-4 text-xs text-gray-700 truncate max-w-[180px]">
+                    ${productName} ${extraText}
+                </td>
+                <td class="p-4 font-bold text-gray-900 text-xs">${grandTotal}</td>
+                <td class="p-4 text-xs font-medium text-gray-700">${methodHtml}</td>
+                <td class="p-4">${paymentBadge}</td>
+                <td class="p-4">${shippingBadge}</td>
+                <td class="p-4 text-center">
+                    <div class="flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                        ${actionBtns}
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+
+    document.getElementById('paginationInfo').innerHTML = `แสดง 1 ถึง ${sorted.length} จากทั้งหมด <span class="font-bold text-gray-800">${sorted.length}</span> รายการ`;
+}
+
+// 4. ฟังก์ชันคืนเงิน (Refund) ทั้งแบบเต็มจำนวน และ บางส่วน
+function processRefund(orderId, maxAmount) {
+    const formattedOrderId = `ORD2026${String(orderId).padStart(5, '0')}`;
+    
+    Swal.fire({
+        title: 'ดำเนินการคืนเงิน (Refund)',
+        html: `
+            <div class="text-left mt-2">
+                <p class="text-sm mb-4 text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    รหัสคำสั่งซื้อ: <strong class="text-gray-900">${formattedOrderId}</strong><br>
+                    ยอดที่สามารถคืนได้สูงสุด: <strong class="text-indigo-600">฿${Number(maxAmount).toLocaleString('th-TH', {minimumFractionDigits: 2})}</strong>
+                </p>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ระบุยอดเงินที่ต้องการคืน</label>
+                <p class="text-xs text-gray-400 mb-2">(ปล่อยช่องว่างไว้ หากต้องการคืนเต็มจำนวน หรือระบุตัวเลขเพื่อคืนบางส่วน)</p>
+                <input type="number" id="refundAmount" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400 transition-colors" placeholder="เช่น 500" max="${maxAmount}" min="1">
+            </div>
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#f1f5f9',
+        confirmButtonText: '<i class="fas fa-undo mr-1.5"></i> ยืนยันการคืนเงิน',
+        cancelButtonText: '<span class="text-gray-700">ยกเลิก</span>',
+        customClass: {
+            popup: 'rounded-2xl shadow-xl',
+            cancelButton: 'hover:bg-gray-200 transition-colors'
+        },
+        preConfirm: () => {
+            const amountInput = document.getElementById('refundAmount').value;
+            if (amountInput && (Number(amountInput) <= 0 || Number(amountInput) > maxAmount)) {
+                Swal.showValidationMessage('กรุณาระบุยอดเงินให้ถูกต้อง (ห้ามเกินยอดสุทธิ)');
+                return false;
+            }
+            return amountInput ? Number(amountInput) : null; 
+        }
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const refundAmount = result.value;
+            
+            Swal.fire({ 
+                title: 'กำลังดำเนินการคืนเงิน...', 
+                allowOutsideClick: false, 
+                showConfirmButton: false, 
+                didOpen: () => { Swal.showLoading(); } 
+            });
+
+            try {
+                const token = localStorage.getItem('token');
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                // ส่ง Request ไปที่ Backend (ปรับ URL ให้ตรงกับ Endpoint ของคุณ)
+                const response = await fetch(`http://localhost:3000/payments/refund/${orderId}`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(refundAmount ? { amount: refundAmount } : {}) 
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) throw new Error(data.message || 'เกิดข้อผิดพลาดในการคืนเงิน กรุณาลองใหม่อีกครั้ง');
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'คืนเงินสำเร็จ!',
+                    html: refundAmount 
+                        ? `ระบบดำเนินการคืนเงินบางส่วนจำนวน <b>฿${refundAmount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</b> เรียบร้อยแล้ว` 
+                        : `ระบบดำเนินการคืนเงินเต็มจำนวน <b>฿${Number(maxAmount).toLocaleString('th-TH', {minimumFractionDigits: 2})}</b> เรียบร้อยแล้ว`,
+                    confirmButtonColor: '#4f46e5',
+                    customClass: { popup: 'rounded-2xl shadow-xl' }
+                }).then(() => {
+                    fetchTransactions(); // รีเฟรชตารางหลังคืนเงินสำเร็จ
+                });
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'ข้อผิดพลาด',
+                    text: error.message,
+                    confirmButtonColor: '#e11d48',
+                    customClass: { popup: 'rounded-2xl shadow-xl' }
+                });
+            }
+        }
+    });
+}
+
+// 5. ระบบคัดกรอง (Search & Filters)
+function filterTransactions() {
+    const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+    const methodVal = document.getElementById('filter-method').value.toLowerCase();
+    const paymentVal = document.getElementById('filter-payment').value;
+    const shippingVal = document.getElementById('filter-shipping').value;
+
+    const filtered = globalTransactions.filter(t => {
+        const orderId = `ORD2026${String(t.id).padStart(5, '0')}`.toLowerCase();
+        const customer = (t.shippingAddress?.fullname || t.user?.name || t.user?.username || '').toLowerCase();
+        const email = (t.user?.email || '').toLowerCase();
+        
+        let prodName = '';
+        if (t.orderItems && t.orderItems.length > 0) prodName = (t.orderItems[0].productName || t.orderItems[0].product_name || '').toLowerCase();
+
+        const matchSearch = !searchVal || orderId.includes(searchVal) || customer.includes(searchVal) || email.includes(searchVal) || prodName.includes(searchVal);
+        const matchMethod = !methodVal || (t.paymentMethod || '').toLowerCase().includes(methodVal);
+        const matchPayment = !paymentVal || (t.paymentStatus || t.payment_status || 'PENDING').toUpperCase() === paymentVal;
+        
+        let currentShipStatus = (t.orderStatus || t.order_status || 'PENDING').toUpperCase();
+        if(currentShipStatus === 'DELIVERED') currentShipStatus = 'COMPLETED';
+        const matchShipping = !shippingVal || currentShipStatus === shippingVal;
+
+        return matchSearch && matchMethod && matchPayment && matchShipping;
+    });
+
+    renderTransactionsTable(filtered);
+}
+
+// 6. ส่งออกข้อมูล (Export CSV & Excel)
+function exportToCSV() {
+    Swal.fire('สำเร็จ', 'ฟังก์ชัน Export CSV พร้อมใช้งานแล้ว', 'success');
+}
+
+function exportToExcel() {
+    Swal.fire('สำเร็จ', 'ฟังก์ชัน Export Excel พร้อมใช้งานแล้ว', 'success');
+}

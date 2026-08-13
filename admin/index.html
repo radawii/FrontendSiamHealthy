@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ภาพรวมระบบ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 สำหรับแจ้งเตือน Popup -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        body { font-family: 'Prompt', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <!-- Container สำหรับดึง Sidebar จาก js/sidebar.js มาแสดง -->
+    <div id="sidebar-container"></div>
+
+    
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Top Navbar -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <button class="sm:hidden text-gray-600 focus:outline-none mr-4">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold text-gray-800">ภาพรวมระบบ</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 border-l pl-4 border-gray-200">
+                    <span class="text-sm text-gray-600 hidden md:inline">ผู้ดูแลระบบ (Admin)</span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=4F46E5&color=fff" alt="Admin" class="w-10 h-10 rounded-full">
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-6 space-y-6">
+            <!-- Stat Cards (5 การ์ด) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <!-- Card 1: ยอดขายวันนี้ -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-medium text-gray-500">ยอดขายวันนี้</p>
+                    <div class="flex justify-between items-end mt-2">
+                        <h3 id="statTodaySales" class="text-2xl font-bold text-gray-800">฿0.00</h3>
+                        <i class="fas fa-money-bill-wave text-green-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2: คำสั่งซื้อใหม่ -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-medium text-gray-500">คำสั่งซื้อใหม่</p>
+                    <div class="flex justify-between items-end mt-2">
+                        <h3 id="statNewOrders" class="text-2xl font-bold text-gray-800">0</h3>
+                        <i class="fas fa-shopping-bag text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3: รอจัดส่ง -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-medium text-gray-500">รอจัดส่ง</p>
+                    <div class="flex justify-between items-end mt-2">
+                        <h3 id="statPendingShipment" class="text-2xl font-bold text-gray-800">0</h3>
+                        <i class="fas fa-truck text-orange-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Card 4: จัดส่งสำเร็จแล้ว -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-medium text-gray-500">จัดส่งสำเร็จแล้ว</p>
+                    <div class="flex justify-between items-end mt-2">
+                        <h3 id="statCompletedShipment" class="text-2xl font-bold text-gray-800">0</h3>
+                        <i class="fas fa-check-circle text-emerald-500 text-xl"></i>
+                    </div>
+                </div>
+
+                <!-- Card 5: ลูกค้าทั้งหมด -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-xs font-medium text-gray-500">ลูกค้าทั้งหมด</p>
+                    <div class="flex justify-between items-end mt-2">
+                        <h3 id="statTotalCustomers" class="text-2xl font-bold text-gray-800">0</h3>
+                        <i class="fas fa-users text-purple-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-semibold text-gray-800 text-base">คำสั่งซื้อล่าสุด (Recent Orders)</h3>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="exportToCSV()" class="text-sm bg-green-500 hover:bg-green-600 text-white py-1.5 px-3 rounded-md transition duration-200 font-medium shadow-sm flex items-center">
+                            <i class="fas fa-file-csv mr-1.5"></i> Export CSV
+                        </button>
+                        <a href="transactions.html" class="text-sm text-indigo-600 hover:underline font-medium">ดูทั้งหมด</a>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+                                <th class="p-4 font-semibold">รหัสสั่งซื้อ</th>
+                                <th class="p-4 font-semibold">วันที่ทำรายการ</th>
+                                <th class="p-4 font-semibold">ลูกค้า</th>
+                                <th class="p-4 font-semibold">ชื่อสินค้า</th>
+                                <th class="p-4 font-semibold">ยอดสุทธิ</th>
+                                <th class="p-4 font-semibold">ช่องทางชำระเงิน</th>
+                                <th class="p-4 font-semibold">สถานะ</th>
+                                <th class="p-4 font-semibold">สถานะการจัดส่ง</th>
+                                <th class="p-4 font-semibold text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="text-sm text-gray-700 divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="9" class="p-8 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i> กำลังโหลดข้อมูลคำสั่งซื้อ...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
+                    <div id="paginationInfo">แสดงข้อมูลคำสั่งซื้อล่าสุด</div>
+                    <div class="flex items-center space-x-1">
+                        <button class="px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-medium">1</button>
+                        <button class="px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- ดึงไฟล์ JavaScript ทำงาน -->
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/notifications.js"></script>
+</body>
+</html>

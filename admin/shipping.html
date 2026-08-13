@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - จัดการที่อยู่จัดส่ง</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            opacity: 0; /* ซ่อนไว้ก่อนสำหรับทำ Fade-in */
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Custom Scrollbar สำหรับตาราง */
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+
+<body class="bg-slate-50 flex h-screen overflow-hidden">
+
+    <!-- 🟢 Container สำหรับแสดง Sidebar จาก sidebar.js -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Top Navbar -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center z-10 sticky top-0 border-b border-gray-100">
+            <div class="flex items-center">
+                <button class="sm:hidden text-gray-600 focus:outline-none mr-4">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold text-gray-800">จัดการข้อมูลที่อยู่จัดส่ง</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 border-l pl-4 border-gray-200">
+                    <span class="text-sm text-gray-600 hidden md:inline">ผู้ดูแลระบบ (Admin)</span>
+                    <div class="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                        AD
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area (เอา max-w-7xl mx-auto ออกเพื่อให้แสดงเต็มจอ) -->
+        <div class="p-6 w-full space-y-6 flex-1">
+
+            <!-- Search Bar Area -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="relative w-full lg:max-w-lg">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" onkeyup="searchShipping()" placeholder="ค้นหา รหัสสั่งซื้อ, ชื่อลูกค้า, เบอร์โทร, จังหวัด..." 
+                        class="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-lg focus:bg-white focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 outline-none transition-all text-sm">
+                </div>
+                
+                <!-- Filters -->
+                <div class="flex gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
+                    <select class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 outline-none focus:ring-2 focus:ring-emerald-100 min-w-[140px]">
+                        <option>จังหวัด: ทั้งหมด</option>
+                    </select>
+                    <select class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 outline-none focus:ring-2 focus:ring-emerald-100 min-w-[140px]">
+                        <option>วันที่: ทั้งหมด</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Shipping Table Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-5 border-b border-gray-100 bg-white">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        ประวัติรายการที่อยู่จัดส่ง 
+                        <span id="total-count" class="ml-2 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">0 รายการ</span>
+                    </h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
+                        <thead>
+                            <tr class="bg-white border-b border-gray-200 text-gray-500 text-xs uppercase tracking-wider">
+                                <th class="p-5 font-semibold w-48">รหัสที่อยู่ / อ้างอิง</th>
+                                <th class="p-5 font-semibold w-56">ผู้รับสินค้า</th>
+                                <th class="p-5 font-semibold">ที่อยู่จัดส่งอย่างละเอียด</th>
+                                <th class="p-5 font-semibold w-40">วันที่บันทึก</th>
+                                <th class="p-5 font-semibold text-center w-28">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shippingTableBody" class="text-sm text-gray-700 divide-y divide-gray-100">
+                            <tr>
+                                <td colspan="5" class="p-12 text-center text-gray-400">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-3 text-emerald-500"></i>
+                                    <p class="font-medium text-gray-500">กำลังโหลดข้อมูลที่อยู่จัดส่ง...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div class="p-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500 bg-gray-50/50" id="paginationInfo">
+                    <span>กำลังประมวลผลข้อมูล...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal สำหรับแก้ไขที่อยู่จัดส่ง -->
+    <div id="editShippingModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-5">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    แก้ไขที่อยู่จัดส่ง
+                </h3>
+                <button onclick="closeEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="editShippingForm" onsubmit="submitEditForm(event)" class="space-y-4 text-sm text-gray-700">
+                <input type="hidden" id="edit-id">
+                
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4 flex items-center gap-2 text-emerald-700 font-medium">
+                    <i class="fas fa-hashtag text-emerald-400"></i> รหัสอ้างอิง: <span id="modal-ship-id"></span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1.5">ชื่อ-นามสกุลผู้รับ</label>
+                        <input type="text" id="edit-fullname" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1.5">เบอร์โทรศัพท์</label>
+                        <input type="text" id="edit-phone" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1.5">ที่อยู่ (บ้านเลขที่, หมู่, ซอย, ถนน)</label>
+                    <textarea id="edit-address" rows="2" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1.5">ตำบล / แขวง</label>
+                        <input type="text" id="edit-subdistrict" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1.5">อำเภอ / เขต</label>
+                        <input type="text" id="edit-district" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1.5">จังหวัด</label>
+                        <input type="text" id="edit-province" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1.5">รหัสไปรษณีย์</label>
+                        <input type="text" id="edit-zipcode" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-colors">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="closeEditModal()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-lg font-medium text-sm transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fas fa-save"></i> บันทึกการแก้ไข
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🟢 Script พื้นฐาน -->
+    <script src="./js/sidebar.js"></script>
+    <script>
+        // --- 1. Fade-in Transition ป้องกันหน้าจอกระตุก ---
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { document.body.style.opacity = '1'; }, 50);
+        });
+
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.hostname === window.location.hostname && this.target !== '_blank' && !this.hasAttribute('onclick')) {
+                    e.preventDefault();
+                    const target = this.href;
+                    document.body.style.opacity = '0';
+                    setTimeout(() => { window.location.href = target; }, 200);
+                }
+            });
+        });
+
+        // --- 2. Logic จัดการข้อมูลที่อยู่จัดส่ง ---
+        let globalShippings = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchShippings();
+        });
+
+        async function fetchShippings() {
+            try {
+                const response = await fetch('http://localhost:3000/shipping');
+                if (!response.ok) throw new Error('ไม่สามารถดึงข้อมูลที่อยู่ได้');
+                
+                const data = await response.json();
+                globalShippings = data;
+                renderShippingTable(data);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('shippingTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-12 text-center text-red-500 font-medium">
+                            <i class="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                            <p>ไม่สามารถเชื่อมต่อฐานข้อมูลที่อยู่จัดส่งได้</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderShippingTable(items) {
+            const tbody = document.getElementById('shippingTableBody');
+            tbody.innerHTML = '';
+            
+            // อัปเดตตัวเลขจำนวนรายการ
+            document.getElementById('total-count').innerText = `${items.length} รายการ`;
+
+            if (items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-12 text-center text-gray-400">
+                            <i class="fas fa-map-marker-alt text-4xl mb-3 text-gray-300"></i>
+                            <p class="font-medium text-gray-500">ไม่พบข้อมูลที่อยู่จัดส่ง</p>
+                        </td>
+                    </tr>`;
+                document.getElementById('paginationInfo').innerHTML = 'ไม่พบข้อมูล';
+                return;
+            }
+
+            // เรียงจากใหม่ไปเก่า (อิงตาม ID)
+            const sortedItems = items.sort((a, b) => (b.id || b.shipping_id) - (a.id || a.shipping_id));
+
+            sortedItems.forEach((item, index) => {
+                const shipId = item.id || item.shipping_id || `SHIP-${String(index + 1).padStart(3, '0')}`;
+                // ใช้ Regular Expression เพื่อสร้าง format ORD2026... ให้สวยงาม
+                const rawOrderId = item.orderId || item.order_id;
+                const orderIdFormat = rawOrderId ? `ORD2026${String(rawOrderId).padStart(5, '0')}` : 'N/A';
+                
+                const fullname = item.fullname || item.name || 'ไม่ระบุชื่อ';
+                const phone = item.phone || item.phone_number || '-';
+                
+                const address = item.address || item.houseNo || '';
+                const subdistrict = item.subdistrict || '';
+                const district = item.district || '';
+                const province = item.province || '';
+                const zipcode = item.zipcode || '';
+
+                const dateObj = new Date(item.createdAt || item.created_at || new Date());
+                const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+                const timeStr = `${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+                const row = `
+                    <tr class="hover:bg-emerald-50/30 transition-colors group">
+                        <td class="p-5 font-mono text-xs">
+                            <div class="text-gray-500 mb-1.5">รหัสที่อยู่: ${shipId}</div>
+                            <div>
+                                <a href="order-details.html?order_id=${orderIdFormat}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors font-semibold">
+                                    <i class="fas fa-file-invoice"></i> ${orderIdFormat}
+                                </a>
+                            </div>
+                        </td>
+                        <td class="p-5">
+                            <div class="font-semibold text-gray-900">${fullname}</div>
+                            <div class="text-xs text-gray-500 mt-1 flex items-center gap-1.5">
+                                <i class="fas fa-phone-alt text-gray-400"></i> ${phone}
+                            </div>
+                        </td>
+                        <td class="p-5 text-sm text-gray-600 leading-relaxed">
+                            <div class="font-medium text-gray-800 mb-0.5 truncate max-w-[300px] xl:max-w-md" title="${address}">${address}</div>
+                            <div class="text-xs text-gray-500">ต.${subdistrict} อ.${district}</div>
+                            <div class="text-xs text-gray-500">จ.${province} <span class="font-semibold text-emerald-600 ml-1">${zipcode}</span></div>
+                        </td>
+                        <td class="p-5 text-gray-500 text-xs font-mono">
+                            <div class="font-medium text-gray-700">${dateStr}</div>
+                            <div class="mt-0.5">${timeStr} น.</div>
+                        </td>
+                        <td class="p-5 text-center">
+                            <div class="flex items-center justify-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                <button onclick='openEditModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white transition-colors" title="แก้ไข">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteShipping(${item.id || item.shipping_id})" class="w-8 h-8 rounded-lg flex items-center justify-center text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white transition-colors" title="ลบ">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById('paginationInfo').innerHTML = `แสดงข้อมูล <span class="font-semibold text-gray-800">1</span> ถึง <span class="font-semibold text-gray-800">${items.length}</span> จากทั้งหมด <span class="font-semibold text-gray-800">${items.length}</span> รายการ`;
+        }
+
+        function searchShipping() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = globalShippings.filter(item => {
+                const name = (item.fullname || item.name || '').toLowerCase();
+                const phone = (item.phone || item.phone_number || '').toLowerCase();
+                const province = (item.province || '').toLowerCase();
+                const orderId = String(item.orderId || item.order_id || '').toLowerCase();
+                return name.includes(keyword) || phone.includes(keyword) || province.includes(keyword) || orderId.includes(keyword);
+            });
+            renderShippingTable(filtered);
+        }
+
+        function openEditModal(item) {
+            document.getElementById('edit-id').value = item.id || item.shipping_id;
+            document.getElementById('modal-ship-id').innerText = item.id || item.shipping_id;
+            document.getElementById('edit-fullname').value = item.fullname || item.name || '';
+            document.getElementById('edit-phone').value = item.phone || item.phone_number || '';
+            document.getElementById('edit-address').value = item.address || item.houseNo || '';
+            document.getElementById('edit-subdistrict').value = item.subdistrict || '';
+            document.getElementById('edit-district').value = item.district || '';
+            document.getElementById('edit-province').value = item.province || '';
+            document.getElementById('edit-zipcode').value = item.zipcode || '';
+
+            document.getElementById('editShippingModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editShippingModal').classList.add('hidden');
+        }
+
+        async function submitEditForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('edit-id').value;
+            
+            const payload = {
+                fullname: document.getElementById('edit-fullname').value,
+                phone_number: document.getElementById('edit-phone').value,
+                address: document.getElementById('edit-address').value,
+                subdistrict: document.getElementById('edit-subdistrict').value,
+                district: document.getElementById('edit-district').value,
+                province: document.getElementById('edit-province').value,
+                zipcode: document.getElementById('edit-zipcode').value
+            };
+
+            Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                const res = await fetch(`http://localhost:3000/shipping/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) throw new Error('อัปเดตข้อมูลไม่สำเร็จ');
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สำเร็จ!',
+                    text: 'อัปเดตที่อยู่จัดส่งเรียบร้อยแล้ว',
+                    confirmButtonColor: '#10b981' // emerald-500
+                }).then(() => {
+                    closeEditModal();
+                    fetchShippings();
+                });
+            } catch (err) {
+                Swal.fire('ข้อผิดพลาด', err.message, 'error');
+            }
+        }
+
+        function deleteShipping(id) {
+            Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: "คุณต้องการลบข้อมูลที่อยู่นี้ใช่หรือไม่? ข้อมูลจะไม่สามารถกู้คืนได้",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก',
+                customClass: { popup: 'rounded-2xl' }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    try {
+                        const res = await fetch(`http://localhost:3000/shipping/${id}`, {
+                            method: 'DELETE'
+                        });
+                        if (!res.ok) throw new Error('ไม่สามารถลบได้ (อาจมีข้อมูลคำสั่งซื้อผูกอยู่)');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ลบสำเร็จ!',
+                            text: 'ข้อมูลที่อยู่ถูกลบเรียบร้อยแล้ว',
+                            confirmButtonColor: '#10b981'
+                        }).then(() => fetchShippings());
+                    } catch (err) {
+                        Swal.fire('ข้อผิดพลาด', err.message, 'error');
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="./js/notifications.js"></script>
+</body>
+</html>

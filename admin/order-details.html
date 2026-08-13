@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - รายละเอียดคำสั่งซื้อ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SheetJS สำหรับ Export Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            opacity: 0; 
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 flex h-screen overflow-hidden">
+
+    <!-- 🟢 Container สำหรับแสดง Sidebar จาก sidebar.js -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Top Navbar -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-10 border-b border-gray-100">
+            <div class="flex items-center">
+                <button class="sm:hidden text-gray-600 focus:outline-none mr-4">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold text-gray-800">รายละเอียดคำสั่งซื้อ</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 border-l pl-4 border-gray-200">
+                    <span class="text-sm text-gray-600 hidden md:inline">ผู้ดูแลระบบ (Admin)</span>
+                    <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                        AD
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area (เอา max-w-7xl ออกเพื่อให้ขยายเต็มจอ) -->
+        <div class="p-6 w-full space-y-6 flex-1">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:justify-between md:items-start bg-white p-6 rounded-xl shadow-sm border border-gray-100 gap-4">
+                <div>
+                    <a href="transactions.html" class="text-indigo-600 hover:text-indigo-800 transition-colors text-sm mb-2 inline-flex items-center gap-1.5 font-medium">
+                        <i class="fas fa-arrow-left"></i> กลับไปหน้ารายการธุรกรรม
+                    </a>
+                    <h2 id="order-title" class="text-2xl font-bold text-gray-800 mt-2">คำสั่งซื้อกำลังโหลด...</h2>
+                    <p id="order-date" class="text-gray-500 text-sm mt-1.5"><i class="far fa-calendar-alt mr-1"></i> วันที่สั่งซื้อ: -</p>
+                    
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <!-- สถานะออร์เดอร์ -->
+                        <span id="badge-order-status" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold border border-gray-200">
+                            <i class="fas fa-spinner fa-spin mr-1"></i> กำลังโหลด...
+                        </span>
+                        <!-- สถานะการชำระเงิน -->
+                        <span id="badge-payment-status" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold border border-gray-200">
+                            <i class="fas fa-spinner fa-spin mr-1"></i> กำลังโหลด...
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Button Group -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="window.print()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-lg shadow-sm font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i class="fas fa-print"></i> พิมพ์ใบเสร็จ
+                    </button>
+
+                    <!-- Dropdown Export Data -->
+                    <div class="relative inline-block text-left">
+                        <button id="export-dropdown-btn" onclick="toggleExportMenu()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-lg shadow-sm font-medium text-sm flex items-center gap-2 transition-colors">
+                            <i class="fas fa-file-export text-indigo-600"></i>
+                            <span>ส่งออกข้อมูล</span>
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+
+                        <div id="export-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+                            <button onclick="exportCSV()" class="w-full flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition text-left">
+                                <i class="fas fa-file-csv w-5 text-green-600 mr-2"></i>
+                                <span>ไฟล์ CSV (.csv)</span>
+                            </button>
+                            <button onclick="exportExcel()" class="w-full flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition text-left">
+                                <i class="fas fa-file-excel w-5 text-emerald-600 mr-2"></i>
+                                <span>ไฟล์ Excel (.xlsx)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ปุ่มเปิด Modal อัปเดตสถานะ -->
+                    <button onclick="openStatusModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium text-sm flex items-center gap-2 transition-colors">
+                        <i class="fas fa-edit"></i> อัปเดตสถานะ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Left Column: Order Items & Summary (Span 2) -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Table order_items -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-5 border-b border-gray-100 bg-white font-semibold flex justify-between items-center">
+                            <span class="text-gray-800">รายการสินค้า (Order Items)</span>
+                            <span id="item-count" class="text-xs px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full font-bold">0 รายการ</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="text-gray-400 text-xs uppercase bg-gray-50 border-b border-gray-100 tracking-wide">
+                                        <th class="p-4 font-semibold">สินค้า</th>
+                                        <th class="p-4 font-semibold text-right">ราคาต่อหน่วย</th>
+                                        <th class="p-4 font-semibold text-center">จำนวน</th>
+                                        <th class="p-4 font-semibold text-right">ยอดรวม</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="order-items-table" class="text-sm text-gray-700 divide-y divide-gray-50">
+                                    <tr>
+                                        <td colspan="4" class="p-12 text-center text-gray-400">
+                                            <i class="fas fa-spinner fa-spin text-2xl mb-2 text-indigo-400"></i>
+                                            <p>กำลังโหลดรายการสินค้า...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="w-full md:w-1/2 ml-auto space-y-3.5 text-sm">
+                            <div class="flex justify-between text-gray-600">
+                                <span>ยอดรวมราคาสินค้า (Total Amount)</span>
+                                <span id="summary-total" class="font-medium">฿0.00</span>
+                            </div>
+                            <div class="flex justify-between text-rose-500">
+                                <span id="summary-discount-label">ส่วนลด (Discount)</span>
+                                <span id="summary-discount" class="font-medium">- ฿0.00</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>ค่าจัดส่ง (Shipping Fee)</span>
+                                <span id="summary-shipping" class="font-medium">฿0.00</span>
+                            </div>
+                            <hr class="border-gray-100 my-3">
+                            <div class="flex justify-between items-center text-lg font-bold text-gray-900">
+                                <span>ยอดสุทธิ (Grand Total)</span>
+                                <span id="summary-grand-total" class="text-indigo-600 text-xl">฿0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Customer & Shipping Info (Span 1) -->
+                <div class="space-y-6">
+                    
+                    <!-- Customer Info -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-gray-800 font-semibold mb-4 pb-3 border-b border-gray-100">ข้อมูลผู้สั่งซื้อ (Customer)</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold bg-indigo-50 text-indigo-600 flex-shrink-0 text-lg">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <p id="customer-name" class="font-bold text-gray-900">-</p>
+                                <p class="text-xs text-gray-500 mt-1"><i class="fas fa-envelope w-4 text-gray-400"></i> <span id="customer-email">-</span></p>
+                                <p class="text-xs text-gray-500 mt-1"><i class="fas fa-phone w-4 text-gray-400"></i> <span id="customer-phone">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Address -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-gray-800 font-semibold mb-4 pb-3 border-b border-gray-100">ที่อยู่สำหรับจัดส่ง (Shipping Address)</h3>
+                        <div id="shipping-address-box" class="text-sm text-gray-700 space-y-2.5">
+                            <p class="text-gray-400 italic">กำลังโหลดที่อยู่...</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Info -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-gray-800 font-semibold mb-4 pb-3 border-b border-gray-100">ช่องทางการชำระเงิน (Payment)</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm">
+                                PAY
+                            </div>
+                            <div>
+                                <p id="payment-method-text" class="text-sm font-bold text-gray-900">-</p>
+                                <p id="payment-text-status" class="text-xs text-gray-500 mt-1"><i class="fas fa-spinner fa-spin"></i> กำลังตรวจสอบ...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal สำหรับอัปเดตสถานะคำสั่งซื้อ -->
+    <div id="statusModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-5">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    อัปเดตสถานะ
+                </h3>
+                <button type="button" onclick="closeStatusModal()" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4 text-sm text-gray-700">
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1.5">สถานะออร์เดอร์ (order_status):</label>
+                    <select id="select-order-status" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 bg-white">
+                        <option value="PENDING">รอดำเนินการ (PENDING)</option>
+                        <option value="PROCESSING">กำลังเตรียมจัดส่ง (PROCESSING)</option>
+                        <option value="COMPLETED">จัดส่งสำเร็จ (COMPLETED)</option>
+                        <option value="CANCELLED">ยกเลิก (CANCELLED)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1.5">สถานะการชำระเงิน (payment_status):</label>
+                    <select id="select-payment-status" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 bg-white">
+                        <option value="PENDING">รอชำระ (PENDING)</option>
+                        <option value="PAID">ชำระแล้ว (PAID)</option>
+                        <option value="REFUNDED">คืนเงินแล้ว (REFUNDED)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <button onclick="closeStatusModal()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2.5 rounded-lg font-medium text-sm transition-colors">
+                    ยกเลิก
+                </button>
+                <button onclick="saveStatusChanges()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fas fa-save"></i> บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🟢 Scripts -->
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/order-details.js"></script> <!-- แยกไฟล์ JS ออกมา -->
+    
+    <script>
+        // Fade-in Transition ป้องกันหน้าจอกระตุก
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { document.body.style.opacity = '1'; }, 50);
+        });
+
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.hostname === window.location.hostname && this.target !== '_blank' && !this.hasAttribute('onclick') && !this.hasAttribute('download')) {
+                    e.preventDefault();
+                    const target = this.href;
+                    document.body.style.opacity = '0';
+                    setTimeout(() => { window.location.href = target; }, 200);
+                }
+            });
+        });
+    </script>
+    <script src="./js/notifications.js"></script>
+</body>
+</html>

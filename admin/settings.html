@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ตั้งค่าบัญชีผู้ใช้</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        /* ซ่อน Icon สลับรหัสผ่านเริ่มต้นของเบราว์เซอร์ */
+        input::-webkit-reveal,
+        input::-webkit-clear-button {
+            display: none;
+        }
+
+        /* Animation สำหรับ Toast Alert */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in {
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-md hidden sm:block flex-shrink-0">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-indigo-600">Admin</h1>
+        </div>
+        <nav class="p-4 space-y-2">
+            <a href="index.html"
+                class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition">
+                <i class="fas fa-home w-6"></i> ภาพรวม
+            </a>
+            <a href="transactions.html"
+                class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition">
+                <i class="fas fa-receipt w-6"></i> รายการธุรกรรม
+            </a>
+            <a href="products.html"
+                class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition">
+                <i class="fas fa-box w-6"></i> จัดการสินค้า
+            </a>
+            <a href="shipping.html"
+                class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition">
+                <i class="fas fa-map-marked-alt w-6"></i> ที่อยู่จัดส่ง
+            </a>
+            <a href="users.html"
+                class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition">
+                <i class="fas fa-users w-6"></i> ผู้ใช้งาน
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Top Navbar -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center relative z-10">
+            <div class="flex items-center">
+                <button class="sm:hidden text-gray-600 focus:outline-none mr-4">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold text-gray-800">ตั้งค่าบัญชีผู้ใช้</h2>
+            </div>
+
+            <!-- Profile & Dropdown Area -->
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notifMenuBtn" onclick="toggleNotifMenu()"
+                        class="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-gray-100 rounded-full transition focus:outline-none">
+                        <i class="fas fa-bell text-xl"></i>
+                        <!-- Badge แสดงจำนวนยังไม่อ่าน -->
+                        <span id="notifBadge"
+                            class="hidden absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full border-2 border-white">
+                            0
+                        </span>
+                    </button>
+
+                    <!-- Notification Menu Panel -->
+                    <div id="notifDropdown"
+                        class="hidden absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 transition-all duration-200">
+                        <div class="px-4 py-2.5 border-b border-gray-100 flex justify-between items-center">
+                            <div class="flex items-center space-x-2">
+                                <h3 class="font-semibold text-gray-800 text-sm">การแจ้งเตือน</h3>
+                                <span id="unreadCountTag" class="text-xs bg-indigo-50 text-indigo-600 font-medium px-2 py-0.5 rounded-full">0 ใหม่</span>
+                            </div>
+                            <button onclick="clearAllNotifications()" class="text-xs text-red-500 hover:text-red-700 font-medium transition">
+                                เคลียร์ทั้งหมด
+                            </button>
+                        </div>
+
+                        <!-- Scrollable Notification List (Rendered via js/notifications.js) -->
+                        <div id="notifList" class="max-h-80 overflow-y-auto divide-y divide-gray-50 text-xs"></div>
+
+                        <div class="p-2 border-t border-gray-100 text-center">
+                            <a href="transactions.html" class="text-xs text-gray-500 hover:text-indigo-600 font-medium transition block py-1">
+                                ดูรายการธุรกรรมทั้งหมด
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <!-- Profile Button -->
+                    <button id="userMenuBtn" onclick="toggleUserMenu()"
+                        class="flex items-center space-x-2 border-l pl-4 border-gray-200 focus:outline-none group">
+                        <span class="text-sm text-gray-600 hidden md:inline group-hover:text-indigo-600 transition">ผู้ดูแลระบบ (Admin)</span>
+                        <img id="headerAvatar" src="https://ui-avatars.com/api/?name=Admin&background=4F46E5&color=fff" alt="Admin"
+                            class="w-10 h-10 rounded-full ring-2 ring-transparent group-hover:ring-indigo-500 transition object-cover">
+                        <i class="fas fa-chevron-down text-xs text-gray-400 group-hover:text-indigo-600 transition"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="userDropdown"
+                        class="hidden absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 transition-all duration-200">
+                        <div class="px-4 py-2.5 border-b border-gray-100">
+                            <p class="text-xs font-semibold text-gray-400 uppercase">บัญชีผู้ใช้</p>
+                            <p class="text-sm font-medium text-gray-800 truncate">admin@example.com</p>
+                        </div>
+                        <a href="settings.html" class="flex items-center px-4 py-2.5 text-sm text-indigo-600 bg-indigo-50 font-medium transition">
+                            <i class="fas fa-user-cog w-5 mr-2"></i> ตั้งค่าบัญชี
+                        </a>
+                        <hr class="my-1 border-gray-100">
+                        <button onclick="confirmLogout()"
+                            class="w-full text-left flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition font-medium">
+                            <i class="fas fa-sign-out-alt w-5 mr-2"></i> ออกจากระบบ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-6 max-w-5xl w-full mx-auto space-y-8">
+            
+            <!-- Section Header -->
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">ตั้งค่าโปรไฟล์และความปลอดภัย</h1>
+                <p class="text-sm text-gray-500 mt-1">จัดการข้อมูลส่วนตัว เบอร์โทรศัพท์ รหัสผ่าน และระบบการยืนยันตัวตน</p>
+            </div>
+
+            <!-- 1. ข้อมูลโปรไฟล์ (Profile Info) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+                <div class="flex items-center space-x-3 border-b border-gray-100 pb-4 mb-6">
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold">
+                        <i class="fas fa-user text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">ข้อมูลโปรไฟล์ (Profile Information)</h2>
+                        <p class="text-xs text-gray-400">อัปเดต รูปภาพ ชื่อ อีเมล และเบอร์โทรศัพท์ของคุณ</p>
+                    </div>
+                </div>
+
+                <form onsubmit="handleSaveProfile(event)" class="space-y-6">
+                    <!-- Upload Profile Image -->
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                        <div class="relative group">
+                            <img id="profilePreview" src="https://ui-avatars.com/api/?name=Admin&background=4F46E5&color=fff" 
+                                class="w-24 h-24 rounded-full ring-4 ring-white shadow-md object-cover">
+                        </div>
+                        <div class="text-center sm:text-left space-y-2">
+                            <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="previewImage(event)">
+                            <button type="button" onclick="document.getElementById('avatarInput').click()"
+                                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-xl shadow-sm transition inline-flex items-center">
+                                <i class="fas fa-camera mr-2"></i> เปลี่ยนรูปโปรไฟล์
+                            </button>
+                            <p class="text-xs text-gray-400">รองรับไฟล์ JPG, PNG หรือ GIF ขนาดไม่เกิน 5MB</p>
+                        </div>
+                    </div>
+
+                    <!-- Input Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-2">ชื่อ - นามสกุล</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fas fa-id-card"></i>
+                                </div>
+                                <input type="text" id="fullName" value="ผู้ดูแลระบบ (Admin)" required
+                                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                            </div>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-2">เบอร์โทรศัพท์</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <input type="tel" id="phoneNumber" value="081-234-5678" required
+                                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                                    placeholder="08X-XXX-XXXX">
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 mb-2">อีเมลติดต่อ</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <input type="email" id="email" value="admin@example.com" required
+                                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end pt-2">
+                        <button type="submit"
+                            class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl shadow-md shadow-indigo-100 transition duration-200 flex items-center">
+                            <i class="fas fa-save mr-2"></i> บันทึกข้อมูลโปรไฟล์
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 2. ความปลอดภัย (Security & 2FA) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 space-y-8">
+                
+                <!-- Password Change Section -->
+                <div>
+                    <div class="flex items-center space-x-3 border-b border-gray-100 pb-4 mb-6">
+                        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center font-bold">
+                            <i class="fas fa-key text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-800">เปลี่ยนรหัสผ่าน (Change Password)</h2>
+                            <p class="text-xs text-gray-400">แนะนำให้เปลี่ยนรหัสผ่านอย่างน้อยทุกๆ 3 เดือนเพื่อความปลอดภัย</p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleSavePassword(event)" class="space-y-4">
+                        <!-- Current Password -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-2">รหัสผ่านปัจจุบัน</label>
+                            <div class="relative max-w-md">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <input type="password" id="currentPassword" required placeholder="••••••••"
+                                    class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                <button type="button" onclick="togglePass('currentPassword', 'icon1')"
+                                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                                    <i id="icon1" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- New Password & Confirm Password -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-2">รหัสผ่านใหม่</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <input type="password" id="newPassword" required placeholder="อย่างน้อย 8 ตัวอักษร"
+                                        class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                    <button type="button" onclick="togglePass('newPassword', 'icon2')"
+                                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                                        <i id="icon2" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-2">ยืนยันรหัสผ่านใหม่</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                        <i class="fas fa-check-double"></i>
+                                    </div>
+                                    <input type="password" id="confirmPassword" required placeholder="พิมพ์รหัสผ่านใหม่อีกครั้ง"
+                                        class="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                                    <button type="button" onclick="togglePass('confirmPassword', 'icon3')"
+                                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600">
+                                        <i id="icon3" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-2">
+                            <button type="submit"
+                                class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-xl shadow-md shadow-amber-100 transition duration-200 flex items-center">
+                                <i class="fas fa-shield-alt mr-2"></i> อัปเดตรหัสผ่าน
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <!-- Two-Factor Authentication (2FA) -->
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold flex-shrink-0 mt-1">
+                            <i class="fas fa-shield-virus text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h3 class="text-base font-semibold text-gray-800">การยืนยันตัวตนสองขั้นตอน (2FA)</h3>
+                                <span id="2faBadge" class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">ปิดใช้งาน</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">เพิ่มความปลอดภัยด้วยการรับรหัส OTP ผ่านแอปพลิเคชัน Authenticator (เช่น Google Authenticator)</p>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Switch -->
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="2faToggle" class="sr-only peer" onchange="handle2FAToggle(this)">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script src="js/notifications.js"></script>
+    <script>
+        // เปิด-ปิด Dropdown Menu
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // ปิด Dropdown อัตโนมัติเมื่อคลิกพื้นที่อื่น
+        window.addEventListener('click', function (e) {
+            const button = document.getElementById('userMenuBtn');
+            const dropdown = document.getElementById('userDropdown');
+            if (button && dropdown && !button.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // แสดงพรีวิวรูปภาพโปรไฟล์เมื่อเลือกไฟล์ใหม่
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('profilePreview');
+                const headerAvatar = document.getElementById('headerAvatar');
+                output.src = reader.result;
+                if (headerAvatar) headerAvatar.src = reader.result;
+            };
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        // สลับซ่อน-แสดง รหัสผ่าน
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // จัดการการบันทึกข้อมูลโปรไฟล์
+        function handleSaveProfile(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'บันทึกสำเร็จ!',
+                text: 'อัปเดตข้อมูลโปรไฟล์เรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonColor: '#4F46E5',
+                customClass: { popup: 'rounded-2xl', confirmButton: 'rounded-xl font-medium px-5 py-2' }
+            });
+        }
+
+        // จัดการการเปลี่ยนรหัสผ่าน
+        function handleSavePassword(e) {
+            e.preventDefault();
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (newPass !== confirmPass) {
+                Swal.fire({
+                    title: 'รหัสผ่านไม่ตรงกัน!',
+                    text: 'กรุณาตรวจสอบรหัสผ่านใหม่และยืนยันรหัสผ่านอีกครั้ง',
+                    icon: 'error',
+                    confirmButtonColor: '#EF4444',
+                    customClass: { popup: 'rounded-2xl', confirmButton: 'rounded-xl font-medium px-5 py-2' }
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'อัปเดตรหัสผ่านสำเร็จ!',
+                text: 'รหัสผ่านของคุณถูกเปลี่ยนเรียบร้อยแล้ว',
+                icon: 'success',
+                confirmButtonColor: '#4F46E5',
+                customClass: { popup: 'rounded-2xl', confirmButton: 'rounded-xl font-medium px-5 py-2' }
+            }).then(() => {
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            });
+        }
+
+        // จัดการการเปิด/ปิด 2FA
+        function handle2FAToggle(checkbox) {
+            const badge = document.getElementById('2faBadge');
+            if (checkbox.checked) {
+                Swal.fire({
+                    title: 'เปิดใช้งาน 2FA',
+                    text: 'กรุณาสแกน QR Code ด้วยแอปพลิเคชัน Authenticator ของคุณเพื่อตั้งค่า',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10B981',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'ตั้งค่าเรียบร้อย',
+                    cancelButtonText: 'ยกเลิก',
+                    customClass: { popup: 'rounded-2xl', confirmButton: 'rounded-xl font-medium px-5 py-2', cancelButton: 'rounded-xl font-medium px-5 py-2' }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        badge.textContent = 'เปิดใช้งานแล้ว';
+                        badge.className = 'px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium';
+                    } else {
+                        checkbox.checked = false;
+                    }
+                });
+            } else {
+                badge.textContent = 'ปิดใช้งาน';
+                badge.className = 'px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium';
+            }
+        }
+
+        // ยืนยันออกจากระบบ
+        function confirmLogout() {
+            document.getElementById('userDropdown').classList.add('hidden');
+            Swal.fire({
+                title: 'ยืนยันการออกจากระบบ?',
+                text: "คุณต้องการออกจากระบบผู้ดูแลระบบใช่หรือไม่",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#4F46E5',
+                cancelButtonColor: '#EF4444',
+                confirmButtonText: 'ใช่, ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                customClass: { popup: 'rounded-2xl', confirmButton: 'rounded-xl font-medium px-5 py-2', cancelButton: 'rounded-xl font-medium px-5 py-2' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    </script>
+    <script src="./js/notifications.js"></script>
+</body>
+
+</html>

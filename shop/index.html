@@ -28,12 +28,15 @@
             }
         }
 
-        /* Class ที่เอาไว้ใส่การ์ดสินค้าที่กำลังแสดง */
+        .product-card {
+            display: block; 
+            opacity: 1;
+        }
+
         .product-card.animate-in {
             animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* ซ่อนสินค้าก่อนเริ่มเล่น animation */
         .product-card.hidden {
             display: none !important;
         }
@@ -65,9 +68,9 @@
 
         <!-- Main content -->
         <main class="main-content">
-            <!-- Header ของสินค้า (จำนวน + จัดเรียง) -->
+            <!-- Header ของสินค้า -->
             <div class="shop-header">
-                <span class="product-count">17 ผลิตภัณฑ์</span>
+                <span class="product-count">กำลังเตรียมข้อมูล...</span>
                 <select>
                     <option value="">เรียงตาม: แนะนำ</option>
                     <option value="price-low">ราคา: ต่ำไปสูง</option>
@@ -75,228 +78,125 @@
                 </select>
             </div>
 
-            <!-- Grid สินค้า -->
+            <!-- Grid สินค้า (จะถูกเรนเดอร์ใหม่จาก API) -->
             <div class="products">
-                
-                <!-- Andicellix (สายตาและการได้ยิน) -->
                 <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=andicellix';">
-                    <div class="product-image">
-                        <img src="./img/andicellix/andicellix1.png" alt="Andicellix">
-                    </div>
+                    <div class="product-image"><img src="./img/andicellix/andicellix1.png" alt="Andicellix"></div>
                     <h3 class="product-title">Andicellix</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Astin (เลือดและระดับน้ำตาล) -->
                 <div class="product-card animate-in" data-category="blood-sugar" onclick="window.location.href='product.html?id=astin';">
-                    <div class="product-image">
-                        <img src="./img/astin/astin1.png" alt="Astin">
-                    </div>
+                    <div class="product-image"><img src="./img/astin/astin1.png" alt="Astin"></div>
                     <h3 class="product-title">Astin</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Back Pro (สุขภาพผู้ชาย) -->
                 <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=backpro';">
-                    <div class="product-image">
-                        <img src="./img/backpro/backpro1.png" alt="Back Pro">
-                    </div>
+                    <div class="product-image"><img src="./img/backpro/backpro1.png" alt="Back Pro"></div>
                     <h3 class="product-title">Back Pro</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Black Rhino (สุขภาพผู้ชาย) -->
                 <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=blackrhino';">
-                    <div class="product-image">
-                        <img src="./img/blackrhino/blackrhino1.png" alt="Black Rhino">
-                    </div>
+                    <div class="product-image"><img src="./img/blackrhino/blackrhino1.png" alt="Black Rhino"></div>
                     <h3 class="product-title">Black Rhino</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Carthisin (กระดูก ข้อ และภูมิคุ้มกัน) -->
                 <div class="product-card animate-in" data-category="bone-immunity" onclick="window.location.href='product.html?id=carthisin';">
-                    <div class="product-image">
-                        <img src="./img/carthisin/carthisin1.png" alt="Carthisin">
-                    </div>
+                    <div class="product-image"><img src="./img/carthisin/carthisin1.png" alt="Carthisin"></div>
                     <h3 class="product-title">Carthisin</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Elsie (ผิวพรรณและชะลอวัย) -->
                 <div class="product-card animate-in" data-category="skin-aging" onclick="window.location.href='product.html?id=elsie';">
-                    <div class="product-image">
-                        <img src="./img/elsie/elsie1.png" alt="Elsie">
-                    </div>
+                    <div class="product-image"><img src="./img/elsie/elsie1.png" alt="Elsie"></div>
                     <h3 class="product-title">Elsie</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Extera (ลำไส้และการขับถ่าย) -->
                 <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=extera';">
-                    <div class="product-image">
-                        <img src="./img/extera/extera1.png" alt="Extera">
-                    </div>
+                    <div class="product-image"><img src="./img/extera/extera1.png" alt="Extera"></div>
                     <h3 class="product-title">Extera</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Genesis Caps (สายตาและการได้ยิน) -->
                 <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=genesis';">
-                    <div class="product-image">
-                        <img src="./img/genesis/genesis1.png" alt="Genesis Caps">
-                    </div>
+                    <div class="product-image"><img src="./img/genesis/genesis1.png" alt="Genesis Caps"></div>
                     <h3 class="product-title">Genesis Caps</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Geralox (ลำไส้และการขับถ่าย) -->
                 <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=geralox';">
-                    <div class="product-image">
-                        <img src="./img/geralox/geralox1.png" alt="Geralox">
-                    </div>
+                    <div class="product-image"><img src="./img/geralox/geralox1.png" alt="Geralox"></div>
                     <h3 class="product-title">Geralox</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Helmina (ลำไส้และการขับถ่าย) -->
                 <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=helmina';">
-                    <div class="product-image">
-                        <img src="./img/helmina/helmina1.png" alt="Helmina">
-                    </div>
+                    <div class="product-image"><img src="./img/helmina/helmina1.png" alt="Helmina"></div>
                     <h3 class="product-title">Helmina</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Oclarizin (สายตาและการได้ยิน) -->
                 <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=oclarizin';">
-                    <div class="product-image">
-                        <img src="./img/oclarizin/oclarizin1.png" alt="Oclarizin">
-                    </div>
+                    <div class="product-image"><img src="./img/oclarizin/oclarizin1.png" alt="Oclarizin"></div>
                     <h3 class="product-title">Oclarizin</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Onix (หุ่นและระบบเผาผลาญ) -->
                 <div class="product-card animate-in" data-category="weight-metabolism" onclick="window.location.href='product.html?id=onix';">
-                    <div class="product-image">
-                        <img src="./img/onix/onix1.png" alt="Onix">
-                    </div>
+                    <div class="product-image"><img src="./img/onix/onix1.png" alt="Onix"></div>
                     <h3 class="product-title">Onix</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Philola (สายตาและการได้ยิน) -->
                 <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=philola';">
-                    <div class="product-image">
-                        <img src="./img/philola/philola1.png" alt="Philola">
-                    </div>
+                    <div class="product-image"><img src="./img/philola/philola1.png" alt="Philola"></div>
                     <h3 class="product-title">Philola</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- S-Complex (ผิวพรรณและชะลอวัย) -->
                 <div class="product-card animate-in" data-category="skin-aging" onclick="window.location.href='product.html?id=scomplex';">
-                    <div class="product-image">
-                        <img src="./img/scomplex/scomplex1.png" alt="S-Complex">
-                    </div>
+                    <div class="product-image"><img src="./img/scomplex/scomplex1.png" alt="S-Complex"></div>
                     <h3 class="product-title">S-Complex</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- T-Chrome (หุ่นและระบบเผาผลาญ) -->
                 <div class="product-card animate-in" data-category="weight-metabolism" onclick="window.location.href='product.html?id=tchrome';">
-                    <div class="product-image">
-                        <img src="./img/tchrome/tchrome1.png" alt="T-Chrome">
-                    </div>
+                    <div class="product-image"><img src="./img/tchrome/tchrome1.png" alt="T-Chrome"></div>
                     <h3 class="product-title">T-Chrome</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Turbine (สุขภาพผู้ชาย) -->
                 <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=turbine';">
-                    <div class="product-image">
-                        <img src="./img/turbine/turbine1.png" alt="Turbine">
-                    </div>
+                    <div class="product-image"><img src="./img/turbine/turbine1.png" alt="Turbine"></div>
                     <h3 class="product-title">Turbine</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
 
-                <!-- Cartirex (กระดูก ข้อ และภูมิคุ้มกัน) -->
                 <div class="product-card animate-in" data-category="bone-immunity" onclick="window.location.href='product.html?id=cartirex';">
-                    <div class="product-image">
-                        <img src="./img/cartirex/cartirex1.png" alt="Turbine">
-                    </div>
+                    <div class="product-image"><img src="./img/cartirex/cartirex1.png" alt="Cartirex"></div>
                     <h3 class="product-title">Cartirex</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price">
-                        <span class="new-price">฿990.00</span>
-                        <span class="old-price">฿1,980.00</span>
-                    </p>
+                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
                 </div>
             </div>
         </main>
@@ -305,99 +205,214 @@
     <contact-section></contact-section>
     <my-footer></my-footer>
 
-    <!-- ส่วน Script ควบคุม Animation และ Stagger Effect -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const API_URL = 'http://localhost:3000/products';
+        const SUPABASE_BASE_URL = 'http://192.168.1.199:8000';
+
         const categoryBtns = document.querySelectorAll('.category-btn');
-        const productCards = Array.from(document.querySelectorAll('.product-card'));
+        let productCards = [];
         const productsContainer = document.querySelector('.products');
         const productCountText = document.querySelector('.product-count');
         const sortSelect = document.querySelector('.shop-header select');
 
-        // เก็บ ลำดับตั้งต้น (แนะนำ) เอาไว้ใช้เวลาเลือก "แนะนำ"
-        productCards.forEach((card, index) => {
-            card.dataset.originalIndex = index;
-            
-            // ดึงราคาจาก DOM (ตัด ฿ และ , ออก แปลงเป็นตัวเลข)
-            const priceText = card.querySelector('.new-price').textContent;
-            card.dataset.price = parseFloat(priceText.replace(/[^0.0-9.-]+/g, ''));
-        });
+        // ตารางแมปหมวดหมู่ตามชื่อสลักสินค้า
+        const categoryMap = {
+            'andicellix': 'eyes-ears',
+            'astin': 'blood-sugar',
+            'backpro': 'mens-health',
+            'blackrhino': 'mens-health',
+            'carthisin': 'bone-immunity',
+            'elsie': 'skin-aging',
+            'extera': 'gut-digestive',
+            'genesis': 'eyes-ears',
+            'genesiscaps': 'eyes-ears',
+            'geralox': 'gut-digestive',
+            'helmina': 'gut-digestive',
+            'oclarizin': 'eyes-ears',
+            'onix': 'weight-metabolism',
+            'philola': 'eyes-ears',
+            'scomplex': 'skin-aging',
+            'tchrome': 'weight-metabolism',
+            'turbine': 'mens-health',
+            'cartirex': 'bone-immunity'
+        };
 
-        // ฟังก์ชันหลักในการกรองหมวดหมู่และเรียงลำดับ
-        function updateProductsUI() {
-            const activeBtn = document.querySelector('.category-btn.active');
-            const selectedCategory = activeBtn ? activeBtn.getAttribute('data-category') : 'all';
-            const sortValue = sortSelect ? sortSelect.value : '';
-
-            // 1. เรียงลำดับ Array ตามตัวเลือก
-            let sortedCards = [...productCards];
-
-            if (sortValue === 'price-low') {
-                sortedCards.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
-            } else if (sortValue === 'price-high') {
-                sortedCards.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
-            } else {
-                // เรียงตามลำดับเดิม (แนะนำ)
-                sortedCards.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+        function fixImageUrl(url) {
+            if (!url || typeof url !== 'string') return '';
+            if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+            let cleanUrl = url
+                .replace(/https:\/\/qzgfjnjrnenncgxqbrqe\.supabase\.co/g, SUPABASE_BASE_URL)
+                .replace(/\/product-images\//g, '/products/');
+            if (cleanUrl.startsWith('/storage/v1/')) {
+                cleanUrl = `${SUPABASE_BASE_URL}${cleanUrl}`;
             }
+            return cleanUrl;
+        }
 
-            // 2. นำ Element ที่เรียงแล้วจัดเข้า Container ใหม่
-            let visibleIndex = 0;
-            sortedCards.forEach(card => {
-                productsContainer.appendChild(card); // ย้ายตำแหน่งใน DOM
+        async function loadDataSafely() {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-                const cardCategories = card.getAttribute('data-category').split(' ');
+                const response = await fetch(API_URL, { signal: controller.signal });
+                clearTimeout(timeoutId);
 
-                // รีเซ็ต Animation
-                card.classList.remove('animate-in', 'hidden');
-                card.style.animationDelay = '0s';
+                if (response.ok) {
+                    const dbProducts = await response.json();
+                    if (Array.isArray(dbProducts) && dbProducts.length > 0) {
+                        renderProductsFromDB(dbProducts);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('Backend ไม่ตอบสนอง จะใช้ข้อมูลสำรองใน HTML', err);
+            }
+            
+            // กรณี API ล้มเหลว ค่อยใช้การ์ดดั้งเดิมใน HTML
+            productCards = Array.from(document.querySelectorAll('.product-card'));
+            initShopLogic();
+        }
 
-                if (selectedCategory === 'all' || cardCategories.includes(selectedCategory)) {
-                    card.style.animationDelay = `${visibleIndex * 0.05}s`;
-                    void card.offsetWidth; // Trigger reflow เพื่อรัน animation ใหม่
-                    card.classList.add('animate-in');
-                    visibleIndex++;
-                } else {
-                    card.classList.add('hidden');
+        // 🟢 เรนเดอร์การ์ดสินค้าโดยอิงจากฐานข้อมูลหลังบ้านเป็นหลัก 100%
+        function renderProductsFromDB(dbProducts) {
+            productsContainer.innerHTML = ''; // ล้างการ์ดเดิมออก ป้องกันจำนวนเกิน
+
+            dbProducts.forEach(dbProduct => {
+                if (!dbProduct.name) return;
+
+                // กรองสินค้าที่ปิดไว้ (Inactive) ออก
+                if (dbProduct.isActive === false || String(dbProduct.isActive) === 'false') return;
+
+                const rawSlug = dbProduct.name.toLowerCase().replace(/[\s\-_]/g, "");
+                // แมป slug พิเศษสำหรับ Genesis Caps ให้เข้ากับหน้า product.html?id=genesis
+                const linkSlug = (rawSlug === 'genesiscaps' || rawSlug === 'genesis') ? 'genesis' : rawSlug;
+
+                const category = categoryMap[rawSlug] || categoryMap[linkSlug] || 'all';
+                const imgSrc = (dbProduct.images && dbProduct.images.length > 0) 
+                    ? fixImageUrl(dbProduct.images[0]) 
+                    : `./img/${linkSlug}/${linkSlug}1.png`;
+
+                const newPriceVal = dbProduct.price != null 
+                    ? '฿' + Number(dbProduct.price).toLocaleString('en-US', {minimumFractionDigits: 2}) 
+                    : '฿0.00';
+                
+                const oldPriceVal = dbProduct.oldPrice || dbProduct.old_price;
+                let oldPriceHtml = '';
+                if (oldPriceVal != null && oldPriceVal > 0) {
+                    oldPriceHtml = `<span class="old-price">฿${Number(oldPriceVal).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'product-card animate-in';
+                card.setAttribute('data-category', category);
+                card.setAttribute('onclick', `window.location.href='product.html?id=${linkSlug}';`);
+                card.dataset.price = dbProduct.price || 0;
+
+                card.innerHTML = `
+                    <div class="product-image">
+                        <img src="${imgSrc}" alt="${dbProduct.name}" onerror="this.onerror=null; this.src='./img/${linkSlug}/${linkSlug}1.png';">
+                    </div>
+                    <h3 class="product-title">${dbProduct.name}</h3>
+                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
+                    <p class="product-price"><span class="new-price">${newPriceVal}</span> ${oldPriceHtml}</p>
+                `;
+
+                productsContainer.appendChild(card);
+            });
+
+            productCards = Array.from(document.querySelectorAll('.product-card'));
+            initShopLogic();
+        }
+
+        function initShopLogic() {
+            productCards.forEach((card, index) => {
+                card.dataset.originalIndex = index;
+                if (!card.dataset.price) {
+                    const newPriceEl = card.querySelector('.new-price');
+                    if (newPriceEl) {
+                        const priceText = newPriceEl.textContent;
+                        card.dataset.price = parseFloat(priceText.replace(/[^0.0-9.-]+/g, '')) || 0;
+                    } else {
+                        card.dataset.price = 0;
+                    }
                 }
             });
 
-            // 3. อัปเดตตัวเลขจำนวนสินค้า
-            if (productCountText) {
-                productCountText.textContent = `${visibleIndex} ผลิตภัณฑ์`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+            if (categoryParam) {
+                const targetBtn = document.querySelector(`.category-btn[data-category="${categoryParam}"]`);
+                if (targetBtn) {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    targetBtn.classList.add('active');
+                }
             }
-        }
 
-        // --- ส่วนรับค่า category จาก URL (แก้ไขใหม่ให้ทำงานตรงจุด) ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category');
+            updateProductsUI();
 
-        if (categoryParam) {
-            const targetBtn = document.querySelector(`.category-btn[data-category="${categoryParam}"]`);
-            if (targetBtn) {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                targetBtn.classList.add('active');
-            }
-        }
-
-        // สั่งอัปเดตการแสดงผลสินค้าครั้งแรกหลังโหลดหน้าเว็บ (จะกรองตามแท็บที่ active อยู่ทันที)
-        updateProductsUI();
-
-        // Event Listener เมื่อเปลี่ยนหมวดหมู่
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                updateProductsUI();
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateProductsUI();
+                });
             });
-        });
 
-        // Event Listener เมื่อเปลี่ยนตัวเลือกเรียงราคา
-        if (sortSelect) {
-            sortSelect.addEventListener('change', updateProductsUI);
+            if (sortSelect) {
+                sortSelect.addEventListener('change', updateProductsUI);
+            }
         }
+
+        function updateProductsUI() {
+            try {
+                const activeBtn = document.querySelector('.category-btn.active');
+                const selectedCategory = activeBtn ? activeBtn.getAttribute('data-category') : 'all';
+                const sortValue = sortSelect ? sortSelect.value : '';
+
+                let sortedCards = [...productCards];
+
+                if (sortValue === 'price-low') {
+                    sortedCards.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+                } else if (sortValue === 'price-high') {
+                    sortedCards.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+                } else {
+                    sortedCards.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+                }
+
+                let visibleIndex = 0;
+                sortedCards.forEach(card => {
+                    productsContainer.appendChild(card); 
+
+                    const catAttr = card.getAttribute('data-category') || '';
+                    const cardCategories = catAttr.split(' ');
+
+                    card.classList.remove('animate-in', 'hidden');
+                    card.style.animationDelay = '0s';
+
+                    if (selectedCategory === 'all' || cardCategories.includes(selectedCategory)) {
+                        card.style.animationDelay = `${visibleIndex * 0.05}s`;
+                        void card.offsetWidth; 
+                        card.style.display = 'block'; 
+                        card.classList.add('animate-in'); 
+                        visibleIndex++;
+                    } else {
+                        card.style.display = 'none'; 
+                        card.classList.add('hidden');
+                    }
+                });
+
+                if (productCountText) {
+                    productCountText.textContent = `${visibleIndex} ผลิตภัณฑ์`;
+                }
+            } catch (e) {
+                console.error('Error in UI rendering:', e);
+            }
+        }
+
+        loadDataSafely();
     });
-</script>
+    </script>
 </body>
 </html>

@@ -1810,7 +1810,7 @@ const productsData = {
     rating: 4.7,
     reviewCount: 2115,
     description:
-      "ฟิโลล่า ออกแบบมาเพื่อฟื้นฟูและปกป้องสายตาอย่างครอบคลุม ช่วยเพิ่มประสิทธิภาพการทำงานของเส้นประสาทตา จอประสาทตา และเลนส์ตา ฟื้นบำรุงกล้ามเนื้อตาที่อ่อนล้าจากการจ้องจอต่อเนื่องหรือเผชิญแสงจ้ามาเป็นเวลานาน ชะลอการลุกลามและลดความเสี่ยงของโรคต้อตามวัย ลดอาการตาแห้งระคายเคือง แสบตา น้ำตาไหล เพื่อคืนทัศนวิสัยที่ดีดังเดิมให้แก่คุณ",
+      "ฟิโลล่า ออกแบบมาเพื่อฟื้นฟูและปกป้องสายตาอย่างครอบคลุม ช่วยเพิ่มประสิทธิภาพการทำงานของเส้นประสตา จอประสาทตา และเลนส์ตา ฟื้นบำรุงกล้ามเนื้อตาที่อ่อนล้าจากการจ้องจอต่อเนื่องหรือเผชิญแสงจ้ามาเป็นเวลานาน ชะลอการลุกลามและลดความเสี่ยงของโรคต้อตามวัย ลดอาการตาแห้งระคายเคือง แสบตา น้ำตาไหล เพื่อคืนทัศนวิสัยที่ดีดังเดิมให้แก่คุณ",
     fda: "ผ่านการรับรองจาก อย.<br/>เลขที่: 11-1-06353-1-0385",
     oldPrice: "฿1,980",
     newPrice: "฿990",
@@ -2372,148 +2372,1009 @@ const productsData = {
       },
     ],
   },
-
-  cartirex: {
-    name: "Cartirex",
-    title: "Siam-Healthy - Cartirex",
-    rating: 4.7,
-    reviewCount: 2115,
-    description:
-      "มอบอิสระให้ทุกการเคลื่อนไหวในกระดูกและข้อต่อเป็นไปอย่างมั่นใจและไร้ความกังวล ด้วยประสิทธิภาพในการบรรเทาอาการปวด บวม และอักเสบ พร้อมลดความเสี่ยงภาวะข้อเสื่อมในอนาคต ผ่านกลไกกระตุ้นปริมาณน้ำหล่อเลี้ยงในข้อต่อ เพื่อลดแรงกระแทกและการเสียดสีขณะเคลื่อนไหว อีกทั้งยังช่วยเสริมสร้างความหนาแน่นของมวลกระดูก ยับยั้งการเสื่อมสลายของเซลล์กระดูกอ่อน และซ่อมแซมเนื้อเยื่อที่สึกหรอทั่วร่างกายอย่างเต็มประสิทธิภาพ",
-    fda: "ผ่านการรับรองจาก อย.<br/>เลขที่: 11-106353-5-0031",
-    oldPrice: "฿1,980",
-    newPrice: "฿990",
-    images: [
-      "./img/cartirex/cartirex1.png",
-      "./img/cartirex/cartirex2.png",
-      "./img/cartirex/cartirex3.png",
-      "./img/cartirex/cartirex4.png",
-      "./img/cartirex/cartirex5.png",
-      "./img/cartirex/cartirex6.png",
-    ],
-    banner1: "./img/cartirex/main.png",
-    benefits: [
-      "ฟื้นฟูกระดูกและข้อต่อ",
-      "เพิ่มความหนาแน่นมวลกระดูก",
-      "ลดอาการปวดบวมอักเสบ",
-    ],
-    warningTitle: "คุณกำลังเผชิญกับปัญหากระดูกและข้อต่อเหล่านี้อยู่ใช่ไหม?",
-    warnings: [
-      {
-        title: "มีเสียงดังกร๊อบแกร๊บดังหรือรู้สึกฝืดขัดในข้อเวลาขยับเขยื้อนร่างกาย",
-        disableToggle: true,
-      },
-      {
-        title: "ปวดแปล๊บที่ข้อเข่า ข้อศอก หรือข้อต่อต่างๆ เมื่อขยับตัวหรือเดินนานๆ",
-        disableToggle: true,
-      },
-      {
-        title: "มีอาการปวด บวมแดง แสบร้อน หรืออักเสบรอบๆ บริเวณข้อต่อ",
-        disableToggle: true,
-      },
-      {
-        title: "รู้สึกเดินไม่ถนัด ลุกนั่งลำบาก และหลีกเลี่ยงการใช้งานกระดูกข้อต่อ",
-        disableToggle: true,
-      }
-    ],
-    solutionTitle:
-      "เจาะลึกต้นตอปัญหา: ตัวการทำลายข้อต่อที่แท้จริงคืออะไร?",
-    solutionTexts: [
-      "",
-      "<b>1. พฤติกรรมการใช้งานซ้ำ ๆ และน้ำหนักกดทับมากเกินไป</b> การนั่งไขว่ห้าง เดินลงน้ำหนักผิดท่า หรือน้ำหนักตัวที่เกินเกณฑ์มาตรฐาน ทำให้จุดรับน้ำหนักหลักอย่างข้อเข่าและข้อเท้าต้องรับแรงกดมหาศาลตลอดเวลา",
-      "<b>2. การขาดสารอาหารซ่อมแซมเซลล์</b> เมื่ออายุมากขึ้น ร่างกายสูญเสียความสามารถในการสังเคราะห์โปรตีนและคอลลาเจนที่จำเป็นต่อการบำรุงกระดูกอ่อน ทำให้โครงสร้างภายในเปราะบางลงอย่างรวดเร็ว",
-      "<b>3. ความเสื่อมของระบบไหลเวียนโลหิตเฉพาะจุด</b> บริเวณข้อต่อและเส้นเอ็นมักมีเส้นเลือดฝอยไปเลี้ยงน้อย เมื่อการไหลเวียนไม่ดี สารอาหารจึงไปไม่ถึงจุดที่สึกหรอ ทำให้ร่างกายซ่อมแซมตัวเองได้ช้าลง",
-      "<b>4. ความไม่สมดุลของฮอร์โมนและกระบวนการเผาผลาญ</b> ส่งผลให้ระบบสร้างมวลกระดูกทำงานช้าลงสวนทางกับการสลายตัวของแร่ธาตุ เนื้อกระดูกจึงบางลงโดยไม่รู้ตัว",
-    ],
-    resultsTitle: "คืนอิสระให้ทุกการเคลื่อนไหว บอกลาความเจ็บปวด ด้วย Cartirex",
-    results: [
-      "<b>ซ่อมแซมโครงสร้างที่สึกหรอ</b> ตรงเข้าฟื้นฟูเซลล์กระดูกอ่อนและเส้นเอ็นที่เสื่อมสภาพ พร้อมกระตุ้นการสร้างเนื้อเยื่อใหม่ให้กลับมาแข็งแรง",
-      "<b>เสริมความหนาแน่นมวลกระดูก</b> เพิ่มความแข็งแกร่งให้โครงสร้างกระดูกจากภายใน ป้องกันภาวะกระดูกบางและลดความเสี่ยงโรคกระดูกเสื่อมระยะยาว",
-      "<b>ตัดวงจรอักเสบ บรรเทาอาการปวด</b> ลดอาการปวด บวม แสบร้อน และความฝืดตึง ให้คุณขยับร่างกายได้สะดวกขึ้น โดยไม่ต้องพึ่งยาแก้ปวด",
-      "<b>เติมน้ำหล่อเลี้ยงข้อต่อ</b> ปกป้องผิวข้อ กระตุ้นการสร้างน้ำในข้อเพื่อลดแรงกระแทกและการเสียดสีที่เป็นต้นเหตุของความเจ็บปวด"
-    ],
-    ingredientTitle: "บำรุงฟื้นฟูกระดูกข้อต่อ ด้วย 6 สารสกัดสำคัญใน Cartirex",
-    ingredients: [
-      {
-        name: "หอยแมลงภู่นิวซีแลนด์",
-        img: "./img/cartirex/cartirexIngredients/New Zealand Mussels.png",
-        props: [
-          "อุดมด้วยกลูโคซามีนธรรมชาติ",
-          "ซ่อมแซมและสร้างเซลล์กระดูกอ่อน",
-          "กระตุ้นการผลิตน้ำหล่อเลี้ยงข้อต่อ",
-        ],
-      },
-      {
-        name: "แม็กนีเซียมออกไซด์",
-        img: "./img/cartirex/cartirexIngredients/Magnesium oxide.png",
-        props: [
-          "ทำงานร่วมกับแคลเซียมเพิ่มมวลกระดูก",
-          "เสริมความหนาแน่น ป้องกันกระดูกพรุน",
-          "ผ่อนคลายกล้ามเนื้อรอบข้อต่อ",
-        ],
-      },
-      {
-        name: "แอล-โปรลีน",
-        img: "./img/cartirex/cartirexIngredients/L-Proline.png",
-        props: [
-          "กรดอะมิโนสำคัญในการสร้างคอลลาเจน",
-          "เพิ่มความยืดหยุ่นให้เส้นเอ็นและข้อต่อ",
-          "ซ่อมแซมเซลล์กระดูกอ่อนที่สึกหรอ",
-        ],
-      },
-      {
-        name: "ซิงก์กลูโคเนต",
-        img: "./img/cartirex/cartirexIngredients/Zinc Gluconate.png",
-        props: [
-          "กระตุ้นการสร้างคอลลาเจนในกระดูก",
-          "เร่งฟื้นฟูข้อต่อและเส้นเอ็นที่สึกหรอ",
-          "ลดกระบวนการอักเสบและปวดบวม",
-        ],
-      },
-      {
-        name: "ผงน้ำมันปลา",
-        img: "./img/cartirex/cartirexIngredients/Fish Oil.png",
-        props: [
-          "อุดมไปด้วยโอเมก้า-3 (EPA & DHA)",
-          "ลดสารสื่อประสาทที่กระตุ้นการปวดข้อ",
-          "เพิ่มความหล่อลื่นและยืดหยุ่นในไขข้อ",
-        ],
-      },
-      {
-        name: "ปักคี้",
-        img: "./img/cartirex/cartirexIngredients/Astragalus ปักคี้ั.png",
-        props: [
-          "บรรเทาอาการปวด คลายกล้ามเนื้อ",
-          "นำสารอาหารไปหล่อเลี้ยงกระดูกและเอ็น",
-          "บรรเทาอาการชาและอ่อนแรงรอบข้อต่อ",
-        ],
-      },
-    ],
-    reviews: [
-      {
-        name: "กิ่งมณี พึ่งพาสุข",
-        rating: 5,
-        text: "พออายุเยอะจึงเริ่มใส่ใจสุขภาพข้อต่อมากขึ้น เลือกกิน Cartirex เสริมมาหลายเดือนแล้ว ปัจจุบันขยับเคลื่อนไหวดีขึ้นและเสียงในข้อก็ลดลงค่ะ",
-        img: null,
-      },
-      {
-        name: "สมศักดิ์ บำราญฤทธิ์",
-        rating: 5,
-        text: "เลือก Cartirex เพราะต้องยืนทำงานทุกวัน รู้สึกว่าเป็นอีกหนึ่งตัวช่วยบำรุงกระดูกที่ดีเลย ทานต่อเนื่องควบคู่กับการยืดเหยียดร่างกายแล้วโอเคมากครับ",
-        img: "./img/cartirex/review1.png",
-      },
-      {
-        name: "ประจักษ์ แคว้นศรี",
-        rating: 4.5,
-        text: "เมื่อก่อนตอนเดินขึ้นบันไดจะมีเสียงข้อเข่าดังแถมปวดจี๊ดตลอด หลังจากได้ลองกิน Cartirex มาได้สักพัก รู้สึกเลยว่าข้อเข่าดีขึ้นมาก เดินคล่องขึ้นกว่าเดิม",
-        img: null,
-      },
-      {
-        name: "กมลฉัตร กุลกลิ่น",
-        rating: 5,
-        text: "ซื้อให้คุณแม่ทานค่ะ เพราะท่านบ่นปวดหลังล่างแทบทุกวัน ตอนนี้แม่บอกว่าสบายขึ้น ไม่ค่อยปวดแล้ว ดีใจมากที่ตัดสินใจให้ท่านลองทานค่ะ",
-        img: "./img/cartirex/review2.png",
-      },
-    ],
-  },
 };
+
+// 📌 ตั้งค่า URL ของ NestJS Backend
+const API_BASE_URL = 'http://localhost:3000';
+
+// 1. ดึง ID สินค้าจาก URL
+const urlParams = new URLSearchParams(window.location.search);
+const rawProductId = urlParams.get("id") || "astin";
+
+function normalizeKey(str) {
+  return str ? str.toLowerCase().replace(/[\s\-_]/g, "") : "";
+}
+
+// Global Variables ให้สามารถใช้ในตะกร้าได้
+let productId = rawProductId;
+let product = null;
+
+// 2. ฟังก์ชันหลักสำหรับดึงและรวมข้อมูล (Backend + Static Data)
+async function initializeProduct() {
+  // --- A. ดึงข้อมูล Static (ไฟล์ JS หน้าบ้าน) มาเป็นโครงสร้างหลัก ---
+  let staticProduct = null;
+  if (typeof productsData !== "undefined") {
+    const targetKey = normalizeKey(rawProductId);
+    const matchedKey = Object.keys(productsData).find(
+      (key) => normalizeKey(key) === targetKey
+    );
+
+    if (matchedKey) {
+      productId = matchedKey;
+      staticProduct = productsData[matchedKey];
+    } else {
+      // ค้นหาแบบยืดหยุ่น ป้องกันเคสพิมพ์เล็ก/ใหญ่ไม่ตรงกัน
+      const fallbackKey = Object.keys(productsData).find(
+        (key) => key.toLowerCase() === rawProductId.toLowerCase()
+      );
+      staticProduct = productsData[fallbackKey] || productsData[rawProductId] || productsData["astin"] || productsData["Astin"];
+    }
+  }
+
+  // Clone object เพื่อไม่ให้กระทบต้นฉบับ
+  product = staticProduct ? JSON.parse(JSON.stringify(staticProduct)) : null;
+
+  // --- B. ดึงข้อมูลแบบ Real-time จาก Backend (NestJS) มาเขียนทับ ---
+  try {
+    // 🟢 แก้ไข: ใช้ชื่อสินค้าที่ถูกต้อง (มีเว้นวรรค) ไปค้นหาแทนคำว่า "backpro"
+    const searchKeyword = staticProduct && staticProduct.name ? staticProduct.name : productId;
+    
+    // เข้ารหัสคำค้นหาให้ URL รองรับการเว้นวรรค
+    const response = await fetch(`${API_BASE_URL}/products/${encodeURIComponent(searchKeyword)}`);
+    
+    if (response.ok) {
+      const dbProduct = await response.json();
+      if (!product) product = {}; // สร้าง Object ใหม่ถ้ายังไม่มี
+
+      // เขียนทับข้อมูลพื้นฐานจาก Database
+      if (dbProduct.name) {
+        product.name = dbProduct.name;
+        product.title = `Siam-Healthy - ${dbProduct.name}`;
+      }
+      if (dbProduct.description) product.description = dbProduct.description;
+      
+      // ปรับแต่งราคาไม่ให้มี ฿฿ ซ้ำซ้อนตอน Render
+      if (dbProduct.price !== undefined && dbProduct.price !== null) {
+        product.newPrice = Number(dbProduct.price).toLocaleString('th-TH', {minimumFractionDigits: 0});
+      }
+      if (dbProduct.oldPrice !== undefined && dbProduct.oldPrice !== null) {
+        product.oldPrice = Number(dbProduct.oldPrice).toLocaleString('th-TH', {minimumFractionDigits: 0});
+      }
+
+      // 🟢 นำแบนเนอร์ใหม่ที่อัปโหลดมาทับแบนเนอร์เก่า
+      if (dbProduct.banner_url) {
+        product.banner1 = dbProduct.banner_url;
+      }
+
+      // 🟢 เขียนทับรูปภาพแกลลอรี่จาก DB (สล็อตรูปภาพใหม่ 1-6)
+      if (dbProduct.images && Array.isArray(dbProduct.images) && dbProduct.images.length > 0) {
+        // กรองเอาเฉพาะรูปที่ไม่เป็นค่าว่าง
+        const validImages = dbProduct.images.filter(img => img && img.trim() !== "");
+        if (validImages.length > 0) {
+            product.images = validImages;
+        }
+      }
+
+      // เขียนทับส่วนผสมจาก DB (พร้อมระบบสำรองลิงก์รูปภาพอัตโนมัติหากลิงก์เดิมพัง)
+      if (dbProduct.product_ingredients && dbProduct.product_ingredients.length > 0) {
+        product.ingredients = dbProduct.product_ingredients.map((ing, idx) => {
+          let imageUrl = ing.image_url || "";
+          if (!imageUrl && product.name) {
+            imageUrl = `${API_BASE_URL.replace(':3000', '')}/images/${productId}/${productId}${idx + 1}.png`;
+          }
+          return {
+            name: ing.name,
+            props: ing.properties || [],
+            img: imageUrl
+          };
+        });
+      }
+
+      // เขียนทับรีวิวจาก DB
+      if (dbProduct.product_reviews && dbProduct.product_reviews.length > 0) {
+        product.reviewCount = dbProduct.product_reviews.length;
+        let sumRating = dbProduct.product_reviews.reduce((acc, rev) => acc + (rev.rating || 5), 0);
+        product.rating = (sumRating / dbProduct.product_reviews.length).toFixed(1);
+        
+        product.reviews = dbProduct.product_reviews.map(rev => ({
+          name: rev.reviewer_name,
+          rating: rev.rating || 5,
+          text: rev.review_text || "",
+          img: rev.image_url || ""
+        }));
+      }
+    } else {
+        console.warn(`[Backend] Product '${searchKeyword}' not found in DB. Falling back to static data.`);
+    }
+  } catch (err) {
+    console.warn("Backend offline or error, falling back to static data.", err);
+  }
+
+  // --- C. เมื่อเตรียมข้อมูลเสร็จ ให้สร้างหน้าจอ UI ---
+  renderUI();
+}
+
+
+// 3. โค้ดสร้างหน้าจอ (DOM Manipulation)
+function renderUI() {
+  if (product && Object.keys(product).length > 0) {
+    // --- อัปเดตข้อมูลทั่วไป ---
+    if (document.getElementById("page-title")) {
+      document.getElementById("page-title").textContent = product.title || product.name;
+    }
+    if (document.getElementById("productName")) {
+      document.getElementById("productName").textContent = product.name;
+    }
+    if (document.getElementById("productReviewCount")) {
+      document.getElementById("productReviewCount").textContent =
+        `${product.rating || "5.0"} (${product.reviewCount || 0} Review)`;
+    }
+    if (document.getElementById("productDescription")) {
+      document.getElementById("productDescription").textContent =
+        product.description || "";
+    }
+    if (document.getElementById("productFda")) {
+      document.getElementById("productFda").innerHTML = product.fda || "";
+    }
+    
+    // 🟢 ปรับแก้ไม่ให้ ฿ ซ้อนกัน
+    if (document.getElementById("oldPrice")) {
+      let op = product.oldPrice || "";
+      document.getElementById("oldPrice").textContent = op.toString().includes("฿") ? op : (op ? `฿${op}` : "");
+    }
+    if (document.getElementById("newPrice")) {
+      let np = product.newPrice || "";
+      document.getElementById("newPrice").textContent = np.toString().includes("฿") ? np : (np ? `฿${np}` : "");
+    }
+
+    // --- แบนเนอร์ & ปรับเลย์เอาต์ Warning (banner1) ---
+    const banner = document.getElementById("bannerImage1");
+    const bannerContainer = document.querySelector(".warning-left-image");
+    const warningRightContent = document.querySelector(".warning-right-content");
+
+    if (product.banner1) {
+      if (banner) {
+        banner.src = product.banner1;
+        banner.style.display = "block";
+      }
+      if (bannerContainer) bannerContainer.style.display = "block";
+      if (warningRightContent) warningRightContent.style.width = "";
+    } else {
+      if (bannerContainer) bannerContainer.style.display = "none";
+      if (warningRightContent) warningRightContent.style.width = "100%";
+    }
+
+    // --- แบนเนอร์ 2 (แสดงผลตรงกลาง) ---
+    const banner2Container = document.getElementById("banner2Container");
+    const banner2 = document.getElementById("bannerImage2");
+
+    if (product.banner2 && banner2Container && banner2) {
+      banner2.src = product.banner2;
+      banner2Container.style.display = "block";
+    } else if (banner2Container) {
+      banner2Container.style.display = "none";
+    }
+
+    // --- รูปภาพและแกลลอรี่ ---
+    const mainProductImg = document.getElementById("mainProduct");
+    const thumbList = document.getElementById("thumbList");
+    const prevBtn = document.getElementById("prevImgBtn");
+    const nextBtn = document.getElementById("nextImgBtn");
+
+    if (
+      mainProductImg &&
+      thumbList &&
+      product.images &&
+      product.images.length > 0
+    ) {
+      thumbList.innerHTML = "";
+      let currentImageIndex = 0;
+
+      function updateMainImage(index) {
+        currentImageIndex = index;
+        const targetSrc = product.images[currentImageIndex];
+
+        mainProductImg.style.opacity = "0.4";
+        mainProductImg.style.transform = "scale(0.97)";
+
+        setTimeout(() => {
+          mainProductImg.src = targetSrc;
+          mainProductImg.style.opacity = "1";
+          mainProductImg.style.transform = "scale(1)";
+        }, 200);
+
+        const thumbImages = thumbList.querySelectorAll("img");
+        thumbImages.forEach((el, idx) => {
+          if (idx === currentImageIndex) {
+            el.classList.add("active");
+            el.scrollIntoView({
+              behavior: "smooth",
+              inline: "nearest",
+              block: "nearest",
+            });
+          } else {
+            el.classList.remove("active");
+          }
+        });
+      }
+
+      product.images.forEach((imgSrc, index) => {
+        const imgElement = document.createElement("img");
+        imgElement.src = imgSrc;
+        if (index === 0) imgElement.classList.add("active");
+
+        imgElement.onclick = () => {
+          updateMainImage(index);
+        };
+
+        thumbList.appendChild(imgElement);
+      });
+
+      if (product.images.length > 0) {
+         mainProductImg.src = product.images[0];
+      }
+      mainProductImg.style.transition = "opacity 0.35s ease, transform 0.35s ease";
+
+      if (prevBtn) {
+        prevBtn.onclick = () => {
+          let newIndex = currentImageIndex - 1;
+          if (newIndex < 0) {
+            newIndex = product.images.length - 1;
+          }
+          updateMainImage(newIndex);
+        };
+      }
+
+      if (nextBtn) {
+        nextBtn.onclick = () => {
+          let newIndex = currentImageIndex + 1;
+          if (newIndex >= product.images.length) {
+            newIndex = 0;
+          }
+          updateMainImage(newIndex);
+        };
+      }
+
+      thumbList.style.display = "flex";
+      thumbList.style.gap = "10px";
+      thumbList.style.overflowX = "auto";
+      thumbList.style.scrollBehavior = "smooth";
+    }
+
+    // --- ประโยชน์ (Benefits) ---
+    const benefitList = document.getElementById("benefitList");
+    if (benefitList && product.benefits) {
+      benefitList.innerHTML = "";
+      product.benefits.forEach((benefit) => {
+        benefitList.innerHTML += `
+          <div class="benefit-item">
+            <div class="check">✓</div>
+            <span>${benefit}</span>
+          </div>`;
+      });
+    }
+
+    // --- ระบบจัดการจำนวนสินค้า (Quantity Selector) ---
+    const decreaseBtn = document.getElementById("decreaseBtn");
+    const increaseBtn = document.getElementById("increaseBtn");
+    const quantityInput = document.getElementById("quantityInput");
+
+    let currentQuantity = 1;
+
+    if (decreaseBtn && increaseBtn && quantityInput) {
+      const updateButtonState = () => {
+        if (currentQuantity <= 1) {
+          decreaseBtn.classList.add("disabled");
+        } else {
+          decreaseBtn.classList.remove("disabled");
+        }
+      };
+
+      decreaseBtn.onclick = () => {
+        if (currentQuantity > 1) {
+          currentQuantity--;
+          quantityInput.value = currentQuantity;
+          updateButtonState();
+        }
+      };
+
+      increaseBtn.onclick = () => {
+        currentQuantity++;
+        quantityInput.value = currentQuantity;
+        updateButtonState();
+      };
+
+      updateButtonState();
+    }
+
+    // --- คำเตือน / สัญญาณเตือน ---
+    const warningSectionEl = document.querySelector(".warning-layout-section");
+    const warningTitleEl = document.getElementById("warningTitle");
+    const warningBox = document.getElementById("warningBox");
+
+    const hasWarningData =
+      product.warningTitle ||
+      (product.warningTable && product.warningTable.headers) ||
+      (product.warningTexts && product.warningTexts.length > 0) ||
+      (product.warnings && product.warnings.length > 0);
+
+    if (hasWarningData && warningBox) {
+      if (warningSectionEl) warningSectionEl.style.display = "";
+
+      if (warningTitleEl && product.warningTitle) {
+        warningTitleEl.textContent = product.warningTitle;
+      }
+
+      warningBox.innerHTML = "";
+
+      if (
+        product.warningTable &&
+        product.warningTable.headers &&
+        product.warningTable.rows
+      ) {
+        warningBox.className = "warning-table-wrapper reveal-on-scroll";
+
+        let tableHTML = `<div style="overflow-x: auto; width: 100%;">`;
+        tableHTML += `<table class="custom-result-table warning-table"><thead><tr>`;
+
+        product.warningTable.headers.forEach((header) => {
+          tableHTML += `<th>${header}</th>`;
+        });
+        tableHTML += `</tr></thead><tbody>`;
+
+        product.warningTable.rows.forEach((row) => {
+          tableHTML += `<tr>`;
+          row.forEach((cell) => {
+            let cellContent = "";
+
+            if (Array.isArray(cell)) {
+              let listItems = cell
+                .map(
+                  (item) =>
+                    `<li style="margin-bottom: 4px; position: relative; padding-left: 14px;">
+                       <span style="position: absolute; left: 0; color: #e53e3e;">•</span>${item}
+                     </li>`
+                )
+                .join("");
+              cellContent = `<ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.6;">${listItems}</ul>`;
+            } else {
+              let formattedCell = cell;
+              const colonIndex = cell.indexOf(":");
+
+              if (colonIndex !== -1) {
+                let titlePart = cell.substring(0, colonIndex).trim();
+                let descPart = cell.substring(colonIndex + 1).trim();
+                formattedCell = `<strong style="color: #c53030; display: block; margin-bottom: 4px; font-size: 14.5px;">${titlePart}:</strong> <span style="color: #4a5568; line-height: 1.6;">${descPart}</span>`;
+              } else {
+                formattedCell = `<span style="line-height: 1.6; color: #2d3748;">${cell}</span>`;
+              }
+              cellContent = formattedCell;
+            }
+
+            tableHTML += `<td style="vertical-align: top; padding: 12px 14px;">${cellContent}</td>`;
+          });
+          tableHTML += `</tr>`;
+        });
+        tableHTML += `</tbody></table></div>`;
+
+        warningBox.innerHTML = tableHTML;
+      } else if (product.warningTexts && product.warningTexts.length > 0) {
+        warningBox.className = "accordion-container reveal-on-scroll";
+
+        let introP = document.getElementById("warningIntro");
+        if (!introP) {
+          introP = document.createElement("p");
+          introP.id = "warningIntro";
+          introP.style.cssText =
+            "color: #555; line-height: 1.7; margin-bottom: 20px; font-size: 16px;";
+          warningBox.parentNode.insertBefore(introP, warningBox);
+        }
+        introP.innerHTML = product.warningTexts[0];
+
+        const accordionTexts = product.warningTexts.slice(1);
+
+        accordionTexts.forEach((text, index) => {
+          const itemEl = document.createElement("div");
+          itemEl.className = `accordion-item warning-type`;
+
+          let titleText = `สัญญาณเตือนส่วนที่ ${index + 1}`;
+          let bodyText = text;
+
+          const match = text.match(/<b>(.*?)<\/b>/);
+          if (match && match[1]) {
+            titleText = match[1].replace(":", "").trim();
+            bodyText = text
+              .replace(/<b>.*?<\/b>:\s*/, "")
+              .replace(/<b>.*?<\/b>/, "")
+              .trim();
+          }
+
+          itemEl.innerHTML = `
+            <button class="accordion-header">
+              <span>${titleText}</span>
+              <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            </button>
+            <div class="accordion-content" style="max-height: 0; padding-bottom: 0;">
+              <p style="margin: 0; padding-top: 5px;">${bodyText}</p>
+            </div>
+          `;
+
+          const header = itemEl.querySelector(".accordion-header");
+          header.onclick = () => {
+            const content = itemEl.querySelector(".accordion-content");
+            itemEl.classList.toggle("active");
+            if (itemEl.classList.contains("active")) {
+              content.style.maxHeight = content.scrollHeight + "px";
+              content.style.paddingBottom = "25px";
+            } else {
+              content.style.maxHeight = "0";
+              content.style.paddingBottom = "0";
+            }
+          };
+          warningBox.appendChild(itemEl);
+        });
+      } else if (product.warnings && product.warnings.length > 0) {
+        warningBox.className = "accordion-container reveal-on-scroll";
+
+        if (product.warningText && product.warningText.length > 0) {
+          let introP = document.getElementById("warningIntro");
+          if (!introP) {
+            introP = document.createElement("p");
+            introP.id = "warningIntro";
+            introP.style.cssText =
+              "color: #555; line-height: 1.7; margin-bottom: 20px; font-size: 16px;";
+            warningBox.parentNode.insertBefore(introP, warningBox);
+          }
+          introP.innerHTML = product.warningText[0];
+        }
+
+        product.warnings.forEach((warning) => {
+          const contentHTML = warning.disableToggle
+            ? ""
+            : `
+              <div class="accordion-content" style="max-height: 0; padding-bottom: 0;">
+                <ul>${warning.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+              </div>
+            `;
+
+          const itemEl = document.createElement("div");
+          itemEl.className = `accordion-item`;
+
+          itemEl.innerHTML = `
+            <button class="accordion-header">
+              <span>${warning.title}</span>
+              <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            </button>
+            ${contentHTML}
+          `;
+
+          const header = itemEl.querySelector(".accordion-header");
+          const icon = itemEl.querySelector(".accordion-icon");
+
+          if (warning.disableToggle) {
+            header.style.cursor = "default";
+            if (icon) icon.style.display = "none";
+          } else {
+            header.onclick = () => {
+              const content = itemEl.querySelector(".accordion-content");
+              itemEl.classList.toggle("active");
+              if (itemEl.classList.contains("active")) {
+                content.style.maxHeight = content.scrollHeight + "px";
+                content.style.paddingBottom = "25px";
+              } else {
+                content.style.maxHeight = "0";
+                content.style.paddingBottom = "0";
+              }
+            };
+          }
+
+          warningBox.appendChild(itemEl);
+        });
+      }
+    } else {
+      if (warningSectionEl) {
+        warningSectionEl.style.display = "none";
+      }
+    }
+
+    // --- ส่วนการแก้ปัญหา / Solution ---
+    const solutionTitleEl = document.getElementById("solutionTitle");
+    const solutionBox = document.getElementById("solutionBox");
+    
+    if (product.solutionTitle && product.solutionTexts && product.solutionTexts.length > 0) {
+      if (solutionTitleEl) {
+        solutionTitleEl.textContent = product.solutionTitle;
+        solutionTitleEl.style.display = "block";
+      }
+      if (solutionBox) {
+        solutionBox.style.display = "block";
+        solutionBox.innerHTML = "";
+        solutionBox.className = "accordion-container reveal-on-scroll";
+
+        let introP = document.getElementById("solutionIntro");
+        if (!introP) {
+          introP = document.createElement("p");
+          introP.id = "solutionIntro";
+          introP.style.cssText =
+            "color: #555; line-height: 1.7; margin-bottom: 20px; font-size: 16px;";
+          solutionBox.parentNode.insertBefore(introP, solutionBox);
+        }
+        introP.innerHTML = product.solutionTexts[0];
+        introP.style.display = "block";
+
+        const accordionTexts = product.solutionTexts.slice(1);
+
+        accordionTexts.forEach((text, index) => {
+          const itemEl = document.createElement("div");
+          itemEl.className = `accordion-item solution-type`;
+
+          let titleText = `แนวทางฟื้นฟูส่วนที่ ${index + 1}`;
+          let bodyText = text;
+
+          const match = text.match(/<b>(.*?)<\/b>/);
+          if (match && match[1]) {
+            titleText = match[1].replace(":", "").trim();
+            bodyText = text
+              .replace(/<b>.*?<\/b>:\s*/, "")
+              .replace(/<b>.*?<\/b>/, "")
+              .trim();
+          }
+
+          itemEl.innerHTML = `
+            <button class="accordion-header">
+              <span>${titleText}</span>
+              <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            </button>
+            <div class="accordion-content" style="max-height: 0; padding-bottom: 0;">
+              <p style="margin: 0; padding-top: 5px;">${bodyText}</p>
+            </div>
+          `;
+
+          const header = itemEl.querySelector(".accordion-header");
+          header.onclick = () => {
+            const content = itemEl.querySelector(".accordion-content");
+            itemEl.classList.toggle("active");
+            if (itemEl.classList.contains("active")) {
+              content.style.maxHeight = content.scrollHeight + "px";
+              content.style.paddingBottom = "25px";
+            } else {
+              content.style.maxHeight = "0";
+              content.style.paddingBottom = "0";
+            }
+          };
+          solutionBox.appendChild(itemEl);
+        });
+      }
+    } else {
+      if (solutionTitleEl) solutionTitleEl.style.display = "none";
+      if (solutionBox) solutionBox.style.display = "none";
+      const introP = document.getElementById("solutionIntro");
+      if (introP) introP.style.display = "none";
+    }
+
+    // --- ส่วนผลลัพธ์ที่คุณสัมผัสได้ ---
+    const resultTitleEl = document.getElementById("resultTitle");
+    const resultImageEl = document.getElementById("resultImage");
+    const resultListEl = document.getElementById("resultList");
+    const resultTableContainer = document.getElementById("resultTableContainer");
+    const resultsWrapper = document.querySelector(".results-flex-wrapper");
+
+    const hasResultData = (product.resultTable && product.resultTable.headers) || (product.results && product.results.length > 0);
+
+    if (resultTitleEl) {
+      if (hasResultData && product.resultsTitle) {
+        resultTitleEl.textContent = product.resultsTitle;
+        resultTitleEl.style.display = "block";
+      } else {
+        resultTitleEl.style.display = "none";
+      }
+    }
+
+    if (resultImageEl) {
+      if (product.resultImage) {
+        resultImageEl.src = product.resultImage;
+        if (resultImageEl.parentElement)
+          resultImageEl.parentElement.style.display = "block";
+      } else {
+        if (resultImageEl.parentElement)
+          resultImageEl.parentElement.style.display = "none";
+      }
+    }
+
+    if (resultsWrapper) {
+      if (!hasResultData) {
+        resultsWrapper.style.display = "none";
+      } else {
+        resultsWrapper.style.display = "flex";
+        if (
+          product.resultTable &&
+          product.resultTable.headers &&
+          product.resultTable.rows
+        ) {
+          if (resultListEl) resultListEl.style.display = "none";
+          if (resultTableContainer) {
+            resultTableContainer.style.display = "block";
+
+            let tableHTML = `<table class="custom-result-table"><thead><tr>`;
+            product.resultTable.headers.forEach((header) => {
+              tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += `</tr></thead><tbody>`;
+
+            product.resultTable.rows.forEach((row) => {
+              tableHTML += `<tr>`;
+              row.forEach((cell) => {
+                let formattedCell = cell;
+                const colonIndex = cell.indexOf(":");
+
+                if (colonIndex !== -1) {
+                  let titlePart = cell.substring(0, colonIndex).trim();
+                  let descPart = cell.substring(colonIndex + 1).trim();
+                  formattedCell = `<strong style="color: #111; display: block; margin-bottom: 6px; font-size: 14.5px;">${titlePart}:</strong> <span style="color: #555; line-height: 1.6;">${descPart}</span>`;
+                }
+
+                tableHTML += `<td>${formattedCell}</td>`;
+              });
+              tableHTML += `</tr>`;
+            });
+            tableHTML += `</tbody></table>`;
+
+            resultTableContainer.innerHTML = tableHTML;
+          }
+        } else if (product.results && product.results.length > 0) {
+          if (resultTableContainer) resultTableContainer.style.display = "none";
+          if (resultListEl) {
+            resultListEl.style.display = "flex";
+            resultListEl.innerHTML = "";
+
+            product.results.forEach((item, index) => {
+              if (typeof item === "object" && item !== null) {
+                let propsItems = item.props
+                  ? item.props.map((p) => `
+                      <li>
+                        <span class="step-dot"></span>
+                        <span>${p}</span>
+                      </li>
+                    `).join("")
+                  : "";
+
+                resultListEl.innerHTML += `
+                  <li class="result-timeline-card">
+                    <div class="result-card-header">
+                      <span class="phase-badge"><i class="fa-solid fa-calendar-check"></i> ${item.title.split(":")[0] || "ระยะที่ " + (index + 1)}</span>
+                      <h3 class="result-card-title">${item.title.includes(":") ? item.title.split(":")[1].trim() : item.title}</h3>
+                    </div>
+                    <ul class="result-card-props">
+                      ${propsItems}
+                    </ul>
+                  </li>
+                `;
+              } else if (typeof item === "string") {
+                let boldPart = "";
+                let textPart = item;
+
+                const match = item.match(/<b>(.*?)<\/b>/);
+                if (match && match[1]) {
+                  boldPart = `<b>${match[1]}</b>`;
+                  textPart = item
+                    .replace(/<b>.*?<\/b>:\s*/, "")
+                    .replace(/<b>.*?<\/b>/, "")
+                    .trim();
+                }
+
+                resultListEl.innerHTML += `
+                  <li>
+                    ${boldPart}
+                    <div class="card-detail-text">${textPart}</div>
+                  </li>
+                `;
+              }
+            });
+          }
+        }
+      }
+    }
+
+    // --- ส่วนผสมของผลิตภัณฑ์ ---
+    const ingredientTitleEl = document.getElementById("ingredientTitle");
+    if (ingredientTitleEl && product.ingredientTitle) {
+      ingredientTitleEl.textContent = product.ingredientTitle;
+    }
+
+    const ingredientGrid = document.getElementById("ingredientGrid");
+    if (ingredientGrid && product.ingredients) {
+      ingredientGrid.className = "ingredient-grid reveal-on-scroll";
+      ingredientGrid.innerHTML = "";
+      product.ingredients.forEach((ing) => {
+        let propsItems = ing.props.map((prop) => `<li>${prop}</li>`).join("");
+        
+        let imgHtml = ing.img 
+          ? `<img src="${ing.img}" alt="${ing.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\\'width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;\\'></div>';" />` 
+          : `<div style="width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;"></div>`;
+          
+        ingredientGrid.innerHTML += `
+          <div class="ingredient-card">
+            <div class="ingredient-image">${imgHtml}</div>
+            <h3>${ing.name}</h3>
+            <ul>${propsItems}</ul>
+          </div>`;
+      });
+    }
+
+    // --- Scroll Reveal Animation ---
+    const observerOptions = { threshold: 0.15 };
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll(".reveal-on-scroll").forEach((el) => {
+      observer.observe(el);
+    });
+
+    // --- อัปเดตสรุปคะแนนรีวิว ---
+    const bigRatingEl = document.getElementById("summaryBigRating");
+    const sumReviewCountEl = document.getElementById("summaryReviewCount");
+    if (bigRatingEl && product.rating) {
+      bigRatingEl.textContent = product.rating;
+    }
+    if (sumReviewCountEl && product.reviewCount) {
+      let formattedCount =
+        product.reviewCount > 1000
+          ? (product.reviewCount / 1000).toFixed(1) + "k"
+          : product.reviewCount;
+      sumReviewCountEl.textContent = formattedCount;
+    }
+
+    // --- รีวิว ---
+    const reviewList = document.getElementById("reviewList");
+    if (reviewList && product.reviews) {
+      reviewList.innerHTML = "";
+      product.reviews.forEach((review) => {
+        let imgHTML = review.img
+          ? `<img class="review-image" src="${review.img}" alt="Review Image" style="margin-top: 10px;" onerror="this.style.display='none'" />`
+          : "";
+
+        let starCount = review.rating || 5;
+        let starsHTML = `<div class="stars-orange" style="font-size: 18px; margin-top: -2px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">`;
+
+        let starsIcon = "";
+        for (let i = 1; i <= 5; i++) {
+          if (i <= starCount) {
+            starsIcon += "★";
+          } else {
+            starsIcon += "☆";
+          }
+        }
+
+        starsHTML += `<span style="letter-spacing: 2px;">${starsIcon}</span>`;
+        starsHTML += `<span style="font-size: 14px; color: #555; font-weight: 500;">(${starCount} ดาว)</span>`;
+        starsHTML += "</div>";
+
+        reviewList.innerHTML += `
+          <div class="review-comment">
+            <div class="user-name" style="margin-bottom: 4px;">${review.name}</div>
+            ${starsHTML}
+            <div class="review-text">${review.text}</div>
+            ${imgHTML}
+          </div>`;
+      });
+    }
+
+    // --- ส่วนผลกระทบ (Impact Section) ---
+    const impactSectionEl = document.querySelector(".impact-section");
+    const impactTitleEl = document.getElementById("impactTitle");
+    const impactGridEl = document.getElementById("impactGrid");
+
+    const hasImpactData =
+      product.impactTitle &&
+      product.impactTexts &&
+      product.impactTexts.length > 0;
+
+    if (hasImpactData) {
+      if (impactSectionEl) impactSectionEl.style.display = "block";
+
+      if (impactTitleEl) {
+        impactTitleEl.textContent = product.impactTitle;
+      }
+
+      if (impactGridEl) {
+        impactGridEl.innerHTML = "";
+
+        let introP = document.getElementById("impactIntro");
+        if (introP) {
+          introP.innerHTML = product.impactTexts[0];
+        }
+
+        const cardsData = product.impactTexts.slice(1);
+
+        cardsData.forEach((text, index) => {
+          let cardTitle = `ผลกระทบที่ ${index + 1}`;
+          let cardBody = text;
+
+          const match = text.match(/<b>(.*?)<\/b>/);
+          if (match && match[1]) {
+            cardTitle = match[1].replace(":", "").trim();
+            cardBody = text
+              .replace(/<b>.*?<\/b>:\s*/, "")
+              .replace(/<b>.*?<\/b>/, "")
+              .trim();
+          }
+
+          const cardEl = document.createElement("div");
+          cardEl.className = "impact-card";
+          cardEl.innerHTML = `
+          <div class="impact-card-header">
+            <div class="impact-icon-box">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="impact-card-title">${cardTitle}</h3>
+          </div>
+          <div class="impact-card-body">${cardBody}</div>
+        `;
+
+          impactGridEl.appendChild(cardEl);
+        });
+      }
+    } else {
+      if (impactSectionEl) {
+        impactSectionEl.style.display = "none";
+      }
+    }
+
+    // --- ส่วนแสดงผลสินค้าอื่นๆ ที่น่าสนใจ ---
+    const relatedContainer = document.getElementById("relatedProductsContainer");
+
+    if (relatedContainer && typeof productsData !== "undefined") {
+      const otherProductKeys = Object.keys(productsData).filter(
+        (key) => normalizeKey(key) !== normalizeKey(productId)
+      );
+
+      const shuffledKeys = otherProductKeys.sort(() => 0.5 - Math.random());
+      const selectedKeys = shuffledKeys.slice(0, 4);
+
+      if (selectedKeys.length > 0) {
+        let relatedHTML = `
+          <div class="related-products-section reveal-on-scroll visible">
+            <div class="related-header">
+              <h2>สินค้าที่คุณอาจสนใจ</h2>
+              <a href="index.html" class="view-all-link">
+                ดูสินค้าทั้งหมด <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+            
+            <div class="products related-products-grid">
+        `;
+
+        selectedKeys.forEach((key) => {
+          const item = productsData[key];
+          const imgCover = (item.images && item.images.length > 0) 
+            ? item.images[0] 
+            : (item.banner1 || "");
+
+          relatedHTML += `
+            <div class="product-card animate-in" onclick="window.location.href='product.html?id=${key}';">
+              <div class="product-image">
+                <img src="${imgCover}" alt="${item.name}">
+              </div>
+              <h3 class="product-title">${item.name}</h3>
+              <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
+              <p class="product-price">
+                <span class="new-price">${item.newPrice}.00</span>
+                <span class="old-price">${item.oldPrice}.00</span>
+              </p>
+            </div>
+          `;
+        });
+        relatedContainer.innerHTML = relatedHTML;
+      }
+    }
+  } else {
+    const pageContainer = document.querySelector(".product-page");
+    if (pageContainer) {
+      pageContainer.innerHTML = "<h1>ขออภัย ไม่พบสินค้านี้</h1>";
+    }
+  }
+
+  // อัปเดตป้ายแจ้งเตือนตะกร้า
+  updateCartBadge();
+}
+
+// --- ฟังก์ชัน Toast Popup ---
+function showToast(productName, quantity) {
+  let toast = document.getElementById("cartToast");
+  
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "cartToast";
+    toast.innerHTML = `
+      <i class="fa-solid fa-circle-check"></i>
+      <div class="toast-content">
+        <h4 id="toastTitle">เพิ่มลงตะกร้าแล้ว</h4>
+        <p id="toastDesc"></p>
+      </div>
+    `;
+    document.body.appendChild(toast);
+  }
+
+  document.getElementById("toastTitle").textContent = "เพิ่มลงตะกร้าสำเร็จ";
+  document.getElementById("toastDesc").textContent = `${productName} (x${quantity})`;
+
+  setTimeout(() => toast.classList.add("show"), 10);
+
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+// --- ฟังก์ชันเพิ่มสินค้าลงตะกร้า ---
+function addToCart(isBuyNow = false) {
+  if (!product) return;
+
+  const quantityInput = document.getElementById("quantityInput");
+  const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
+
+  let cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
+
+  const existingItemIndex = cart.findIndex((item) => item.id === productId);
+
+  if (existingItemIndex > -1) {
+    cart[existingItemIndex].quantity += quantity;
+  } else {
+    cart.push({
+      id: productId,
+      name: product.name,
+      price: parseFloat(product.newPrice ? product.newPrice.replace(/[^0-9.]/g, "") : 0),
+      oldPrice: product.oldPrice
+        ? parseFloat(product.oldPrice.replace(/[^0-9.]/g, ""))
+        : null,
+      image: product.images && product.images.length > 0 ? product.images[0] : "",
+      tag: (product.benefits && product.benefits[0]) || "#ผลิตภัณฑ์เสริมอาหาร",
+      quantity: quantity,
+      selected: true,
+    });
+  }
+
+  localStorage.setItem("siam_healthy_cart", JSON.stringify(cart));
+  window.dispatchEvent(new CustomEvent("cartUpdated"));
+
+  if (isBuyNow) {
+    window.location.href = "../cart/";
+  } else {
+    showToast(product.name, quantity);
+    updateCartBadge();
+  }
+}
+
+// --- อัปเดตตัวเลขแจ้งเตือนบนไอคอนตะกร้า ---
+function updateCartBadge() {
+  const cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
+  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  document.querySelectorAll(".cart-badge").forEach((badge) => {
+    if (totalCount > 0) {
+      badge.innerText = totalCount;
+      badge.style.display = "flex";
+    } else {
+      badge.innerText = "";
+      badge.style.display = "none";
+    }
+  });
+}
+
+// --- ผูกอีเวนต์เมื่อโหลดหน้าเว็บเสร็จสมบูรณ์ ---
+document.addEventListener("DOMContentLoaded", () => {
+  // เริ่มดึงข้อมูลทั้ง Static และ Backend ทันทีที่โหลด
+  initializeProduct();
+
+  const cartBtn = document.querySelector(".cart-btn-minimal");
+  const buyBtn = document.querySelector(".buy-btn-black");
+
+  if (cartBtn) cartBtn.onclick = () => addToCart(false);
+  if (buyBtn) buyBtn.onclick = () => addToCart(true);
+});

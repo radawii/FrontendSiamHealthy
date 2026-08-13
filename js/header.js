@@ -31,14 +31,14 @@ class MyHeader extends HTMLElement {
                   <span>รถเข็นของคุณ</span>
                 </a>
 
-                <a href="/login.html" class="mobile-icon-link">
+                <a href="/login.html" class="mobile-icon-link" id="mobileProfileLink">
                   <div class="icon-wrapper">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                   </div>
-                  <span>โปรไฟล์</span>
+                  <span id="mobileProfileText">เข้าสู่ระบบ</span>
                 </a>
               </div>
             </nav>
@@ -62,7 +62,7 @@ class MyHeader extends HTMLElement {
                 <span class="cart-badge" style="display: none;"></span>
               </a>
 
-              <a href="/login.html" class="icon-btn profile-btn" title="โปรไฟล์">
+              <a href="/login.html" class="icon-btn profile-btn" id="desktopProfileLink" title="เข้าสู่ระบบ">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
@@ -103,6 +103,7 @@ class MyHeader extends HTMLElement {
     this.initSearchToggle();
     this.initSearchSystem();
     this.initContactScroll();
+    this.initProfileSystem();
 
     // อัปเดตตัวเลขเมื่อโหลดหน้าเว็บ
     this.updateCartBadge();
@@ -111,6 +112,85 @@ class MyHeader extends HTMLElement {
     window.addEventListener("cartUpdated", () => {
       this.updateCartBadge();
     });
+  }
+
+  // ==========================================
+  // 🔐 ฟังก์ชันตรวจสอบสถานะ Login สำหรับเมนู Profile
+  // ==========================================
+  initProfileSystem() {
+    const mobileLink = this.querySelector('#mobileProfileLink');
+    const desktopLink = this.querySelector('#desktopProfileLink');
+    const mobileText = this.querySelector('#mobileProfileText');
+
+    // ตรวจสอบ Token ใน LocalStorage
+    const customToken = localStorage.getItem('siam_healthy_user');
+    const supabaseToken = localStorage.getItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
+
+    const hasCustomAuth = customToken && customToken !== 'null' && customToken !== 'undefined' && customToken.trim() !== '' && customToken !== '[]' && customToken !== '{}';
+    const hasSupabaseAuth = supabaseToken && supabaseToken !== 'null' && supabaseToken !== 'undefined' && supabaseToken !== '[]' && supabaseToken !== '{}';
+
+    if (hasCustomAuth || hasSupabaseAuth) {
+      // 🟢 กรณีล็อกอินแล้ว -> เปลี่ยนปุ่มเป็น "ออกจากระบบ"
+      if (mobileText) mobileText.textContent = 'ออกจากระบบ';
+      if (desktopLink) desktopLink.setAttribute('title', 'ออกจากระบบ');
+
+      // สร้างฟังก์ชันสำหรับรัน SweetAlert2
+      const execSwalLogout = () => {
+        Swal.fire({
+          title: 'ออกจากระบบ?',
+          text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#e11d48',
+          cancelButtonColor: '#cbd5e1',
+          confirmButtonText: 'ออกจากระบบ',
+          cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // ล้าง Token ออกจากระบบ
+            localStorage.removeItem('siam_healthy_user');
+            localStorage.removeItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
+            
+            Swal.fire({
+              icon: 'success',
+              title: 'ออกจากระบบสำเร็จ',
+              timer: 1500,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.reload(); // รีเฟรชหน้าเว็บ 1 รอบ
+            });
+          }
+        });
+      };
+
+      // ฟังก์ชันเมื่อกดปุ่ม
+      const handleLogout = (e) => {
+        e.preventDefault();
+
+        // ตรวจสอบว่าหน้าเว็บปัจจุบันโหลด SweetAlert2 มาแล้วหรือยัง
+        if (typeof Swal === 'undefined') {
+          // หากยังไม่โหลด ให้สร้างและโหลด Script ให้อัตโนมัติ (Dynamic Import)
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+          script.onload = () => {
+            execSwalLogout(); // เมื่อโหลดสคริปต์เสร็จ ค่อยแสดง Popup
+          };
+          document.head.appendChild(script);
+        } else {
+          // หากโหลดไว้แล้ว แสดง Popup ได้เลย
+          execSwalLogout();
+        }
+      };
+
+      // ผูก Event Click ให้ทำงานฟังก์ชันออกจากระบบแทน
+      if (mobileLink) mobileLink.addEventListener('click', handleLogout);
+      if (desktopLink) desktopLink.addEventListener('click', handleLogout);
+
+    } else {
+      // 🔴 กรณียังไม่ล็อกอิน -> ปล่อยให้เป็นปุ่มเข้าสู่ระบบตามปกติ
+      if (mobileText) mobileText.textContent = 'เข้าสู่ระบบ';
+      if (desktopLink) desktopLink.setAttribute('title', 'เข้าสู่ระบบ');
+    }
   }
 
   initContactScroll() {
@@ -139,7 +219,6 @@ class MyHeader extends HTMLElement {
     }
   }
 
-  // ฟังก์ชันคำนวณและอัปเดตป้ายตัวเลขสีแดง
   updateCartBadge() {
     const cart = JSON.parse(localStorage.getItem("siam_healthy_cart")) || [];
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -275,3 +354,4 @@ window.addEventListener('load', () => {
     }
   }
 });
+
