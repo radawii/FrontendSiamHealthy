@@ -44,6 +44,16 @@
         .sidebar .category-btn {
             transition: all 0.2s ease-in-out;
         }
+
+        /* กล่องแจ้งเตือนตอนโหลดข้อมูล */
+        .loading-container {
+            width: 100%;
+            text-align: center;
+            padding: 50px 20px;
+            grid-column: 1 / -1;
+            color: #666;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 
@@ -78,126 +88,9 @@
                 </select>
             </div>
 
-            <!-- Grid สินค้า (จะถูกเรนเดอร์ใหม่จาก API) -->
-            <div class="products">
-                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=andicellix';">
-                    <div class="product-image"><img src="./img/andicellix/andicellix1.png" alt="Andicellix"></div>
-                    <h3 class="product-title">Andicellix</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="blood-sugar" onclick="window.location.href='product.html?id=astin';">
-                    <div class="product-image"><img src="./img/astin/astin1.png" alt="Astin"></div>
-                    <h3 class="product-title">Astin</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=backpro';">
-                    <div class="product-image"><img src="./img/backpro/backpro1.png" alt="Back Pro"></div>
-                    <h3 class="product-title">Back Pro</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=blackrhino';">
-                    <div class="product-image"><img src="./img/blackrhino/blackrhino1.png" alt="Black Rhino"></div>
-                    <h3 class="product-title">Black Rhino</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="bone-immunity" onclick="window.location.href='product.html?id=carthisin';">
-                    <div class="product-image"><img src="./img/carthisin/carthisin1.png" alt="Carthisin"></div>
-                    <h3 class="product-title">Carthisin</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="skin-aging" onclick="window.location.href='product.html?id=elsie';">
-                    <div class="product-image"><img src="./img/elsie/elsie1.png" alt="Elsie"></div>
-                    <h3 class="product-title">Elsie</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=extera';">
-                    <div class="product-image"><img src="./img/extera/extera1.png" alt="Extera"></div>
-                    <h3 class="product-title">Extera</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=genesis';">
-                    <div class="product-image"><img src="./img/genesis/genesis1.png" alt="Genesis Caps"></div>
-                    <h3 class="product-title">Genesis Caps</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=geralox';">
-                    <div class="product-image"><img src="./img/geralox/geralox1.png" alt="Geralox"></div>
-                    <h3 class="product-title">Geralox</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="gut-digestive" onclick="window.location.href='product.html?id=helmina';">
-                    <div class="product-image"><img src="./img/helmina/helmina1.png" alt="Helmina"></div>
-                    <h3 class="product-title">Helmina</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=oclarizin';">
-                    <div class="product-image"><img src="./img/oclarizin/oclarizin1.png" alt="Oclarizin"></div>
-                    <h3 class="product-title">Oclarizin</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="weight-metabolism" onclick="window.location.href='product.html?id=onix';">
-                    <div class="product-image"><img src="./img/onix/onix1.png" alt="Onix"></div>
-                    <h3 class="product-title">Onix</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="eyes-ears" onclick="window.location.href='product.html?id=philola';">
-                    <div class="product-image"><img src="./img/philola/philola1.png" alt="Philola"></div>
-                    <h3 class="product-title">Philola</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="skin-aging" onclick="window.location.href='product.html?id=scomplex';">
-                    <div class="product-image"><img src="./img/scomplex/scomplex1.png" alt="S-Complex"></div>
-                    <h3 class="product-title">S-Complex</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="weight-metabolism" onclick="window.location.href='product.html?id=tchrome';">
-                    <div class="product-image"><img src="./img/tchrome/tchrome1.png" alt="T-Chrome"></div>
-                    <h3 class="product-title">T-Chrome</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="mens-health" onclick="window.location.href='product.html?id=turbine';">
-                    <div class="product-image"><img src="./img/turbine/turbine1.png" alt="Turbine"></div>
-                    <h3 class="product-title">Turbine</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
-
-                <div class="product-card animate-in" data-category="bone-immunity" onclick="window.location.href='product.html?id=cartirex';">
-                    <div class="product-image"><img src="./img/cartirex/cartirex1.png" alt="Cartirex"></div>
-                    <h3 class="product-title">Cartirex</h3>
-                    <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
-                    <p class="product-price"><span class="new-price">฿990.00</span> <span class="old-price">฿1,980.00</span></p>
-                </div>
+            <!-- Grid สินค้า (จะถูกเรนเดอร์ใหม่จาก JS เท่านั้น) -->
+            <div class="products" id="products-container">
+                <!-- ข้อมูลสินค้าจะถูกใส่ผ่าน JavaScript -->
             </div>
         </main>
     </div>
@@ -206,17 +99,27 @@
     <my-footer></my-footer>
 
     <script>
+    // 📌 บังคับล้าง Cache ของ Shop ทิ้ง เพื่อให้โหลดรูปล่าสุดจาก DB ทันที
+    if (!localStorage.getItem('shop_cache_cleared_v13')) {
+        localStorage.removeItem('siam_healthy_shop_products_cache');
+        localStorage.setItem('shop_cache_cleared_v13', 'true');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        const API_URL = 'http://localhost:3000/products';
+        // 🔴 ตั้งค่า URL ให้ตรงกับ Backend และ Storage ของคุณ
+        const API_URL = 'http://localhost:3000/products'; 
         const SUPABASE_BASE_URL = 'http://192.168.1.199:8000';
+        
+        const CACHE_KEY = 'siam_healthy_shop_products_cache';
 
         const categoryBtns = document.querySelectorAll('.category-btn');
         let productCards = [];
-        const productsContainer = document.querySelector('.products');
+        const productsContainer = document.getElementById('products-container');
         const productCountText = document.querySelector('.product-count');
         const sortSelect = document.querySelector('.shop-header select');
+        let isLogicInitialized = false;
 
-        // ตารางแมปหมวดหมู่ตามชื่อสลักสินค้า
+        // ตารางแมปหมวดหมู่ตามชื่อสินค้า
         const categoryMap = {
             'andicellix': 'eyes-ears',
             'astin': 'blood-sugar',
@@ -238,6 +141,7 @@
             'cartirex': 'bone-immunity'
         };
 
+        // ฟังก์ชันปรับ URL รูปภาพให้มาจาก DB เสมอ
         function fixImageUrl(url) {
             if (!url || typeof url !== 'string') return '';
             if (url.startsWith('data:') || url.startsWith('blob:')) return url;
@@ -251,9 +155,23 @@
         }
 
         async function loadDataSafely() {
+            // 1. ลองดึงข้อมูลจาก Cache มาแสดงทันที 0 วินาที
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            if (cachedData) {
+                try {
+                    const parsedProducts = JSON.parse(cachedData);
+                    renderProductsFromDB(parsedProducts);
+                } catch (e) {
+                    console.error("Cache reading error", e);
+                }
+            } else {
+                productsContainer.innerHTML = '<div class="loading-container"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดข้อมูลสินค้า...</div>';
+            }
+
+            // 2. ไปดึงข้อมูลล่าสุดจาก Backend แอบทำงานอยู่เบื้องหลัง
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
 
                 const response = await fetch(API_URL, { signal: controller.signal });
                 clearTimeout(timeoutId);
@@ -261,22 +179,54 @@
                 if (response.ok) {
                     const dbProducts = await response.json();
                     if (Array.isArray(dbProducts) && dbProducts.length > 0) {
-                        renderProductsFromDB(dbProducts);
-                        return;
+                        
+                        // 🟢 ย่อขนาดข้อมูลก่อนบันทึกลง Cache
+                        const lightweightData = dbProducts.map(p => {
+                            // พยายามแปลงรูปจาก JSON/Array ให้พร้อมใช้
+                            let parsedImages = [];
+                            if (typeof p.images === 'string') {
+                                try { parsedImages = JSON.parse(p.images); } catch(e) { parsedImages = [p.images]; }
+                            } else if (Array.isArray(p.images)) {
+                                parsedImages = p.images;
+                            }
+                            
+                            return {
+                                id: p.id,
+                                name: p.name,
+                                isActive: p.isActive,
+                                price: p.price,
+                                oldPrice: p.oldPrice || p.old_price,
+                                // เก็บเฉพาะรูปแรกเท่านั้นเพื่อความเบา
+                                images: parsedImages.length > 0 ? [parsedImages[0]] : [] 
+                            };
+                        });
+
+                        try {
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(lightweightData));
+                        } catch (quotaError) {
+                            console.warn("Storage เต็ม เคลียร์ของเก่าแล้วลองใหม่");
+                            localStorage.clear(); 
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(lightweightData));
+                        }
+
+                        // อัปเดตหน้าจอด้วยข้อมูลเต็มแบบไร้รอยต่อ
+                        renderProductsFromDB(lightweightData);
                     }
+                } else {
+                    throw new Error('Network response was not ok');
                 }
             } catch (err) {
-                console.warn('Backend ไม่ตอบสนอง จะใช้ข้อมูลสำรองใน HTML', err);
+                console.warn('Backend ไม่ตอบสนอง จะใช้ข้อมูลใน Cache', err);
+                if (!cachedData) {
+                    productsContainer.innerHTML = '<div class="loading-container" style="color: red;">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ในขณะนี้ กรุณาตรวจสอบว่า NestJS (Backend) เปิดทำงานอยู่หรือไม่</div>';
+                    if(productCountText) productCountText.textContent = "0 ผลิตภัณฑ์";
+                }
             }
-            
-            // กรณี API ล้มเหลว ค่อยใช้การ์ดดั้งเดิมใน HTML
-            productCards = Array.from(document.querySelectorAll('.product-card'));
-            initShopLogic();
         }
 
-        // 🟢 เรนเดอร์การ์ดสินค้าโดยอิงจากฐานข้อมูลหลังบ้านเป็นหลัก 100%
+        // 🟢 เรนเดอร์การ์ดสินค้า โดยใช้แต่รูปจาก DB
         function renderProductsFromDB(dbProducts) {
-            productsContainer.innerHTML = ''; // ล้างการ์ดเดิมออก ป้องกันจำนวนเกิน
+            productsContainer.innerHTML = ''; // ล้างการ์ดเดิมออก
 
             dbProducts.forEach(dbProduct => {
                 if (!dbProduct.name) return;
@@ -285,33 +235,41 @@
                 if (dbProduct.isActive === false || String(dbProduct.isActive) === 'false') return;
 
                 const rawSlug = dbProduct.name.toLowerCase().replace(/[\s\-_]/g, "");
-                // แมป slug พิเศษสำหรับ Genesis Caps ให้เข้ากับหน้า product.html?id=genesis
-                const linkSlug = (rawSlug === 'genesiscaps' || rawSlug === 'genesis') ? 'genesis' : rawSlug;
-
-                const category = categoryMap[rawSlug] || categoryMap[linkSlug] || 'all';
-                const imgSrc = (dbProduct.images && dbProduct.images.length > 0) 
-                    ? fixImageUrl(dbProduct.images[0]) 
-                    : `./img/${linkSlug}/${linkSlug}1.png`;
+                
+                // ใช้ ID เป็นลิงก์เป้าหมาย
+                const linkTarget = dbProduct.id || rawSlug; 
+                
+                const category = categoryMap[rawSlug] || 'all';
+                
+                // 🟢 ดึงรูปจาก DB 100% ถ้าไม่มีให้ใช้ Placeholder
+                let imgSrc = "https://via.placeholder.com/300?text=No+Image";
+                if (dbProduct.images && dbProduct.images.length > 0 && dbProduct.images[0]) {
+                    imgSrc = fixImageUrl(dbProduct.images[0]);
+                }
 
                 const newPriceVal = dbProduct.price != null 
-                    ? '฿' + Number(dbProduct.price).toLocaleString('en-US', {minimumFractionDigits: 2}) 
-                    : '฿0.00';
+                    ? '฿' + Number(dbProduct.price).toLocaleString('en-US', {minimumFractionDigits: 0}) 
+                    : '฿0';
                 
                 const oldPriceVal = dbProduct.oldPrice || dbProduct.old_price;
                 let oldPriceHtml = '';
                 if (oldPriceVal != null && oldPriceVal > 0) {
-                    oldPriceHtml = `<span class="old-price">฿${Number(oldPriceVal).toLocaleString('en-US', {minimumFractionDigits: 2})}</span>`;
+                    oldPriceHtml = `<span class="old-price">฿${Number(oldPriceVal).toLocaleString('en-US', {minimumFractionDigits: 0})}</span>`;
                 }
 
                 const card = document.createElement('div');
                 card.className = 'product-card animate-in';
                 card.setAttribute('data-category', category);
-                card.setAttribute('onclick', `window.location.href='product.html?id=${linkSlug}';`);
+                
+                // 🟢 แก้ไขตรงนี้: ลบ ../ ออก เพื่อให้หาไฟล์เจอ
+                card.setAttribute('onclick', `window.location.href='product.html?id=${linkTarget}';`);
+                
                 card.dataset.price = dbProduct.price || 0;
 
+                // ใส่ loading="lazy" ป้องกันโหลดรูปพร้อมกันทำให้กระตุก
                 card.innerHTML = `
                     <div class="product-image">
-                        <img src="${imgSrc}" alt="${dbProduct.name}" onerror="this.onerror=null; this.src='./img/${linkSlug}/${linkSlug}1.png';">
+                        <img src="${imgSrc}" alt="${dbProduct.name}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/300?text=No+Image';">
                     </div>
                     <h3 class="product-title">${dbProduct.name}</h3>
                     <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>
@@ -339,30 +297,34 @@
                 }
             });
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoryParam = urlParams.get('category');
-            if (categoryParam) {
-                const targetBtn = document.querySelector(`.category-btn[data-category="${categoryParam}"]`);
-                if (targetBtn) {
-                    categoryBtns.forEach(b => b.classList.remove('active'));
-                    targetBtn.classList.add('active');
+            // ทำแค่ครั้งเดียว ป้องกัน Event ซ้อนกันถ้าโหลดใหม่จาก Network
+            if (!isLogicInitialized) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const categoryParam = urlParams.get('category');
+                if (categoryParam) {
+                    const targetBtn = document.querySelector(`.category-btn[data-category="${categoryParam}"]`);
+                    if (targetBtn) {
+                        categoryBtns.forEach(b => b.classList.remove('active'));
+                        targetBtn.classList.add('active');
+                    }
                 }
+
+                categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        categoryBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        updateProductsUI();
+                    });
+                });
+
+                if (sortSelect) {
+                    sortSelect.addEventListener('change', updateProductsUI);
+                }
+                isLogicInitialized = true;
             }
 
             updateProductsUI();
-
-            categoryBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    categoryBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    updateProductsUI();
-                });
-            });
-
-            if (sortSelect) {
-                sortSelect.addEventListener('change', updateProductsUI);
-            }
         }
 
         function updateProductsUI() {

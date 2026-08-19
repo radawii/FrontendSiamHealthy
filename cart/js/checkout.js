@@ -3,7 +3,61 @@
 window.savedAddresses = [];
 window.currentAddress = null;
 
+// 🔒 ฟังก์ชันตรวจสอบว่าลูกค้าล็อกอินแล้วหรือยัง
+function checkUserLoginStatus() {
+    try {
+        const storedUser = localStorage.getItem('siam_healthy_user');
+        if (storedUser && storedUser !== 'login_success_token') {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser && (parsedUser.id || parsedUser.user_id)) {
+                return parsedUser;
+            }
+        }
+
+        const supabaseAuth = localStorage.getItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
+        if (supabaseAuth) {
+            const parsedAuth = JSON.parse(supabaseAuth);
+            if (parsedAuth.user && parsedAuth.user.id) {
+                return parsedAuth.user;
+            }
+        }
+    } catch (e) {
+        console.warn('เกิดข้อผิดพลาดในการตรวจสอบสถานะผู้ใช้งาน', e);
+    }
+    return null;
+}
+
+// 🚨 ฟังก์ชันแจ้งเตือนให้ไปหน้า Login
+function promptLogin() {
+    Swal.fire({
+        icon: 'warning',
+        title: 'กรุณาเข้าสู่ระบบ',
+        text: 'คุณต้องเข้าสู่ระบบก่อนทำการสั่งซื้อสินค้า',
+        confirmButtonText: 'เข้าสู่ระบบทันที',
+        showCancelButton: true,
+        cancelButtonText: 'กลับไปหน้าหลัก',
+        confirmButtonColor: '#0f766e',
+        cancelButtonColor: '#94a3b8',
+        allowOutsideClick: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // บันทึกหน้าปัจจุบันไว้ เพื่อให้ล็อกอินเสร็จแล้วเด้งกลับมาหน้านี้
+            localStorage.setItem('siam_healthy_redirect_after_login', window.location.href);
+            window.location.href = '../login/login.html'; 
+        } else {
+            window.location.href = '../shop/';
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 🔒 ตรวจสอบการล็อกอินทันทีที่เปิดหน้าชำระเงิน
+    const currentUser = checkUserLoginStatus();
+    if (!currentUser) {
+        promptLogin();
+        return;
+    }
+
     // 🛠️ 1. เช็คว่าถ้าเด้งกลับมาจากการแสกน PromptPay สำเร็จ ให้แสดงใบเสร็จ
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('payment') === 'success') {
@@ -31,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ฟังก์ชันจัดการตอนเด้งกลับมาจากหน้า QR Code Stripe
 function handleSuccessfulRedirectReturn() {
-    // 🧹 ล้าง Session การจ่ายเงินที่ค้างอยู่ทิ้งเมื่อจ่ายสำเร็จ
     localStorage.removeItem('siam_healthy_payment_session');
 
     const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
@@ -245,7 +298,6 @@ function updatePaymentUI(method) {
     }
 }
 
-// 🟢 ฟังก์ชันช่วยดึง Stripe Publishable Key จาก Backend สำรองไว้
 async function fetchStripePublishableKey() {
     try {
         const res = await fetch('http://localhost:3000/payments/config');
@@ -261,6 +313,16 @@ async function fetchStripePublishableKey() {
 
 // 🚀 ฟังก์ชันหลักเมื่อกดปุ่ม "ยืนยันการชำระเงิน"
 async function processPayment() {
+    // 🔒 ตรวจสอบว่าล็อกอินหรือยังเป็นด่านแรก
+    const currentUser = checkUserLoginStatus();
+    if (!currentUser) {
+        promptLogin();
+        return;
+    }
+
+    const userId = currentUser.id || currentUser.user_id;
+    const userEmail = currentUser.email || '';
+
     const paymentInputs = document.querySelectorAll('input[name="paymentMethod"]:checked');
     const selectedPayment = paymentInputs.length > 0 ? paymentInputs[0].value : 'promptpay';
     
@@ -275,56 +337,6 @@ async function processPayment() {
     const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const discount = subtotal > 0 ? 100 : 0; 
     const grandTotal = Math.max(0, subtotal - discount);
-
-    let userId = null;
-    let userEmail = ''; 
-    
-    // 🟢 1. พยายามดึงข้อมูล User จาก Local Storage
-    try {
-        const storedUser = localStorage.getItem('siam_healthy_user');
-        if (storedUser && storedUser !== 'login_success_token') {
-            const parsedUser = JSON.parse(storedUser);
-            userEmail = parsedUser.email || '';
-            userId = parsedUser.id || parsedUser.username || null;
-        }
-
-        if (!userEmail) {
-            const supabaseAuth = localStorage.getItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
-            if (supabaseAuth) {
-                const parsedAuth = JSON.parse(supabaseAuth);
-                userId = parsedAuth.user?.id || userId;
-                userEmail = parsedAuth.user?.email || userEmail; 
-            }
-        }
-    } catch (e) {
-        console.warn("ไม่สามารถดึงข้อมูล User ID / Email ได้", e);
-    }
-
-    // 🟢 2. ดึงจาก Cache เก่า
-    if (!userEmail) {
-        userEmail = localStorage.getItem('siam_healthy_customer_email') || '';
-    }
-
-    // 🟢 3. ถ้าดึงจากระบบไม่ได้ ให้ถามลูกค้า
-    if (!userEmail) {
-        const { value: emailInput } = await Swal.fire({
-            title: 'กรุณาระบุอีเมล',
-            text: 'เพื่อใช้สำหรับส่งใบเสร็จรับเงิน',
-            input: 'email',
-            inputPlaceholder: 'example@email.com',
-            showCancelButton: true,
-            confirmButtonText: 'ยืนยันชำระเงิน',
-            cancelButtonText: 'ยกเลิก',
-            confirmButtonColor: '#0f766e',
-            cancelButtonColor: '#cbd5e1'
-        });
-
-        if (!emailInput) {
-            return; 
-        }
-        userEmail = emailInput;
-        localStorage.setItem('siam_healthy_customer_email', userEmail);
-    }
 
     Swal.fire({
         title: 'กำลังเตรียมระบบชำระเงิน...',
@@ -341,9 +353,6 @@ async function processPayment() {
         const isNotExpired = (Date.now() - savedSession.timestamp) < (15 * 60 * 1000); 
 
         if (isNotExpired && savedSession.grandTotal === grandTotal && savedSession.paymentMethod === selectedPayment) {
-            console.log("🔄 Re-using active payment session...");
-            
-            // 🛠️ ดึง Key สำรองกรณีใน Session ไม่มี
             let pubKey = savedSession.publishableKey;
             if (!pubKey) {
                 pubKey = await fetchStripePublishableKey();
@@ -376,7 +385,7 @@ async function processPayment() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                user_id: userId || userEmail || null, 
+                user_id: userId, // 🟢 ส่ง User ID ของผู้ใช้ที่ล็อกอินเท่านั้น
                 total_amount: subtotal,
                 discount_amount: discount,
                 shipping_fee: 0,
@@ -424,13 +433,11 @@ async function processPayment() {
             throw new Error(intentData.message || 'ไม่สามารถสร้าง PaymentIntent ได้');
         }
 
-        // 🟢 🛠️ ดักจับ Publishable Key: ถ้าคีย์ที่คืนกลับมาไม่มี ให้ยิงไปดึงจาก config สำรองทันที
         let stripePublishableKey = intentData.publishableKey || intentData.stripePublicKey;
         if (!stripePublishableKey) {
             stripePublishableKey = await fetchStripePublishableKey();
         }
 
-        // 🟢 บันทึก Cache ลง LocalStorage
         localStorage.setItem('siam_healthy_payment_session', JSON.stringify({
             orderId: createdOrderId,
             clientSecret: intentData.clientSecret,
@@ -470,7 +477,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
         Swal.fire({
             icon: 'error',
             title: 'ข้อผิดพลาด',
-            text: 'ไม่พบ Stripe Publishable Key จากระบบ (กรุณาเช็คการตั้งค่า STRIPE_PUBLISHABLE_KEY ใน .env ของ Backend)',
+            text: 'ไม่พบ Stripe Publishable Key จากระบบ',
             confirmButtonColor: '#0f766e'
         });
         return;
@@ -478,7 +485,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
 
     const stripe = Stripe(publishableKey);
 
-    // 🚀 กรณีที่ 1: ลูกค้าเลือก PromptPay (สแกน QR Code)
+    // 🚀 กรณีที่ 1: ลูกค้าเลือก PromptPay
     if (paymentType === 'promptpay') {
         Swal.update({
             title: 'กำลังโหลด QR Code...',
