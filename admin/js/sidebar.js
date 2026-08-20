@@ -46,14 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPath = 'transactions.html';
     }
 
-    // รายการเมนู
+    // 🟢 รายการเมนู (เพิ่ม "จัดการโค้ดส่วนลด" แล้ว)
     const menuItems = [
         { name: 'ภาพรวม (Dashboard)', icon: 'fas fa-home', link: 'index.html' },
         { name: 'รายการธุรกรรม', icon: 'fas fa-receipt', link: 'transactions.html' },
         { name: 'จัดการสินค้า', icon: 'fas fa-box', link: 'products.html' },
         { name: 'รีวิว & สารสกัด', icon: 'fas fa-star', link: 'product-content.html' },
         { name: 'ที่อยู่จัดส่ง', icon: 'fas fa-map-marked-alt', link: 'shipping.html' },
-        { name: 'ผู้ใช้งาน', icon: 'fas fa-users', link: 'users.html' }
+        { name: 'ผู้ใช้งาน', icon: 'fas fa-users', link: 'users.html' },
+        { name: 'จัดการโค้ดส่วนลด', icon: 'fas fa-ticket', link: 'coupons.html' }
     ];
 
     // โครงสร้าง HTML ของ Sidebar

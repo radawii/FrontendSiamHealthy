@@ -24,19 +24,41 @@ function normalizeKeyString(str) {
 var activeProductId = urlRawId;
 var activeProductData = null;
 
-// 🟢 ฟังก์ชันช่วยเหลือสำหรับแปลงและดึง URL รูปภาพจาก Database โดยตรง
+// 🟢 ฟังก์ชันช่วยเหลือสำหรับแปลงและดึง URL รูปภาพ
 function fixImageUrlLocal(url) {
     if (!url || typeof url !== 'string') return '';
+    
+    // 1. ถ้ามี data: หรือ blob: นำหน้าอยู่แล้ว แปลว่าเป็นรูปที่พร้อมใช้งาน
     if (url.startsWith('data:') || url.startsWith('blob:')) return url;
     
+    // 2. ตรวจจับกรณีรูปเป็น Base64 เพียวๆ (ช่วยให้รูปแสดงผลได้)
+    if (url.length > 200 && !/\.(png|jpe?g|gif|webp|svg)$/i.test(url)) {
+        let mimeType = 'image/jpeg'; 
+        if (url.startsWith('iVBORw')) mimeType = 'image/png';
+        else if (url.startsWith('R0lGOD')) mimeType = 'image/gif';
+        else if (url.startsWith('UklGR')) mimeType = 'image/webp';
+        
+        return `data:${mimeType};base64,${url}`;
+    }
+
+    // 3. กรณีเป็น Path ปกติ
     let cleanUrl = url
         .replace(/https:\/\/qzgfjnjrnenncgxqbrqe\.supabase\.co/g, SUPABASE_STORAGE_URL)
         .replace(/\/product-images\//g, '/products/');
         
-    if (cleanUrl.startsWith('/storage/v1/')) {
-        cleanUrl = `${SUPABASE_STORAGE_URL}${cleanUrl}`;
+    if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+        return cleanUrl;
     }
-    return cleanUrl;
+
+    if (cleanUrl.startsWith('/storage/v1/')) {
+        return `${SUPABASE_STORAGE_URL}${cleanUrl}`;
+    }
+
+    if (!cleanUrl.startsWith('/')) {
+        return `${SIAM_API_URL}/uploads/${cleanUrl}`; 
+    }
+
+    return `${SIAM_API_URL}${cleanUrl}`;
 }
 
 // 2. ฟังก์ชันหลักสำหรับดึงข้อมูลและประกอบร่างข้อมูล
@@ -44,7 +66,7 @@ async function initializeProduct() {
   const cacheKey = `siam_product_detail_${normalizeKeyString(urlRawId)}`;
   let hasRenderedFast = false;
   
-  // 🚀 ขั้นตอนที่ 1: โหลดจาก Cache ทันที (เพื่อให้ลูกค้าเห็นหน้าเว็บใน 0 วินาที)
+  // 🚀 ขั้นตอนที่ 1: โหลดจาก Cache ทันที
   const cachedData = localStorage.getItem(cacheKey);
   if (cachedData) {
     try {
@@ -78,12 +100,10 @@ async function initializeProduct() {
       reviewCount: 0
     };
 
-    // ลองดึงชื่อและราคาจาก Cache ของหน้า Shop มาโชว์ก่อนคร่าวๆ
     try {
       const shopCache = localStorage.getItem('siam_healthy_shop_products_cache');
       if (shopCache) {
         const allShopProducts = JSON.parse(shopCache);
-        // ค้นหาทั้งจาก ID และ Name
         const matchedShop = allShopProducts.find(p => String(p.id) === urlRawId || normalizeKeyString(p.name) === normalizeKeyString(urlRawId));
         if (matchedShop) {
           activeProductData.name = matchedShop.name;
@@ -100,7 +120,7 @@ async function initializeProduct() {
     renderUI();
   }
 
-  // --- ⏳ ขั้นตอนที่ 3: ดึงข้อมูลล่าสุดจาก Backend ทับข้อมูลเก่าทั้งหมด ---
+  // --- ⏳ ขั้นตอนที่ 3: ดึงข้อมูลล่าสุดจาก Backend ---
   try {
     const response = await fetch(`${SIAM_API_URL}/products/${encodeURIComponent(urlRawId)}`);
     
@@ -117,7 +137,6 @@ async function initializeProduct() {
       if (dbProduct.price != null) activeProductData.newPrice = dbProduct.price.toString();
       if (dbProduct.oldPrice != null) activeProductData.oldPrice = dbProduct.oldPrice.toString();
 
-      // 🟢 ผสมข้อมูลเนื้อหาแบบยาว (คำเตือน, ประโยชน์) จาก Static Data โดยอิงจาก "ชื่อสินค้า" ที่ Backend ส่งมา
       if (typeof productsData !== "undefined" && dbProduct.name) {
         const targetStaticKey = normalizeKeyString(dbProduct.name);
         const matchedKey = Object.keys(productsData).find(key => normalizeKeyString(key) === targetStaticKey);
@@ -137,12 +156,10 @@ async function initializeProduct() {
         }
       }
 
-      // 🟢 ดึงรูปแบนเนอร์จาก Database 100%
       if (dbProduct.banner_url) {
         activeProductData.banner1 = fixImageUrlLocal(dbProduct.banner_url);
       }
 
-      // 🟢 ดึงรูป Gallery จาก Database 100%
       let parsedImages = [];
       if (typeof dbProduct.images === 'string') {
          try { parsedImages = JSON.parse(dbProduct.images); } catch(e) { parsedImages = [dbProduct.images]; }
@@ -154,7 +171,6 @@ async function initializeProduct() {
         activeProductData.images = parsedImages.map(img => fixImageUrlLocal(img)).filter(Boolean);
       }
 
-      // 🟢 ดึงข้อมูลส่วนผสมจาก Database
       if (dbProduct.product_ingredients && dbProduct.product_ingredients.length > 0) {
         activeProductData.ingredients = dbProduct.product_ingredients.map(ing => {
           return { 
@@ -165,7 +181,6 @@ async function initializeProduct() {
         });
       }
 
-      // 🟢 ดึงข้อมูลรีวิวและเรตติ้งจาก Database
       if (dbProduct.product_reviews && dbProduct.product_reviews.length > 0) {
         activeProductData.reviewCount = dbProduct.product_reviews.length;
         let sumRating = dbProduct.product_reviews.reduce((acc, rev) => acc + (rev.rating || 5), 0);
@@ -179,12 +194,12 @@ async function initializeProduct() {
         }));
       }
 
-      // เซฟลง Cache เพื่อให้รอบหน้าโหลด 0 วินาที
+      // พยายามเก็บลง Cache แต่ถ้า Base64 ใหญ่เกินโควต้า 5MB ก็ให้ข้ามไป
       try {
         localStorage.setItem(cacheKey, JSON.stringify(activeProductData));
       } catch (quotaErr) {
         localStorage.removeItem(cacheKey); 
-        localStorage.setItem(cacheKey, JSON.stringify(activeProductData));
+        console.warn("Payload size exceeds localStorage limits (likely due to large Base64). Caching skipped.");
       }
 
       renderUI();
@@ -206,13 +221,18 @@ function renderUI() {
     if (document.getElementById("oldPrice")) document.getElementById("oldPrice").textContent = activeProductData.oldPrice && activeProductData.oldPrice !== "0" ? `฿${Number(activeProductData.oldPrice).toLocaleString()}` : "";
     if (document.getElementById("newPrice")) document.getElementById("newPrice").textContent = activeProductData.newPrice && activeProductData.newPrice !== "0" ? `฿${Number(activeProductData.newPrice).toLocaleString()}` : "";
 
-    // แบนเนอร์ 1
+    // แบนเนอร์ 1 (ตั้งค่า Priority สูงสุด)
     const banner = document.getElementById("bannerImage1");
     const bannerContainer = document.querySelector(".warning-left-image");
     const warningRightContent = document.querySelector(".warning-right-content");
 
     if (activeProductData.banner1) {
-      if (banner) { banner.src = activeProductData.banner1; banner.style.display = "block"; }
+      if (banner) { 
+          banner.src = activeProductData.banner1; 
+          banner.setAttribute("decoding", "async"); // ป้องกันเว็บค้าง
+          banner.setAttribute("fetchpriority", "high"); // เร่งโหลดรูปแรก
+          banner.style.display = "block"; 
+      }
       if (bannerContainer) bannerContainer.style.display = "block";
       if (warningRightContent) warningRightContent.style.width = "";
     } else {
@@ -220,18 +240,20 @@ function renderUI() {
       if (warningRightContent) warningRightContent.style.width = "100%";
     }
 
-    // แบนเนอร์ 2
+    // แบนเนอร์ 2 (ตั้งค่า Lazy Load)
     const banner2Container = document.getElementById("banner2Container");
     const banner2 = document.getElementById("bannerImage2");
     
     if (activeProductData.banner2 && banner2Container && banner2) {
       banner2.src = activeProductData.banner2;
+      banner2.setAttribute("loading", "lazy");
+      banner2.setAttribute("decoding", "async");
       banner2Container.style.display = "block";
     } else if (banner2Container) {
       banner2Container.style.display = "none";
     }
 
-    // จัดการรูปภาพแกลลอรี่สินค้า (6 รูป)
+    // จัดการรูปภาพแกลลอรี่สินค้า
     const mainProductImg = document.getElementById("mainProduct");
     const thumbList = document.getElementById("thumbList");
     const prevBtn = document.getElementById("prevImgBtn");
@@ -240,6 +262,10 @@ function renderUI() {
     if (mainProductImg && thumbList && activeProductData.images && activeProductData.images.length > 0) {
       thumbList.innerHTML = "";
       let currentImageIndex = 0;
+
+      // เซ็ตความเร็วในการเปลี่ยนรูปหลัก และ ป้องกันการบล็อก Thread
+      mainProductImg.setAttribute("decoding", "async");
+      mainProductImg.setAttribute("fetchpriority", "high");
 
       function updateMainImage(index) {
         currentImageIndex = index;
@@ -250,7 +276,7 @@ function renderUI() {
           mainProductImg.src = targetSrc;
           mainProductImg.style.opacity = "1";
           mainProductImg.style.transform = "scale(1)";
-        }, 200);
+        }, 150);
 
         const thumbImages = thumbList.querySelectorAll("img");
         thumbImages.forEach((el, idx) => {
@@ -266,6 +292,9 @@ function renderUI() {
       activeProductData.images.forEach((imgSrc, index) => {
         const imgElement = document.createElement("img");
         imgElement.src = imgSrc;
+        imgElement.setAttribute("decoding", "async");
+        // รูป Thumbnail อันแรกให้โหลดทันที นอกนั้นให้โหลดแบบ Lazy
+        imgElement.setAttribute("loading", index === 0 ? "eager" : "lazy");
         if (index === 0) imgElement.classList.add("active");
         imgElement.onclick = () => updateMainImage(index);
         thumbList.appendChild(imgElement);
@@ -274,7 +303,7 @@ function renderUI() {
       if (activeProductData.images.length > 0) {
          mainProductImg.src = activeProductData.images[0];
       }
-      mainProductImg.style.transition = "opacity 0.35s ease, transform 0.35s ease";
+      mainProductImg.style.transition = "opacity 0.25s ease, transform 0.25s ease";
 
       if (prevBtn) {
         prevBtn.onclick = () => {
@@ -500,7 +529,12 @@ function renderUI() {
     }
 
     if (resultImageEl) {
-      if (activeProductData.resultImage) { resultImageEl.src = activeProductData.resultImage; if (resultImageEl.parentElement) resultImageEl.parentElement.style.display = "block"; } 
+      if (activeProductData.resultImage) { 
+          resultImageEl.src = activeProductData.resultImage; 
+          resultImageEl.setAttribute("loading", "lazy");
+          resultImageEl.setAttribute("decoding", "async");
+          if (resultImageEl.parentElement) resultImageEl.parentElement.style.display = "block"; 
+      } 
       else if (resultImageEl.parentElement) resultImageEl.parentElement.style.display = "none";
     }
 
@@ -567,9 +601,12 @@ function renderUI() {
       ingredientGrid.innerHTML = "";
       activeProductData.ingredients.forEach((ing) => {
         let propsItems = (ing.props || []).map((prop) => `<li>${prop}</li>`).join("");
+        
+        // 🟢 เพิ่ม loading="lazy" และ decoding="async" ให้ส่วนผสม (แก้ความช้า)
         let imgHtml = ing.img 
-          ? `<img src="${ing.img}" alt="${ing.name}" loading="lazy" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\\'width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;\\'></div>';" />` 
+          ? `<img src="${ing.img}" alt="${ing.name}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\\'width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;\\'></div>';" />` 
           : `<div style="width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;"></div>`;
+          
         ingredientGrid.innerHTML += `<div class="ingredient-card"><div class="ingredient-image">${imgHtml}</div><h3>${ing.name}</h3><ul>${propsItems}</ul></div>`;
       });
       ingredientGrid.style.display = "grid";
@@ -600,7 +637,8 @@ function renderUI() {
     if (reviewList && activeProductData.reviews && activeProductData.reviews.length > 0) {
       reviewList.innerHTML = "";
       activeProductData.reviews.forEach((review) => {
-        let imgHTML = review.img ? `<img class="review-image" src="${review.img}" alt="Review Image" loading="lazy" style="margin-top: 10px;" onerror="this.style.display='none'" />` : "";
+        // 🟢 เพิ่ม loading="lazy" และ decoding="async" ให้รีวิว (แก้ความช้า)
+        let imgHTML = review.img ? `<img class="review-image" src="${review.img}" alt="Review Image" loading="lazy" decoding="async" style="margin-top: 10px;" onerror="this.style.display='none'" />` : "";
         let starCount = review.rating || 5;
         let starsHTML = `<div class="stars-orange" style="font-size: 18px; margin-top: -2px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">`;
         let starsIcon = "";
@@ -660,7 +698,7 @@ function renderUI() {
             let relatedHTML = `<div class="related-products-section reveal-on-scroll visible"><div class="related-header"><h2>สินค้าที่คุณอาจสนใจ</h2><a href="../shop/" class="view-all-link">ดูสินค้าทั้งหมด <i class="fa-solid fa-arrow-right"></i></a></div><div class="products related-products-grid">`;
             selected.forEach((item) => {
               const imgCover = (item.images && item.images.length > 0) ? fixImageUrlLocal(item.images[0]) : "https://via.placeholder.com/300?text=No+Image";
-              relatedHTML += `<div class="product-card animate-in" onclick="window.location.href='product.html?id=${item.id}';"><div class="product-image"><img src="${imgCover}" alt="${item.name}" loading="lazy"></div><h3 class="product-title">${item.name}</h3><p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p><p class="product-price"><span class="new-price">฿${Number(item.price).toLocaleString()}</span></p></div>`;
+              relatedHTML += `<div class="product-card animate-in" onclick="window.location.href='product.html?id=${item.id}';"><div class="product-image"><img src="${imgCover}" alt="${item.name}" loading="lazy" decoding="async"></div><h3 class="product-title">${item.name}</h3><p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p><p class="product-price"><span class="new-price">฿${Number(item.price).toLocaleString()}</span></p></div>`;
             });
             relatedHTML += `</div></div>`;
             relatedContainer.innerHTML = relatedHTML;

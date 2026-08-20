@@ -93,9 +93,10 @@ function handleSuccessfulRedirectReturn() {
     if (selectedItems.length > 0) {
         const remainingCart = cart.filter(i => !i.selected);
         const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const discount = subtotal > 0 ? 100 : 0; 
+        const discount = 0; 
         const grandTotal = Math.max(0, subtotal - discount);
 
+    
         localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
         
         const savedAddress = localStorage.getItem('siam_healthy_last_address');
@@ -335,7 +336,7 @@ async function processPayment() {
     }
 
     const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = subtotal > 0 ? 100 : 0; 
+    const discount = 0; 
     const grandTotal = Math.max(0, subtotal - discount);
 
     Swal.fire({

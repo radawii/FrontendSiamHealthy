@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - จัดการโค้ดส่วนลด</title>
+    <!-- โหลด Font Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- โหลด Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- โหลด Tailwind CSS (สำหรับ Layout บางส่วนที่ใช้ร่วมกับ Sidebar) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- โหลด SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --danger: #ef4444;
+            --bg-gray: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            margin: 0;
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ---------------- Main Content ---------------- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background-color: var(--bg-gray);
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Prompt', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* ---------------- Table ---------------- */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        td {
+            font-size: 14px;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-expired { background: #fee2e2; color: #991b1b; }
+
+        .btn-delete {
+            background: transparent;
+            color: var(--danger);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 6px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
+
+        /* ---------------- SweetAlert2 Custom ---------------- */
+        .swal-custom-popup {
+            border-radius: 16px !important;
+        }
+        .swal-custom-btn {
+            border-radius: 8px !important;
+            font-family: 'Prompt', sans-serif !important;
+            font-weight: 500 !important;
+            padding: 10px 24px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar (จะถูกแทรกอัตโนมัติจากไฟล์ sidebar.js) -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">จัดการโค้ดส่วนลด (Coupons)</h1>
+            <button class="btn-primary" onclick="openCreateCouponModal()">
+                <i class="fa-solid fa-plus"></i> สร้างโค้ดส่วนลด
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>โค้ดส่วนลด</th>
+                        <th>ส่วนลด (บาท)</th>
+                        <th>ยอดซื้อขั้นต่ำ</th>
+                        <th>วันที่เริ่ม</th>
+                        <th>วันที่สิ้นสุด</th>
+                        <th>สถานะ</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="couponTableBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- โหลดสคริปต์ Sidebar -->
+    <script src="js/sidebar.js"></script>
+
+    <script>
+        const API_URL = 'http://localhost:3000/coupons';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCoupons();
+        });
+
+        // 🟢 ดึงข้อมูลคูปองมาแสดงในตาราง
+        async function loadCoupons() {
+            const tbody = document.getElementById('couponTableBody');
+            try {
+                const res = await fetch(API_URL);
+                const coupons = await res.json();
+
+                tbody.innerHTML = '';
+
+                if (coupons.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">ไม่มีโค้ดส่วนลดในระบบ</td></tr>';
+                    return;
+                }
+
+                const now = new Date();
+
+                coupons.forEach(coupon => {
+                    const start = new Date(coupon.start_date);
+                    const end = new Date(coupon.end_date);
+                    
+                    // เช็คสถานะ (เริ่ม, ยังไม่เริ่ม, หมดอายุ)
+                    let statusHtml = '';
+                    if (now > end || !coupon.is_active) {
+                        statusHtml = '<span class="status-badge status-expired">หมดอายุแล้ว</span>';
+                    } else if (now < start) {
+                        statusHtml = '<span class="status-badge" style="background: #fef9c3; color: #854d0e;">ยังไม่เริ่ม</span>';
+                    } else {
+                        statusHtml = '<span class="status-badge status-active">ใช้งานได้</span>';
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: 700; color: var(--primary); font-size: 15px;">${coupon.code}</td>
+                        <td style="font-weight: 500;">฿${Number(coupon.discount_amount).toLocaleString()}</td>
+                        <td>฿${Number(coupon.min_spend).toLocaleString()}</td>
+                        <td>${formatDate(start)}</td>
+                        <td>${formatDate(end)}</td>
+                        <td>${statusHtml}</td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteCoupon(${coupon.id}, '${coupon.code}')" title="ลบโค้ด">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error fetching coupons:', error);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 40px;">โหลดข้อมูลล้มเหลว กรุณาตรวจสอบเซิร์ฟเวอร์</td></tr>';
+            }
+        }
+
+        // 🟢 เปิด Modal สร้างคูปอง (ดีไซน์สวยงาม)
+        async function openCreateCouponModal() {
+            // เซ็ตค่า Default: วันนี้ ถึง เดือนหน้า
+            const today = new Date();
+            today.setMinutes(today.getMinutes() - today.getTimezoneOffset()); 
+            const nowStr = today.toISOString().slice(0, 16);
+            
+            const nextMonth = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+            const nextMonthStr = nextMonth.toISOString().slice(0, 16);
+
+            const { value: formValues } = await Swal.fire({
+                title: '<div style="font-family:\'Prompt\', sans-serif; font-size:22px; font-weight:700; color:#1e293b; margin-bottom: 10px;">สร้างโค้ดส่วนลดใหม่</div>',
+                width: '500px', // ขยายขนาดให้พอดี
+                padding: '24px',
+                html: `
+                <style>
+                    /* CSS สำหรับตกแต่งฟอร์มใน Modal */
+                    .coupon-form {
+                        text-align: left;
+                        font-family: 'Prompt', sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+                        padding: 10px 0;
+                    }
+                    .form-group {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 6px;
+                    }
+                    .form-label {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: #475569;
+                        margin: 0;
+                    }
+                    .required { color: #ef4444; }
+                    .custom-input {
+                        width: 100%;
+                        padding: 12px 16px;
+                        font-size: 14px;
+                        font-family: 'Prompt', sans-serif;
+                        color: #1e293b;
+                        background-color: #f8fafc;
+                        border: 1px solid #cbd5e1;
+                        border-radius: 10px;
+                        outline: none;
+                        transition: all 0.2s ease;
+                        box-sizing: border-box;
+                    }
+                    .custom-input:focus {
+                        background-color: #ffffff;
+                        border-color: #6366f1;
+                        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+                    }
+                    .input-row {
+                        display: flex;
+                        gap: 16px;
+                    }
+                    .input-row .form-group {
+                        flex: 1;
+                    }
+                </style>
+                
+                <div class="coupon-form">
+                    <div class="form-group">
+                        <label class="form-label">ชื่อโค้ดส่วนลด <span class="required">*</span></label>
+                        <input id="swal-c-code" class="custom-input" placeholder="เช่น SUMMER100 (ภาษาอังกฤษ/ตัวเลข)" style="text-transform: uppercase;" autocomplete="off">
+                    </div>
+                    
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label class="form-label">มูลค่าส่วนลด (บาท) <span class="required">*</span></label>
+                            <input id="swal-c-discount" type="number" class="custom-input" placeholder="เช่น 100" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ยอดซื้อขั้นต่ำ (บาท) <span class="required">*</span></label>
+                            <input id="swal-c-min" type="number" class="custom-input" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">วันที่เริ่มใช้งาน <span class="required">*</span></label>
+                        <input id="swal-c-start" type="datetime-local" class="custom-input" value="${nowStr}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">วันที่สิ้นสุด (หมดอายุ) <span class="required">*</span></label>
+                        <input id="swal-c-end" type="datetime-local" class="custom-input" value="${nextMonthStr}">
+                    </div>
+                </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-save" style="margin-right: 5px;"></i> บันทึกโค้ด',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#94a3b8',
+                customClass: {
+                    popup: 'swal-custom-popup',
+                    confirmButton: 'swal-custom-btn',
+                    cancelButton: 'swal-custom-btn'
+                },
+                preConfirm: () => {
+                    const code = document.getElementById('swal-c-code').value.trim();
+                    const discount = document.getElementById('swal-c-discount').value;
+                    const min_spend = document.getElementById('swal-c-min').value;
+                    const start = document.getElementById('swal-c-start').value;
+                    const end = document.getElementById('swal-c-end').value;
+
+                    if (!code || !discount || !start || !end) {
+                        Swal.showValidationMessage('กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบถ้วน');
+                        return false;
+                    }
+
+                    return {
+                        code: code.toUpperCase(), // บังคับให้โค้ดเป็นตัวพิมพ์ใหญ่เสมอ
+                        discount_amount: Number(discount),
+                        min_spend: Number(min_spend || 0),
+                        start_date: new Date(start).toISOString(),
+                        end_date: new Date(end).toISOString(),
+                    };
+                }
+            });
+
+            if (formValues) {
+                try {
+                    Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formValues)
+                    });
+                    
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || 'บันทึกไม่สำเร็จ');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สำเร็จ!',
+                        text: 'สร้างโค้ดส่วนลดเรียบร้อยแล้ว',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    
+                    loadCoupons(); // รีโหลดตาราง
+                } catch (e) {
+                    Swal.fire('เกิดข้อผิดพลาด', e.message, 'error');
+                }
+            }
+        }
+
+        // 🟢 ลบคูปอง
+        async function deleteCoupon(id, code) {
+            const result = await Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: `คุณต้องการลบโค้ดส่วนลด "${code}" ใช่หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'ใช่, ลบเลย',
+                cancelButtonText: 'ยกเลิก',
+                customClass: {
+                    popup: 'swal-custom-popup',
+                    confirmButton: 'swal-custom-btn',
+                    cancelButton: 'swal-custom-btn'
+                }
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    if (!res.ok) throw new Error('ไม่สามารถลบโค้ดส่วนลดได้');
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'ลบสำเร็จ!',
+                        text: 'โค้ดส่วนลดถูกลบออกจากระบบแล้ว',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    loadCoupons();
+                } catch (e) {
+                    Swal.fire('เกิดข้อผิดพลาด', e.message, 'error');
+                }
+            }
+        }
+
+        // 🟢 ฟังก์ชันแปลงรูปแบบวันที่ให้แสดงผลสวยงาม (19/08/2569 15:30)
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+            const time = date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            return `${day}/${month}/${year} ${time}`;
+        }
+    </script>
+</body>
+</html>

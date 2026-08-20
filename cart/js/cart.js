@@ -305,7 +305,7 @@ function calculateSummary() {
   const selectedItems = cart.filter(i => i.selected);
 
   const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = subtotal > 0 ? 100 : 0; 
+  const discount = 0; 
   const grandTotal = Math.max(0, subtotal - discount);
 
   const subtotalEl = document.getElementById('subtotalAmount');
