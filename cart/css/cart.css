@@ -419,7 +419,7 @@ body {
   box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25);
   transition: all 0.25s ease;
   flex: 1; /* ดันปุ่มให้กว้างเต็มพื้นที่ที่เหลือ */
-  max-width: 400px; /* จำกัดความกว้างสูงสุดไม่ให้ล้นน่าเกลียด */
+  max-width: 300px; /* จำกัดความกว้างสูงสุดไม่ให้ล้นน่าเกลียด */
 }
 
 .checkout-btn:hover {
@@ -890,4 +890,151 @@ body {
       align-items: flex-start;
       gap: 10px;
   }
+}
+
+/* ===================================================
+   SAVED ADDRESS CARDS (SIAM-HEALTHY THEME)
+=================================================== */
+.address-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 14px;
+    background: #ffffff;
+}
+
+.address-card:hover {
+    border-color: rgba(13, 92, 46, 0.3);
+}
+
+.address-card.selected {
+    border-color: var(--primary-color);
+    background-color: #f4fbf7;
+}
+
+.address-card-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex: 1;
+}
+
+.address-card input[type="radio"] {
+    margin-top: 4px;
+    accent-color: var(--primary-color);
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.address-info h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.05rem;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.address-info p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* ปุ่มจัดการการ์ดที่อยู่ (แก้ไข / ลบ) */
+.address-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.addr-action-btn {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.addr-action-btn.edit:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: #f4fbf7;
+}
+
+.addr-action-btn.delete:hover {
+    border-color: var(--price-red);
+    color: var(--price-red);
+    background: #fff1f2;
+}
+
+.add-address-dashed {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f8faf8;
+}
+
+.add-address-dashed:hover {
+    border-color: var(--primary-color);
+    background: #f0f7f2;
+}
+
+/* จัดระเบียบส่วนล่างของตะกร้าสินค้าบนมือถือ */
+@media (max-width: 480px) {
+    .cart-footer-actions-wrapper {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 16px !important;
+    }
+
+    .cart-footer-back-btn {
+        width: 100% !important;
+        max-width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .cart-footer-summary-group {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    .cart-footer-summary-group > div:first-child {
+        text-align: center !important;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8faf8;
+        padding: 10px 14px;
+        border-radius: 8px;
+    }
+
+    .cart-footer-checkout-btn {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
 }

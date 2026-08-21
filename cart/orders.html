@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดคำสั่งซื้อ - Siam-Healthy</title>
+    <!-- Google Fonts & CSS Framework / Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/contact.css">
+    <link rel="stylesheet" href="./css/orders.css">
+
+    <!-- Web Components -->
+    <script src="../js/header.js" defer></script>
+    <script src="../js/contact.js" defer></script>
+    <script src="../js/footer.js" defer></script>
+</head>
+<body>
+
+    <!-- Header Component -->
+    <my-header></my-header>
+
+    <main class="main-content">
+        <h1 class="page-title">รายละเอียดคำสั่งซื้อ</h1>
+        <p class="page-subtitle">ตรวจสอบสถานะและดูรายละเอียดคำสั่งซื้อทั้งหมดของคุณ</p>
+
+        <div id="ordersContainer" class="orders-list">
+            <!-- รายการออเดอร์จะถูกเรนเดอร์ผ่าน JavaScript ตรงนี้ -->
+        </div>
+    </main>
+    
+    <!-- Contact & Footer -->
+    <contact-section></contact-section>
+    <my-footer></my-footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // ฟังก์ชันช่วยจัดรูปแบบเลขออเดอร์ให้เป็นรูปแบบเดียวกับ Admin
+        function formatOrderId(id) {
+            if (!id) return '-';
+            // ถ้ามีคำว่า ORD อยู่แล้ว แสดงตามนั้นได้เลย
+            if (id.toString().startsWith('ORD')) return id;
+            
+            // ถ้าเป็นเลขสั้นๆ หรือมี SH- ให้แปลงเป็นรูปแบบ ORD + ปี (2026) + เลขรหัส
+            const cleanId = id.toString().replace('SH-', '');
+            if (cleanId.length <= 6) {
+                return `ORD2026${cleanId.padStart(6, '0')}`;
+            }
+            return `ORD${cleanId}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUserOrders();
+        });
+
+        function renderUserOrders() {
+            const container = document.getElementById('ordersContainer');
+            
+            // ดึงข้อมูลออเดอร์จาก LocalStorage (รองรับทั้งออเดอร์ล่าสุด และเก็บสะสมเป็นอาเรย์)
+            let orders = [];
+            
+            const storedOrders = localStorage.getItem('siam_healthy_orders');
+            if (storedOrders) {
+                try {
+                    orders = JSON.parse(storedOrders);
+                } catch (e) {
+                    orders = [];
+                }
+            }
+
+            const latestOrder = localStorage.getItem('latest_order');
+            if (latestOrder) {
+                try {
+                    const parsedLatest = JSON.parse(latestOrder);
+                    if (!orders.some(o => o.orderId === parsedLatest.orderId)) {
+                        orders.unshift(parsedLatest);
+                        localStorage.setItem('siam_healthy_orders', JSON.stringify(orders));
+                    }
+                } catch (e) {}
+            }
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-orders">
+                        <h3>ยังไม่มีประวัติคำสั่งซื้อ</h3>
+                        <p>คุณยังไม่ได้ทำรายการสั่งซื้อสินค้ากับทาง Siam-Healthy</p>
+                        <a href="../shop/" class="btn-shop">เลือกซื้อสินค้าเลย</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => {
+                let paymentLabel = 'ชำระเงินเรียบร้อย';
+                if (order.paymentMethod === 'cod') paymentLabel = 'เก็บเงินปลายทาง';
+                else if (order.paymentMethod === 'promptpay') paymentLabel = 'พร้อมเพย์ (PromptPay)';
+                else if (order.paymentMethod === 'credit') paymentLabel = 'บัตรเครดิต / เดบิต';
+
+                // แปลงหมายเลขคำสั่งซื้อให้เป็นรูปแบบเต็ม
+                const displayOrderId = formatOrderId(order.orderId);
+
+                // วนลูปแสดงรายการสินค้าในออร์เดอร์
+                const itemsHTML = (order.items || []).map(item => {
+                    const itemName = item.name || item.product_name || 'สินค้าสุขภาพ';
+                    const itemImage = item.image || '../images/default-product.png';
+                    const itemQty = item.quantity || 1;
+                    const itemPrice = item.price || 0;
+
+                    return `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                            <img src="${itemImage}" alt="${itemName}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" onerror="this.src='../images/default-product.png'">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--text-heading); font-size: 0.9rem;">${itemName}</div>
+                                <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">จำนวน: ${itemQty} ชิ้น</div>
+                            </div>
+                            <div style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">
+                                ฿${(itemPrice * itemQty).toLocaleString('th-TH', {minimumFractionDigits: 2})}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="order-card" style="margin-bottom: 16px;">
+                        <div class="order-header">
+                            <span class="order-id">คำสั่งซื้อ #${displayOrderId}</span>
+                            <span class="order-date">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                ${order.date || 'เมื่อเร็วๆ นี้'}
+                            </span>
+                        </div>
+                        
+                        <div class="order-items-list" style="margin-bottom: 12px;">
+                            ${itemsHTML}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">ยอดสุทธิรวมทั้งสิ้น</span>
+                            <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-heading);">฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                        </div>
+
+                        <div class="order-footer">
+                            <div>
+                                <span class="badge-status success">ชำระเงินแล้ว (${paymentLabel})</span>
+                            </div>
+                            <a href="./order-detail.html?id=${order.orderId}" class="btn-detail">ดูรายละเอียดเพิ่มเติม</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>

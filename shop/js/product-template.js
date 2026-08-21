@@ -1,3 +1,7 @@
+// ==========================================
+// Logic การทำงานทั้งหมด (product-script.js)
+// ==========================================
+
 // 📌 บังคับล้าง Cache รุ่นเก่าทิ้งทั้งหมด (อัปเดตเป็น v14)
 if (!localStorage.getItem('cache_cleared_v14')) {
   Object.keys(localStorage).forEach(k => {
@@ -31,7 +35,7 @@ function fixImageUrlLocal(url) {
     // 1. ถ้ามี data: หรือ blob: นำหน้าอยู่แล้ว แปลว่าเป็นรูปที่พร้อมใช้งาน
     if (url.startsWith('data:') || url.startsWith('blob:')) return url;
     
-    // 2. ตรวจจับกรณีรูปเป็น Base64 เพียวๆ (ช่วยให้รูปแสดงผลได้)
+    // 2. ตรวจจับกรณีรูปเป็น Base64 เพียวๆ
     if (url.length > 200 && !/\.(png|jpe?g|gif|webp|svg)$/i.test(url)) {
         let mimeType = 'image/jpeg'; 
         if (url.startsWith('iVBORw')) mimeType = 'image/png';
@@ -61,10 +65,9 @@ function fixImageUrlLocal(url) {
     return `${SIAM_API_URL}${cleanUrl}`;
 }
 
-// 2. ฟังก์ชันหลักสำหรับดึงข้อมูลและประกอบร่างข้อมูล
+// 2. ฟังก์ชันหลักสำหรับดึงข้อมูล
 async function initializeProduct() {
   const cacheKey = `siam_product_detail_${normalizeKeyString(urlRawId)}`;
-  let hasRenderedFast = false;
   
   // 🚀 ขั้นตอนที่ 1: โหลดจาก Cache ทันที
   const cachedData = localStorage.getItem(cacheKey);
@@ -72,7 +75,6 @@ async function initializeProduct() {
     try {
       activeProductData = JSON.parse(cachedData);
       renderUI(); 
-      hasRenderedFast = true;
     } catch (e) {}
   }
 
@@ -90,6 +92,7 @@ async function initializeProduct() {
       benefits: [],
       impactTexts: [],
       results: [],
+      resultTable: null, 
       solutionTexts: [],
       warningTexts: [],
       warnings: [],
@@ -139,7 +142,13 @@ async function initializeProduct() {
 
       if (typeof productsData !== "undefined" && dbProduct.name) {
         const targetStaticKey = normalizeKeyString(dbProduct.name);
-        const matchedKey = Object.keys(productsData).find(key => normalizeKeyString(key) === targetStaticKey);
+        
+        // 🟢 ให้ระบบเช็คทั้งจากชื่อ Key และชื่อ Name
+        const matchedKey = Object.keys(productsData).find(key => 
+            normalizeKeyString(key) === targetStaticKey || 
+            normalizeKeyString(productsData[key].name) === targetStaticKey ||
+            targetStaticKey.includes(normalizeKeyString(key))
+        );
         
         if (matchedKey && productsData[matchedKey]) {
           const staticData = productsData[matchedKey];
@@ -148,16 +157,44 @@ async function initializeProduct() {
           activeProductData.warnings = staticData.warnings || [];
           activeProductData.warningTable = staticData.warningTable || null;
           activeProductData.resultsTitle = staticData.resultsTitle || "";
+          activeProductData.resultTable = staticData.resultTable || null;
           activeProductData.results = staticData.results || [];
+          
+          if (staticData.resultImage) {
+            activeProductData._staticResultImage = staticData.resultImage;
+          }
           activeProductData.solutionTitle = staticData.solutionTitle || "";
           activeProductData.solutionTexts = staticData.solutionTexts || [];
           activeProductData.impactTitle = staticData.impactTitle || "";
           activeProductData.impactTexts = staticData.impactTexts || [];
+          activeProductData.ingredientTitle = staticData.ingredientTitle || "";
+
+          if (staticData.images && staticData.images.length > 0) {
+            activeProductData._staticImages = staticData.images;
+          }
+          if (staticData.banner1) {
+            activeProductData._staticBanner1 = staticData.banner1;
+          }
+          if (staticData.banner2) {
+            activeProductData._staticBanner2 = staticData.banner2;
+          }
         }
       }
 
       if (dbProduct.banner_url) {
         activeProductData.banner1 = fixImageUrlLocal(dbProduct.banner_url);
+      } else if (activeProductData._staticBanner1) {
+        activeProductData.banner1 = activeProductData._staticBanner1;
+      }
+
+      if (!activeProductData.banner2 && activeProductData._staticBanner2) {
+        activeProductData.banner2 = activeProductData._staticBanner2;
+      }
+
+      if (dbProduct.result_image) {
+        activeProductData.resultImage = fixImageUrlLocal(dbProduct.result_image);
+      } else if (activeProductData._staticResultImage) {
+        activeProductData.resultImage = activeProductData._staticResultImage;
       }
 
       let parsedImages = [];
@@ -169,19 +206,31 @@ async function initializeProduct() {
 
       if (parsedImages.length > 0) {
         activeProductData.images = parsedImages.map(img => fixImageUrlLocal(img)).filter(Boolean);
+      } else if (activeProductData._staticImages && activeProductData._staticImages.length > 0) {
+        activeProductData.images = activeProductData._staticImages;
       }
 
-      if (dbProduct.product_ingredients && dbProduct.product_ingredients.length > 0) {
+      // 🟢 ปรับโครงสร้างป้องกัน Error กรณีแอดมินเว้นว่าง Properties ส่วนผสม
+      if (dbProduct.product_ingredients && Array.isArray(dbProduct.product_ingredients)) {
         activeProductData.ingredients = dbProduct.product_ingredients.map(ing => {
+          let parsedProps = [];
+          try {
+            if (typeof ing.properties === 'string') {
+              parsedProps = JSON.parse(ing.properties);
+            } else if (Array.isArray(ing.properties)) {
+              parsedProps = ing.properties;
+            }
+          } catch(e) {}
+          
           return { 
             name: ing.name, 
-            props: typeof ing.properties === 'string' ? JSON.parse(ing.properties) : (ing.properties || []), 
+            props: Array.isArray(parsedProps) ? parsedProps : [], // ป้องกัน undefined
             img: fixImageUrlLocal(ing.image_url || ing.image_data)
           };
         });
       }
 
-      if (dbProduct.product_reviews && dbProduct.product_reviews.length > 0) {
+      if (dbProduct.product_reviews && Array.isArray(dbProduct.product_reviews) && dbProduct.product_reviews.length > 0) {
         activeProductData.reviewCount = dbProduct.product_reviews.length;
         let sumRating = dbProduct.product_reviews.reduce((acc, rev) => acc + (rev.rating || 5), 0);
         activeProductData.rating = (sumRating / activeProductData.reviewCount).toFixed(1);
@@ -194,12 +243,11 @@ async function initializeProduct() {
         }));
       }
 
-      // พยายามเก็บลง Cache แต่ถ้า Base64 ใหญ่เกินโควต้า 5MB ก็ให้ข้ามไป
       try {
         localStorage.setItem(cacheKey, JSON.stringify(activeProductData));
       } catch (quotaErr) {
         localStorage.removeItem(cacheKey); 
-        console.warn("Payload size exceeds localStorage limits (likely due to large Base64). Caching skipped.");
+        console.warn("Payload size exceeds localStorage limits. Caching skipped.");
       }
 
       renderUI();
@@ -221,7 +269,7 @@ function renderUI() {
     if (document.getElementById("oldPrice")) document.getElementById("oldPrice").textContent = activeProductData.oldPrice && activeProductData.oldPrice !== "0" ? `฿${Number(activeProductData.oldPrice).toLocaleString()}` : "";
     if (document.getElementById("newPrice")) document.getElementById("newPrice").textContent = activeProductData.newPrice && activeProductData.newPrice !== "0" ? `฿${Number(activeProductData.newPrice).toLocaleString()}` : "";
 
-    // แบนเนอร์ 1 (ตั้งค่า Priority สูงสุด)
+    // แบนเนอร์ 1
     const banner = document.getElementById("bannerImage1");
     const bannerContainer = document.querySelector(".warning-left-image");
     const warningRightContent = document.querySelector(".warning-right-content");
@@ -229,8 +277,8 @@ function renderUI() {
     if (activeProductData.banner1) {
       if (banner) { 
           banner.src = activeProductData.banner1; 
-          banner.setAttribute("decoding", "async"); // ป้องกันเว็บค้าง
-          banner.setAttribute("fetchpriority", "high"); // เร่งโหลดรูปแรก
+          banner.setAttribute("decoding", "async"); 
+          banner.setAttribute("fetchpriority", "high"); 
           banner.style.display = "block"; 
       }
       if (bannerContainer) bannerContainer.style.display = "block";
@@ -240,7 +288,7 @@ function renderUI() {
       if (warningRightContent) warningRightContent.style.width = "100%";
     }
 
-    // แบนเนอร์ 2 (ตั้งค่า Lazy Load)
+    // แบนเนอร์ 2
     const banner2Container = document.getElementById("banner2Container");
     const banner2 = document.getElementById("bannerImage2");
     
@@ -263,7 +311,6 @@ function renderUI() {
       thumbList.innerHTML = "";
       let currentImageIndex = 0;
 
-      // เซ็ตความเร็วในการเปลี่ยนรูปหลัก และ ป้องกันการบล็อก Thread
       mainProductImg.setAttribute("decoding", "async");
       mainProductImg.setAttribute("fetchpriority", "high");
 
@@ -293,7 +340,6 @@ function renderUI() {
         const imgElement = document.createElement("img");
         imgElement.src = imgSrc;
         imgElement.setAttribute("decoding", "async");
-        // รูป Thumbnail อันแรกให้โหลดทันที นอกนั้นให้โหลดแบบ Lazy
         imgElement.setAttribute("loading", index === 0 ? "eager" : "lazy");
         if (index === 0) imgElement.classList.add("active");
         imgElement.onclick = () => updateMainImage(index);
@@ -332,7 +378,7 @@ function renderUI() {
 
     // ประโยชน์ (Benefits)
     const benefitList = document.getElementById("benefitList");
-    if (benefitList && activeProductData.benefits && activeProductData.benefits.length > 0) {
+    if (benefitList && Array.isArray(activeProductData.benefits) && activeProductData.benefits.length > 0) {
       benefitList.innerHTML = "";
       activeProductData.benefits.forEach((benefit) => {
         benefitList.innerHTML += `<div class="benefit-item"><div class="check">✓</div><span>${benefit}</span></div>`;
@@ -361,11 +407,11 @@ function renderUI() {
       updateButtonState();
     }
 
-    // Warnings (ข้อควรระวัง)
+    // Warnings
     const warningSectionEl = document.querySelector(".warning-layout-section");
     const warningTitleEl = document.getElementById("warningTitle");
     const warningBox = document.getElementById("warningBox");
-    const hasWarningData = activeProductData.warningTitle || (activeProductData.warningTable && activeProductData.warningTable.headers) || (activeProductData.warningTexts && activeProductData.warningTexts.length > 0) || (activeProductData.warnings && activeProductData.warnings.length > 0);
+    const hasWarningData = activeProductData.warningTitle || (activeProductData.warningTable && activeProductData.warningTable.headers) || (Array.isArray(activeProductData.warningTexts) && activeProductData.warningTexts.length > 0) || (Array.isArray(activeProductData.warnings) && activeProductData.warnings.length > 0);
 
     if (hasWarningData && warningBox) {
       if (warningSectionEl) warningSectionEl.style.display = "";
@@ -386,7 +432,7 @@ function renderUI() {
               cellContent = `<ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.6;">${listItems}</ul>`;
             } else {
               let formattedCell = cell;
-              const colonIndex = cell.indexOf(":");
+              const colonIndex = String(cell).indexOf(":");
               if (colonIndex !== -1) {
                 let titlePart = cell.substring(0, colonIndex).trim();
                 let descPart = cell.substring(colonIndex + 1).trim();
@@ -402,7 +448,7 @@ function renderUI() {
         });
         tableHTML += `</tbody></table></div>`;
         warningBox.innerHTML = tableHTML;
-      } else if (activeProductData.warningTexts && activeProductData.warningTexts.length > 0) {
+      } else if (Array.isArray(activeProductData.warningTexts) && activeProductData.warningTexts.length > 0) {
         warningBox.className = "accordion-container reveal-on-scroll";
         let introP = document.getElementById("warningIntro");
         if (!introP) {
@@ -438,14 +484,17 @@ function renderUI() {
           };
           warningBox.appendChild(itemEl);
         });
-      } else if (activeProductData.warnings && activeProductData.warnings.length > 0) {
+      } else if (Array.isArray(activeProductData.warnings) && activeProductData.warnings.length > 0) {
         warningBox.className = "accordion-container reveal-on-scroll";
         activeProductData.warnings.forEach((warning) => {
           const itemEl = document.createElement("div");
           itemEl.className = `accordion-item`;
+          // 🟢 แก้ไข: ป้องกันกรณี warning.items ถูกปล่อยว่างจากหลังบ้าน 
+          const warningItemsHTML = Array.isArray(warning.items) ? warning.items.map(i => `<li>${i}</li>`).join('') : "";
+          
           itemEl.innerHTML = `
-            <button class="accordion-header"><span>${warning.title}</span><i class="fa-solid fa-chevron-down accordion-icon"></i></button>
-            <div class="accordion-content" style="max-height: 0; padding-bottom: 0;"><ul>${warning.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
+            <button class="accordion-header"><span>${warning.title || "คำเตือน"}</span><i class="fa-solid fa-chevron-down accordion-icon"></i></button>
+            <div class="accordion-content" style="max-height: 0; padding-bottom: 0;"><ul>${warningItemsHTML}</ul></div>`;
           const header = itemEl.querySelector(".accordion-header");
           header.onclick = () => {
             const content = itemEl.querySelector(".accordion-content");
@@ -463,11 +512,11 @@ function renderUI() {
       if (warningSectionEl) warningSectionEl.style.display = "none";
     }
 
-    // Solutions (แนวทางฟื้นฟู)
+    // Solutions
     const solutionTitleEl = document.getElementById("solutionTitle");
     const solutionBox = document.getElementById("solutionBox");
     
-    if (activeProductData.solutionTitle && activeProductData.solutionTexts && activeProductData.solutionTexts.length > 0) {
+    if (activeProductData.solutionTitle && Array.isArray(activeProductData.solutionTexts) && activeProductData.solutionTexts.length > 0) {
       if (solutionTitleEl) { solutionTitleEl.textContent = activeProductData.solutionTitle; solutionTitleEl.style.display = "block"; }
       if (solutionBox) {
         solutionBox.style.display = "block";
@@ -515,13 +564,14 @@ function renderUI() {
       if (introP) introP.style.display = "none";
     }
 
-    // Results (ผลลัพธ์)
+    // Results 
     const resultTitleEl = document.getElementById("resultTitle");
     const resultImageEl = document.getElementById("resultImage");
     const resultListEl = document.getElementById("resultList");
     const resultTableContainer = document.getElementById("resultTableContainer");
     const resultsWrapper = document.querySelector(".results-flex-wrapper");
-    const hasResultData = (activeProductData.resultTable && activeProductData.resultTable.headers) || (activeProductData.results && activeProductData.results.length > 0);
+    
+    const hasResultData = (activeProductData.resultTable && activeProductData.resultTable.headers) || (Array.isArray(activeProductData.results) && activeProductData.results.length > 0);
 
     if (resultTitleEl) {
       if (hasResultData && activeProductData.resultsTitle) { resultTitleEl.textContent = activeProductData.resultsTitle; resultTitleEl.style.display = "block"; } 
@@ -542,6 +592,7 @@ function renderUI() {
       if (!hasResultData) resultsWrapper.style.display = "none";
       else {
         resultsWrapper.style.display = "flex";
+        
         if (activeProductData.resultTable && activeProductData.resultTable.headers && activeProductData.resultTable.rows) {
           if (resultListEl) resultListEl.style.display = "none";
           if (resultTableContainer) {
@@ -553,10 +604,10 @@ function renderUI() {
               tableHTML += `<tr>`;
               row.forEach((cell) => {
                 let formattedCell = cell;
-                const colonIndex = cell.indexOf(":");
+                const colonIndex = String(cell).indexOf(":");
                 if (colonIndex !== -1) {
-                  let titlePart = cell.substring(0, colonIndex).trim();
-                  let descPart = cell.substring(colonIndex + 1).trim();
+                  let titlePart = String(cell).substring(0, colonIndex).trim();
+                  let descPart = String(cell).substring(colonIndex + 1).trim();
                   formattedCell = `<strong style="color: #111; display: block; margin-bottom: 6px; font-size: 14.5px;">${titlePart}:</strong> <span style="color: #555; line-height: 1.6;">${descPart}</span>`;
                 }
                 tableHTML += `<td>${formattedCell}</td>`;
@@ -566,15 +617,18 @@ function renderUI() {
             tableHTML += `</tbody></table>`;
             resultTableContainer.innerHTML = tableHTML;
           }
-        } else if (activeProductData.results && activeProductData.results.length > 0) {
+        } 
+        else if (Array.isArray(activeProductData.results) && activeProductData.results.length > 0) {
           if (resultTableContainer) resultTableContainer.style.display = "none";
           if (resultListEl) {
             resultListEl.style.display = "flex";
             resultListEl.innerHTML = "";
             activeProductData.results.forEach((item, index) => {
               if (typeof item === "object" && item !== null) {
-                let propsItems = item.props ? item.props.map((p) => `<li><span class="step-dot"></span><span>${p}</span></li>`).join("") : "";
-                resultListEl.innerHTML += `<li class="result-timeline-card"><div class="result-card-header"><span class="phase-badge"><i class="fa-solid fa-calendar-check"></i> ${item.title.split(":")[0] || "ระยะที่ " + (index + 1)}</span><h3 class="result-card-title">${item.title.includes(":") ? item.title.split(":")[1].trim() : item.title}</h3></div><ul class="result-card-props">${propsItems}</ul></li>`;
+                // 🟢 แก้ไข: ป้องกันกรณีไม่มี props ใน Results 
+                let propsItems = Array.isArray(item.props) ? item.props.map((p) => `<li><span class="step-dot"></span><span>${p}</span></li>`).join("") : "";
+                let itemTitle = item.title || "";
+                resultListEl.innerHTML += `<li class="result-timeline-card"><div class="result-card-header"><span class="phase-badge"><i class="fa-solid fa-calendar-check"></i> ${itemTitle.split(":")[0] || "ระยะที่ " + (index + 1)}</span><h3 class="result-card-title">${itemTitle.includes(":") ? itemTitle.split(":")[1].trim() : itemTitle}</h3></div><ul class="result-card-props">${propsItems}</ul></li>`;
               } else if (typeof item === "string") {
                 let boldPart = "";
                 let textPart = item;
@@ -591,18 +645,19 @@ function renderUI() {
       }
     }
 
-    // Ingredients (ส่วนผสม)
+    // Ingredients
     const ingredientTitleEl = document.getElementById("ingredientTitle");
     if (ingredientTitleEl && activeProductData.ingredientTitle) ingredientTitleEl.textContent = activeProductData.ingredientTitle;
 
     const ingredientGrid = document.getElementById("ingredientGrid");
-    if (ingredientGrid && activeProductData.ingredients && activeProductData.ingredients.length > 0) {
+    if (ingredientGrid && Array.isArray(activeProductData.ingredients) && activeProductData.ingredients.length > 0) {
       ingredientGrid.className = "ingredient-grid reveal-on-scroll";
       ingredientGrid.innerHTML = "";
       activeProductData.ingredients.forEach((ing) => {
-        let propsItems = (ing.props || []).map((prop) => `<li>${prop}</li>`).join("");
+        // 🟢 แก้ไข: ป้องกัน Array undefined สำหรับ props 
+        let propsArray = Array.isArray(ing.props) ? ing.props : [];
+        let propsItems = propsArray.map((prop) => `<li>${prop}</li>`).join("");
         
-        // 🟢 เพิ่ม loading="lazy" และ decoding="async" ให้ส่วนผสม (แก้ความช้า)
         let imgHtml = ing.img 
           ? `<img src="${ing.img}" alt="${ing.name}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\\'width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;\\'></div>';" />` 
           : `<div style="width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;"></div>`;
@@ -633,11 +688,13 @@ function renderUI() {
     }
 
     // Review List
+    // Review List
     const reviewList = document.getElementById("reviewList");
-    if (reviewList && activeProductData.reviews && activeProductData.reviews.length > 0) {
+    const allH2 = document.querySelectorAll("h2"); // ค้นหา H2 เตรียมไว้ก่อน
+
+    if (reviewList && Array.isArray(activeProductData.reviews) && activeProductData.reviews.length > 0) {
       reviewList.innerHTML = "";
       activeProductData.reviews.forEach((review) => {
-        // 🟢 เพิ่ม loading="lazy" และ decoding="async" ให้รีวิว (แก้ความช้า)
         let imgHTML = review.img ? `<img class="review-image" src="${review.img}" alt="Review Image" loading="lazy" decoding="async" style="margin-top: 10px;" onerror="this.style.display='none'" />` : "";
         let starCount = review.rating || 5;
         let starsHTML = `<div class="stars-orange" style="font-size: 18px; margin-top: -2px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">`;
@@ -646,19 +703,34 @@ function renderUI() {
         starsHTML += `<span style="letter-spacing: 2px;">${starsIcon}</span><span style="font-size: 14px; color: #555; font-weight: 500;">(${starCount} ดาว)</span></div>`;
         reviewList.innerHTML += `<div class="review-comment"><div class="user-name" style="margin-bottom: 4px;">${review.name}</div>${starsHTML}<div class="review-text">${review.text}</div>${imgHTML}</div>`;
       });
-      document.querySelector(".review-container").style.display = "block";
+      
+      const reviewContainer = document.querySelector(".review-container");
+      if (reviewContainer) reviewContainer.style.display = "block";
+
+      // 🟢 สำคัญ: เปิดแสดงข้อความ H2 กลับมาเมื่อมีรีวิว
+      allH2.forEach(h2 => {
+        if (h2.textContent.includes('ยืนยันประสิทธิภาพจากผู้ใช้จริง')) {
+          h2.style.display = ""; // ล้างการซ่อนออกเพื่อให้กลับมาแสดง
+        }
+      });
+
     } else if (reviewList) {
       const reviewContainer = document.querySelector(".review-container");
       if (reviewContainer) reviewContainer.style.display = "none";
-      const reviewHeading = document.querySelector("h2:contains('ยืนยันประสิทธิภาพจากผู้ใช้จริง')");
-      if (reviewHeading) reviewHeading.style.display = "none";
+      
+      // 🟢 ซ่อนข้อความเมื่อไม่มีรีวิว
+      allH2.forEach(h2 => {
+        if (h2.textContent.includes('ยืนยันประสิทธิภาพจากผู้ใช้จริง')) {
+          h2.style.display = "none";
+        }
+      });
     }
 
     // Impact Section
     const impactSectionEl = document.querySelector(".impact-section");
     const impactTitleEl = document.getElementById("impactTitle");
     const impactGridEl = document.getElementById("impactGrid");
-    const hasImpactData = activeProductData.impactTitle && activeProductData.impactTexts && activeProductData.impactTexts.length > 0;
+    const hasImpactData = activeProductData.impactTitle && Array.isArray(activeProductData.impactTexts) && activeProductData.impactTexts.length > 0;
 
     if (hasImpactData) {
       if (impactSectionEl) impactSectionEl.style.display = "block";

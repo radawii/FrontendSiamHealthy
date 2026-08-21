@@ -415,3 +415,43 @@
     padding: 0 16px;
   }
 }
+
+/* Styling สำหรับ Profile Dropdown */
+.desktop-profile-container, .mobile-profile-container {
+  position: relative;
+}
+
+.profile-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 8px;
+  background: #ffffff;
+  min-width: 180px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* แสดงผลเมื่อมีคลาส active */
+.desktop-profile-container.active .profile-dropdown-menu,
+.mobile-profile-container.active .profile-dropdown-menu {
+  display: flex;
+}
+
+.profile-dropdown-menu .dropdown-item {
+  padding: 10px 16px;
+  color: #334155;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.profile-dropdown-menu .dropdown-item:hover {
+  background: #f1f5f9;
+}
