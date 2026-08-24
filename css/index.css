@@ -6,15 +6,15 @@
   --price-red: #ff2b56;
   --bg-main: #f8faf8;
   --card-bg: #ffffff;
-  
-  --text-dark: #334155; 
+
+  --text-dark: #334155;
   --text-heading: #1e293b;
   --text-muted: #64748b;
-  
+
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 8px 20px rgba(13, 92, 46, 0.06);
   --shadow-hover: 0 14px 28px rgba(13, 92, 46, 0.1);
-  
+
   --radius-lg: 20px;
   --radius-md: 12px;
   --radius-sm: 8px;
@@ -43,6 +43,7 @@ body {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -52,8 +53,8 @@ body {
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -96,7 +97,7 @@ body {
 
 /* 4. BANNER HERO CAROUSEL (FULL COVER & SMOOTH)*/
 .carousel-section {
-  padding: 30px 0;
+  padding: 15px 0;
   width: 100%;
 }
 
@@ -105,7 +106,7 @@ body {
   width: 100%;
   max-width: 90%;
   margin: 0 auto;
-  padding: 0 50px; 
+  padding: 0 50px;
   box-sizing: border-box;
 }
 
@@ -116,7 +117,7 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: 0 12px 30px rgba(13, 92, 46, 0.08);
   background-color: #f1f5f9;
-  aspect-ratio: 16 / 6.5; 
+  aspect-ratio: 16 / 6.5;
 }
 
 .carousel-track {
@@ -147,9 +148,9 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.455); 
   color: var(--primary-color);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.6); 
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -158,13 +159,25 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 10;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px); 
+  -webkit-backdrop-filter: blur(4px); /* สำหรับ Safari */
 }
 
-.prev-btn { left: 12px; }
-.next-btn { right: 12px; }
+.carousel-btn:hover {
+  background: rgba(255, 255, 255, 0.85); 
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.prev-btn {
+  left: 12px;
+}
+
+.next-btn {
+  right: 12px;
+}
 
 .carousel-btn:hover {
   background: var(--primary-color);
@@ -216,7 +229,7 @@ body {
 
 .shop-header-wrapper {
   max-width: 1200px;
-  margin: 60px auto 36px auto; 
+  margin: 60px auto 36px auto;
   text-align: left;
 }
 
@@ -455,9 +468,17 @@ body {
 }
 
 @keyframes rotateGlow {
-  0% { transform: rotate(0deg) translate(0, 0); }
-  50% { transform: rotate(180deg) translate(25px, 30px); }
-  100% { transform: rotate(360deg) translate(0, 0); }
+  0% {
+    transform: rotate(0deg) translate(0, 0);
+  }
+
+  50% {
+    transform: rotate(180deg) translate(25px, 30px);
+  }
+
+  100% {
+    transform: rotate(360deg) translate(0, 0);
+  }
 }
 
 .concern-header {
@@ -483,7 +504,9 @@ body {
   align-items: center;
 }
 
-.card-1, .card-2, .card-3 {
+.card-1,
+.card-2,
+.card-3 {
   grid-column: span 2;
 }
 
@@ -492,19 +515,23 @@ body {
   max-width: 85%;
   justify-self: end;
 }
+
 .card-5 {
   grid-column: 4 / span 3;
   max-width: 85%;
   justify-self: start;
 }
 
-.card-6, .card-7, .card-8 {
+.card-6,
+.card-7,
+.card-8 {
   grid-column: span 2;
 }
 
 .card-9 {
   grid-column: 2 / span 2;
 }
+
 .card-10 {
   grid-column: 4 / span 2;
 }
@@ -545,13 +572,28 @@ body {
   line-height: 1.45;
 }
 
-.float-anim-1 { animation: floatSlow 5s infinite ease-in-out; }
-.float-anim-2 { animation: floatSlow 6.5s infinite ease-in-out -2s; }
-.float-anim-3 { animation: floatSlow 5.8s infinite ease-in-out -4s; }
+.float-anim-1 {
+  animation: floatSlow 5s infinite ease-in-out;
+}
+
+.float-anim-2 {
+  animation: floatSlow 6.5s infinite ease-in-out -2s;
+}
+
+.float-anim-3 {
+  animation: floatSlow 5.8s infinite ease-in-out -4s;
+}
 
 @keyframes floatSlow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 .glass-card:hover {
@@ -735,9 +777,17 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
-  
-  .card-1, .card-2, .card-3, .card-4, .card-5,
-  .card-6, .card-7, .card-8, .card-9, .card-10 {
+
+  .card-1,
+  .card-2,
+  .card-3,
+  .card-4,
+  .card-5,
+  .card-6,
+  .card-7,
+  .card-8,
+  .card-9,
+  .card-10 {
     grid-column: span 1;
     max-width: 100%;
     justify-self: stretch;
@@ -766,21 +816,47 @@ body {
   }
 
   .carousel-container {
-    padding: 0 16px;
+    max-width: 100%;
+    padding: 20px 16px;
   }
 
   .carousel-viewport {
-    aspect-ratio: 16 / 9;
+    position: static;
+    aspect-ratio: auto;
+    height: auto;
     border-radius: 16px;
+  }
+
+  .carousel-track,
+  .carousel-item {
+    height: auto;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
   }
 
   .carousel-btn {
     width: 36px;
     height: 36px;
+    z-index: 50;
   }
 
-  .prev-btn { left: 4px; }
-  .next-btn { right: 4px; }
+  .carousel-dots {
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+  }
+
+  .prev-btn {
+    left: 2px;
+  }
+
+  .next-btn {
+    right: 2px;
+  }
 
   .shop {
     grid-template-columns: repeat(2, 1fr);
@@ -814,7 +890,7 @@ body {
   .distributed-glass-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .concern-main-title {
     font-size: 1.4rem;
   }
@@ -822,32 +898,33 @@ body {
 
 /* ขยายขนาดรูปไอคอน SVG */
 .icon-sup .icon-image svg {
-    width: 48px;
-    height: 48px;
+  width: 48px;
+  height: 48px;
 }
 
 /* สำหรับหน้าจอ Mobile ให้แสดงเป็น 2 คอลัมน์ */
 @media screen and (max-width: 768px) {
-    .distributed-glass-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px; /* ปรับระยะห่างระหว่างการ์ดตามความเหมาะสม */
-        padding: 0 12px;
-    }
+  .distributed-glass-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    /* ปรับระยะห่างระหว่างการ์ดตามความเหมาะสม */
+    padding: 0 12px;
+  }
 
-    /* ปรับขนาดตัวอักษรหรือความสูงในการ์ดเล็กน้อยเพื่อให้พอดีกับ 2 คอลัมน์บนมือถือ */
-    .glass-card {
-        padding: 16px 12px;
-        min-height: 110px;
-    }
+  /* ปรับขนาดตัวอักษรหรือความสูงในการ์ดเล็กน้อยเพื่อให้พอดีกับ 2 คอลัมน์บนมือถือ */
+  .glass-card {
+    padding: 16px 12px;
+    min-height: 110px;
+  }
 
-    .glass-card .card-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-    }
+  .glass-card .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
 
-    .glass-card .card-desc {
-        font-size: 0.75rem;
-        line-height: 1.3;
-    }
+  .glass-card .card-desc {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
 }
