@@ -2,6 +2,7 @@
 
 window.savedAddresses = [];
 window.currentAddress = null;
+let editingIndex = null;
 
 // 🔒 ฟังก์ชันตรวจสอบว่าลูกค้าล็อกอินแล้วหรือยัง
 function checkUserLoginStatus() {
@@ -27,7 +28,6 @@ function checkUserLoginStatus() {
     return null;
 }
 
-// 🚨 ฟังก์ชันแจ้งเตือนให้ไปหน้า Login
 function promptLogin() {
     Swal.fire({
         icon: 'warning',
@@ -41,9 +41,8 @@ function promptLogin() {
         allowOutsideClick: false
     }).then((result) => {
         if (result.isConfirmed) {
-            // บันทึกหน้าปัจจุบันไว้ เพื่อให้ล็อกอินเสร็จแล้วเด้งกลับมาหน้านี้
             localStorage.setItem('siam_healthy_redirect_after_login', window.location.href);
-            window.location.href = '../login/login.html'; 
+            window.location.href = '../login.html'; 
         } else {
             window.location.href = '../shop/';
         }
@@ -51,14 +50,12 @@ function promptLogin() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 🔒 ตรวจสอบการล็อกอินทันทีที่เปิดหน้าชำระเงิน
     const currentUser = checkUserLoginStatus();
     if (!currentUser) {
         promptLogin();
         return;
     }
 
-    // 🛠️ 1. เช็คว่าถ้าเด้งกลับมาจากการแสกน PromptPay สำเร็จ ให้แสดงใบเสร็จ
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('payment') === 'success') {
         handleSuccessfulRedirectReturn();
@@ -74,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ดักจับการเปลี่ยนช่องทางชำระเงินเพื่อเคลียร์ UI
     const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
     paymentRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
@@ -83,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ฟังก์ชันจัดการตอนเด้งกลับมาจากหน้า QR Code Stripe
 function handleSuccessfulRedirectReturn() {
     localStorage.removeItem('siam_healthy_payment_session');
 
@@ -95,7 +90,6 @@ function handleSuccessfulRedirectReturn() {
         const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const discount = 0; 
         const grandTotal = Math.max(0, subtotal - discount);
-
     
         localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
         
@@ -103,6 +97,21 @@ function handleSuccessfulRedirectReturn() {
         if (savedAddress) {
             window.currentAddress = JSON.parse(savedAddress);
         }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderIdFromUrl = urlParams.get('order_id') || ('SH-' + Date.now().toString().slice(-6));
+
+        const orderData = {
+            orderId: orderIdFromUrl,
+            date: new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }),
+            items: selectedItems,
+            shippingAddress: window.currentAddress,
+            paymentMethod: 'promptpay',
+            subtotal: subtotal,
+            discount: discount,
+            grandTotal: grandTotal
+        };
+        localStorage.setItem('latest_order', JSON.stringify(orderData));
 
         Swal.fire({
             icon: 'success',
@@ -144,7 +153,11 @@ function buildFullAddress(addr) {
 function loadSavedAddresses() {
     const stored = localStorage.getItem('siam_healthy_addresses');
     if (stored) {
-        window.savedAddresses = JSON.parse(stored);
+        try {
+            window.savedAddresses = JSON.parse(stored);
+        } catch(e) {
+            window.savedAddresses = [];
+        }
     } else {
         window.savedAddresses = [];
     }
@@ -161,19 +174,35 @@ function renderSavedAddresses() {
     if (window.savedAddresses.length > 0) {
         window.savedAddresses.forEach((addr, index) => {
             const isSelected = (window.currentAddress && window.currentAddress.id === addr.id) || (!window.currentAddress && index === 0);
-            if(isSelected && !window.currentAddress) window.currentAddress = addr;
+            if (isSelected && !window.currentAddress) {
+                window.currentAddress = addr;
+            }
 
-            const card = document.createElement('label');
+            const card = document.createElement('div');
             card.className = `address-card ${isSelected ? 'selected' : ''}`;
+            card.style.cssText = "border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; cursor: pointer; transition: all 0.2s; margin-bottom: 14px; background: #ffffff;";
             
             const displayAddress = buildFullAddress(addr);
             const displayPhone = maskPhone(addr.phone);
 
             card.innerHTML = `
-                <input type="radio" name="selectedAddress" value="${addr.id}" ${isSelected ? 'checked' : ''} style="margin-top: 4px;" onchange="selectAddress('${addr.id}')">
-                <div class="address-info">
-                    <h4>${addr.fullname} <span style="font-weight:400; color:var(--text-muted);">${displayPhone}</span></h4>
-                    <p>${displayAddress}</p>
+                <div style="display: flex; align-items: flex-start; gap: 14px; flex: 1;" onclick="selectAddress('${addr.id}')">
+                    <input type="radio" name="selectedAddress" value="${addr.id}" ${isSelected ? 'checked' : ''} style="margin-top: 4px; accent-color: var(--primary-color); transform: scale(1.2); cursor: pointer;" onchange="selectAddress('${addr.id}')">
+                    <div class="address-info">
+                        <h4 style="margin: 0 0 6px 0; font-size: 1.05rem; color: #1e293b; font-weight: 600;">
+                            ${addr.fullname} <span style="font-weight:400; font-size: 0.9rem; color: var(--text-muted);">(${displayPhone})</span>
+                        </h4>
+                        <p style="margin: 0 0 4px 0; font-size: 0.92rem; color: #475569; line-height: 1.5;">${displayAddress}</p>
+                        <p style="margin: 0; font-size: 0.85rem; color: var(--primary-color);">อีเมล: ${addr.email || '-'}</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="addr-action-btn edit" onclick="event.stopPropagation(); showAddressForm(${index})" title="แก้ไขที่อยู่" style="background: transparent; border: 1px solid #e2e8f0; color: #64748b; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" class="addr-action-btn delete" onclick="event.stopPropagation(); deleteAddress(${index})" title="ลบที่อยู่" style="background: transparent; border: 1px solid #e2e8f0; color: #e11d48; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
                 </div>
             `;
             container.appendChild(card);
@@ -184,23 +213,45 @@ function renderSavedAddresses() {
     } else {
         if (viewContainer) viewContainer.style.display = 'none';
         if (formContainer) formContainer.style.display = 'block';
+        showAddressForm();
     }
 }
 
-function showAddressForm() {
+function showAddressForm(index = null) {
     const viewContainer = document.getElementById('saved-addresses-view');
     const formContainer = document.getElementById('new-address-form-container');
+    const formTitle = document.getElementById('address-form-title');
+    const form = document.getElementById('shipping-form');
 
     if (viewContainer) viewContainer.style.display = 'none';
     if (formContainer) formContainer.style.display = 'block';
-
-    const form = document.getElementById('shipping-form');
     if (form) form.reset();
-    
-    window.currentAddress = null; 
+
+    if (index !== null && index !== undefined && window.savedAddresses[index]) {
+        editingIndex = index;
+        if (formTitle) formTitle.innerText = 'แก้ไขที่อยู่จัดส่ง';
+        
+        const addr = window.savedAddresses[index];
+        document.getElementById('fullname').value = addr.fullname || '';
+        document.getElementById('phone').value = addr.phone || '';
+        document.getElementById('email').value = addr.email || '';
+        document.getElementById('houseNo').value = addr.houseNo || '';
+        document.getElementById('moo').value = addr.moo || '';
+        document.getElementById('village').value = addr.village || '';
+        document.getElementById('soi').value = addr.soi || '';
+        document.getElementById('road').value = addr.road || '';
+        document.getElementById('subdistrict').value = addr.subdistrict || '';
+        document.getElementById('district').value = addr.district || '';
+        document.getElementById('province').value = addr.province || '';
+        document.getElementById('zipcode').value = addr.zipcode || '';
+    } else {
+        editingIndex = null;
+        if (formTitle) formTitle.innerText = 'ที่อยู่ในการรับสินค้าใหม่';
+    }
 }
 
 function cancelAddressForm() {
+    editingIndex = null;
     if (window.savedAddresses.length > 0) {
         renderSavedAddresses();
     } else {
@@ -212,15 +263,41 @@ function selectAddress(id) {
     window.currentAddress = window.savedAddresses.find(a => a.id === id);
     document.querySelectorAll('.address-card').forEach(card => {
         card.classList.remove('selected');
-        if(card.querySelector('input').value === id) {
+        const radio = card.querySelector('input[type="radio"]');
+        if (radio && radio.value === id) {
+            radio.checked = true;
             card.classList.add('selected');
         }
     });
 }
 
+function deleteAddress(index) {
+    Swal.fire({
+        title: 'ลบที่อยู่นี้?',
+        text: 'คุณต้องการลบที่อยู่จัดส่งนี้ออกจากระบบใช่หรือไม่',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#cbd5e1',
+        confirmButtonText: 'ลบ',
+        cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.savedAddresses.splice(index, 1);
+            localStorage.setItem('siam_healthy_addresses', JSON.stringify(window.savedAddresses));
+            renderSavedAddresses();
+        }
+    });
+}
+
 function useSelectedAddressAndGoToStep3() {
+    if (!window.currentAddress && window.savedAddresses.length > 0) {
+        window.currentAddress = window.savedAddresses[0];
+    }
+    
     if (!window.currentAddress) {
-        Swal.fire('แจ้งเตือน', 'กรุณาเลือกที่อยู่สำหรับจัดส่ง', 'warning');
+        Swal.fire('แจ้งเตือน', 'กรุณาเลือกหรือเพิ่มที่อยู่สำหรับจัดส่ง', 'warning');
+        showAddressForm();
         return;
     }
     updateShippingSummaryUI();
@@ -231,10 +308,11 @@ function validateAndGoToStep3() {
     const form = document.getElementById('shipping-form');
     
     if (form && form.checkValidity()) {
-        const newAddress = {
-            id: 'addr_' + Date.now(),
+        const addressData = {
+            id: (editingIndex !== null && window.savedAddresses[editingIndex]) ? window.savedAddresses[editingIndex].id : ('addr_' + Date.now()),
             fullname: document.getElementById('fullname').value.trim(),
             phone: document.getElementById('phone').value.trim(),
+            email: document.getElementById('email').value.trim(),
             zipcode: document.getElementById('zipcode').value.trim(),
             province: document.getElementById('province').value.trim(),
             district: document.getElementById('district').value.trim(),
@@ -247,41 +325,99 @@ function validateAndGoToStep3() {
         };
 
         const isSaveChecked = document.getElementById('saveAddressCheckbox') ? document.getElementById('saveAddressCheckbox').checked : true;
-        window.currentAddress = newAddress;
+        window.currentAddress = addressData;
 
         if (isSaveChecked) {
-            window.savedAddresses.push(newAddress);
+            if (editingIndex !== null && editingIndex !== undefined && window.savedAddresses[editingIndex]) {
+                window.savedAddresses[editingIndex] = addressData;
+            } else {
+                window.savedAddresses.unshift(addressData);
+            }
             localStorage.setItem('siam_healthy_addresses', JSON.stringify(window.savedAddresses));
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'บันทึกที่อยู่สำเร็จ',
-                timer: 1500,
-                showConfirmButton: false
-            }).then(() => {
-                renderSavedAddresses();
-                updateShippingSummaryUI();
-                goToTypeStep(3);
-            });
-        } else {
-            updateShippingSummaryUI();
-            goToTypeStep(3);
         }
+
+        editingIndex = null;
+        updateShippingSummaryUI();
+        goToTypeStep(3);
     } else if (form) {
         form.reportValidity();
     }
+}
+
+// 📦 ฟังก์ชันเรนเดอร์รายการสินค้าที่เลือกสำหรับตรวจสอบใน Step 3 (ดีไซน์เดียวกับตะกร้า)
+function renderCheckoutReviewItems() {
+    const container = document.getElementById('checkoutItemsReviewList');
+    if (!container) return;
+
+    const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
+    const selectedItems = cart.filter(i => i.selected);
+
+    if (selectedItems.length === 0) {
+        container.innerHTML = `
+            <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; padding: 10px 0;">
+                ไม่มีสินค้าที่เลือกในตะกร้า
+            </p>
+        `;
+        return;
+    }
+
+    let html = '';
+    selectedItems.forEach(item => {
+        let imgPath = item.image || '';
+        if (imgPath) {
+            imgPath = imgPath.replace(/^\.\//, '').replace(/^\//, '');
+            if (!imgPath.startsWith('../shop/') && !imgPath.startsWith('http')) {
+                imgPath = imgPath.startsWith('shop/') ? '../' + imgPath : '../shop/' + imgPath;
+            }
+        } else {
+            imgPath = '../shop/img/elsie/elsie1.png';
+        }
+
+        html += `
+            <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #fafcfb; border-radius: 12px; border: 1px solid #f0f4f1;">
+                <!-- รูปภาพสินค้า -->
+                <div style="width: 90px; height: 90px; background: #ffffff; border-radius: 12px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #f1f5f9;">
+                    <img src="${imgPath}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='../shop/img/elsie/elsie1.png';">
+                </div>
+
+                <!-- รายละเอียดสินค้า -->
+                <div style="flex: 1; min-width: 0;">
+                    <h3 style="font-size: 1.05rem; font-weight: 600; color: #1e293b; margin: 0 0 2px 0;">${item.name}</h3>
+                    <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 2px 0;">จัดจำหน่ายโดย: Siam-Healthy Official</p>
+                    <p style="font-size: 0.78rem; color: var(--primary-color); margin-bottom: 8px;">${item.tag || '#ผลิตภัณฑ์เสริมอาหาร'}</p>
+
+                    <!-- ราคาและจำนวน -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div style="display: flex; align-items: baseline; gap: 8px;">
+                            <span style="font-size: 1.05rem; font-weight: 600; color: var(--primary-color);">฿${(item.price || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            ${item.oldPrice ? `<span style="font-size: 0.85rem; color: #b7bfc9; text-decoration: line-through;">฿${item.oldPrice.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>` : ''}
+                        </div>
+                        <div style="font-size: 0.88rem; font-weight: 500; color: #475569; background: #e2e8f033; padding: 2px 10px; border-radius: 20px;">
+                            จำนวน: ${item.quantity} ชิ้น
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
 }
 
 function updateShippingSummaryUI() {
     const summaryBox = document.getElementById('summaryAddressText');
     if (summaryBox && window.currentAddress) {
         const displayAddress = buildFullAddress(window.currentAddress);
+        const displayPhone = maskPhone(window.currentAddress.phone);
         summaryBox.innerHTML = `
             <div style="font-weight: 600; color: var(--text-heading); font-size: 0.95rem; margin-bottom: 6px;">
-                ${window.currentAddress.fullname} <span style="font-weight: 400; color: var(--text-muted); margin: 0 8px;">|</span> <span style="font-weight: 400; color: var(--text-dark);">${window.currentAddress.phone}</span>
+                ${window.currentAddress.fullname} <span style="font-weight: 400; color: var(--text-muted); margin: 0 8px;">|</span> <span style="font-weight: 400; color: var(--text-dark);">${displayPhone}</span>
             </div>
             <div style="color: var(--text-dark); margin-bottom: 4px; line-height: 1.6; font-size: 0.88rem;">
                 ${displayAddress}
+            </div>
+            <div style="color: var(--primary-color); font-size: 0.85rem;">
+                อีเมล: ${window.currentAddress.email || '-'}
             </div>
         `;
     }
@@ -314,7 +450,6 @@ async function fetchStripePublishableKey() {
 
 // 🚀 ฟังก์ชันหลักเมื่อกดปุ่ม "ยืนยันการชำระเงิน"
 async function processPayment() {
-    // 🔒 ตรวจสอบว่าล็อกอินหรือยังเป็นด่านแรก
     const currentUser = checkUserLoginStatus();
     if (!currentUser) {
         promptLogin();
@@ -322,7 +457,7 @@ async function processPayment() {
     }
 
     const userId = currentUser.id || currentUser.user_id;
-    const userEmail = currentUser.email || '';
+    const userEmail = currentUser.email || window.currentAddress?.email || '';
 
     const paymentInputs = document.querySelectorAll('input[name="paymentMethod"]:checked');
     const selectedPayment = paymentInputs.length > 0 ? paymentInputs[0].value : 'promptpay';
@@ -347,7 +482,6 @@ async function processPayment() {
         didOpen: () => { Swal.showLoading(); }
     });
 
-    // 🟢 เช็ค Cache Session เดิมที่ยังไม่หมดอายุ (15 นาที)
     const savedSessionStr = localStorage.getItem('siam_healthy_payment_session');
     if (savedSessionStr) {
         const savedSession = JSON.parse(savedSessionStr);
@@ -386,7 +520,7 @@ async function processPayment() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                user_id: userId, // 🟢 ส่ง User ID ของผู้ใช้ที่ล็อกอินเท่านั้น
+                user_id: userId,
                 total_amount: subtotal,
                 discount_amount: discount,
                 shipping_fee: 0,
@@ -410,14 +544,6 @@ async function processPayment() {
         }
 
         const createdOrderId = orderResult.order_id;
-
-        if (selectedPayment === 'cod') {
-            Swal.close();
-            const remainingCart = cart.filter(i => !i.selected);
-            localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
-            showReceiptModal('cod', selectedItems, subtotal, discount, grandTotal);
-            return;
-        }
 
         const paymentType = (selectedPayment === 'promptpay') ? 'promptpay' : 'card';
         const paymentIntentRes = await fetch(`http://localhost:3000/payments/create-payment-intent/${createdOrderId}`, {
@@ -486,7 +612,6 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
 
     const stripe = Stripe(publishableKey);
 
-    // 🚀 กรณีที่ 1: ลูกค้าเลือก PromptPay
     if (paymentType === 'promptpay') {
         Swal.update({
             title: 'กำลังโหลด QR Code...',
@@ -515,7 +640,6 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
         return; 
     }
 
-    // 💳 กรณีที่ 2: ลูกค้าเลือกบัตรเครดิต
     Swal.close(); 
     
     const elements = stripe.elements({ 
@@ -582,6 +706,18 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
             const remainingCart = cart.filter(i => !i.selected);
             localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
 
+            const orderData = {
+                orderId: orderId,
+                date: new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }),
+                items: selectedItems,
+                shippingAddress: window.currentAddress,
+                paymentMethod: 'credit',
+                subtotal: subtotal,
+                discount: discount,
+                grandTotal: grandTotal
+            };
+            localStorage.setItem('latest_order', JSON.stringify(orderData));
+
             Swal.fire({
                 icon: 'success',
                 title: 'ชำระเงินสำเร็จ!',
@@ -594,19 +730,29 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
     };
 }
 
-// 🧾 ฟังก์ชันแสดงใบเสร็จรับเงิน
+function formatOrderId(id) {
+    if (!id) return '-';
+    if (id.toString().startsWith('ORD')) return id;
+    const cleanId = id.toString().replace('SH-', '');
+    if (cleanId.length <= 6) {
+        return `ORD2026${cleanId.padStart(6, '0')}`;
+    }
+    return `ORD${cleanId}`;
+}
+
 function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0, discount = 0, grandTotal = 0) {
     const receiptPaper = document.getElementById('receiptPaper');
     if (receiptPaper && window.currentAddress) {
         const now = new Date();
         const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        const orderNo = 'SH-' + Date.now().toString().slice(-6);
+        
+        const latestOrder = JSON.parse(localStorage.getItem('latest_order')) || {};
+        const rawOrderId = latestOrder.orderId || ('SH-' + Date.now().toString().slice(-6));
+        const orderNo = formatOrderId(rawOrderId);
+
         const displayAddress = buildFullAddress(window.currentAddress);
 
-        let paymentStr = '';
-        if (paymentMethod === 'promptpay') paymentStr = 'สแกน QR Code / พร้อมเพย์';
-        else if (paymentMethod === 'credit' || paymentMethod === 'card' || paymentMethod === 'stripe') paymentStr = 'บัตรเครดิต / Stripe';
-        else paymentStr = 'เก็บเงินปลายทาง (COD)';
+        let paymentStr = (paymentMethod === 'promptpay') ? 'สแกน QR Code / พร้อมเพย์' : 'บัตรเครดิต / Stripe';
 
         receiptPaper.innerHTML = `
             <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 12px;">
@@ -616,6 +762,7 @@ function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0,
             </div>
             <div style="margin-bottom: 12px; font-size: 0.85rem; line-height: 1.6;">
                 <strong>ผู้รับ:</strong> ${window.currentAddress.fullname} (${window.currentAddress.phone})<br>
+                <strong>อีเมล:</strong> ${window.currentAddress.email || '-'}<br>
                 <strong>ที่อยู่:</strong> ${displayAddress}
             </div>
             <div style="margin-bottom: 12px; font-size: 0.85rem;">
@@ -665,4 +812,12 @@ function cancelOrder() {
             goToTypeStep(1);
         }
     });
+}
+
+function viewOrderDetails() {
+    window.location.href = './order-detail.html'; 
+}
+
+function validateAndSaveAddress() {
+    validateAndGoToStep3();
 }

@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <!-- ⚠️ ย้าย Stripe Script มาไว้ที่ Head เพื่อให้โหลดเตรียมพร้อมไว้ก่อน -->
+    <!-- Stripe Script -->
     <script src="https://js.stripe.com/v3/"></script>
 
     <!-- Web Components -->
@@ -58,9 +58,7 @@
             <!-- Left Side: Items List & Form -->
             <section class="cart-items-section reveal-on-scroll">
 
-                <!-- ========================================== -->
                 <!-- STEP 1: รายการสินค้าในตะกร้า -->
-                <!-- ========================================== -->
                 <div id="step1-content" class="checkout-step-page active">
                     <div class="cart-list-header">
                         <label class="custom-checkbox select-all-label">
@@ -77,9 +75,7 @@
                     </div>
                 </div>
 
-                <!-- ========================================== -->
                 <!-- STEP 2: ฟอร์มจัดการที่อยู่จัดส่ง -->
-                <!-- ========================================== -->
                 <div id="step2-content" class="checkout-step-page" style="display: none;">
                     
                     <!-- ส่วนแสดงรายการที่อยู่ที่เคยบันทึกไว้ -->
@@ -95,68 +91,74 @@
                             <button type="button" onclick="goToTypeStep(1)" class="back-btn">
                                 <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
                             </button>
-                            <button type="button" onclick="useSelectedAddressAndGoToStep3()" class="checkout-btn next-step-btn" style="background-color: #0ea5e9;">
+                            <button type="button" onclick="useSelectedAddressAndGoToStep3()" class="checkout-btn next-step-btn">
                                 ถัดไป
                             </button>
                         </div>
                     </div>
 
-                    <!-- ฟอร์มกรอกที่อยู่จัดส่งใหม่ -->
+                    <!-- ฟอร์มกรอกที่อยู่จัดส่งใหม่ / แก้ไข -->
                     <div id="new-address-form-container" style="display: none;">
-                        <h3 class="step-title">ที่อยู่ในการรับสินค้า</h3>
+                        <h3 class="step-title" id="address-form-title">ที่อยู่ในการรับสินค้า</h3>
                         <form id="shipping-form" class="advanced-address-form">
-                            <!-- แถวที่ 1 -->
+                            <input type="hidden" id="editingAddressIndex" value="">
+
+                            <!-- ข้อมูลติดต่อ -->
                             <div class="form-row span-2">
                                 <label>ชื่อ - นามสกุล<span class="req">*</span></label>
-                                <input type="text" id="fullname" required>
+                                <input type="text" id="fullname" required placeholder="ชื่อ นามสกุลผู้รับ">
                             </div>
                             <div class="form-row span-2">
                                 <label>เบอร์โทรศัพท์<span class="req">*</span></label>
-                                <input type="tel" id="phone" required>
+                                <input type="tel" id="phone" required placeholder="08XXXXXXXX">
                             </div>
-                            <!-- แถวที่ 2 -->
+                            <div class="form-row span-4">
+                                <label>อีเมล<span class="req">*</span></label>
+                                <input type="email" id="email" required placeholder="example@email.com">
+                            </div>
+
+                            <!-- ที่อยู่รายละเอียด -->
                             <div class="form-row span-2">
-                                <label>รหัสไปรษณีย์<span class="req">*</span></label>
-                                <input type="text" id="zipcode" required>
-                            </div>
-                            <div class="form-row span-2">
-                                <label>จังหวัด</label>
-                                <input type="text" id="province" required>
-                            </div>
-                            <!-- แถวที่ 3 -->
-                            <div class="form-row span-2">
-                                <label>อำเภอ / เขต</label>
-                                <input type="text" id="district" required>
-                            </div>
-                            <div class="form-row span-2">
-                                <label>ตำบล / แขวง</label>
-                                <input type="text" id="subdistrict" required>
-                            </div>
-                            <!-- แถวที่ 4 -->
-                            <div class="form-row span-1">
                                 <label>เลขที่<span class="req">*</span></label>
-                                <input type="text" id="houseNo" required>
-                            </div>
-                            <div class="form-row span-1">
-                                <label>หมู่</label>
-                                <input type="text" id="moo">
+                                <input type="text" id="houseNo" required placeholder="บ้านเลขที่ / อาคาร">
                             </div>
                             <div class="form-row span-2">
-                                <label>หมู่บ้าน</label>
-                                <input type="text" id="village">
+                                <label>หมู่</label>
+                                <input type="text" id="moo" placeholder="หมู่ที่ (ถ้ามี)">
                             </div>
-                            <!-- แถวที่ 5 -->
+                            <div class="form-row span-2">
+                                <label>หมู่บ้าน / อาคารชุด</label>
+                                <input type="text" id="village" placeholder="ชื่อหมู่บ้าน / คอนโด">
+                            </div>
                             <div class="form-row span-2">
                                 <label>ซอย</label>
-                                <input type="text" id="soi">
+                                <input type="text" id="soi" placeholder="ตรอก / ซอย">
+                            </div>
+                            <div class="form-row span-4">
+                                <label>ถนน</label>
+                                <input type="text" id="road" placeholder="ชื่อถนน">
+                            </div>
+
+                            <!-- พื้นที่ -->
+                            <div class="form-row span-2">
+                                <label>ตำบล / แขวง<span class="req">*</span></label>
+                                <input type="text" id="subdistrict" required placeholder="ตำบล / แขวง">
                             </div>
                             <div class="form-row span-2">
-                                <label>ถนน</label>
-                                <input type="text" id="road">
+                                <label>อำเภอ / เขต<span class="req">*</span></label>
+                                <input type="text" id="district" required placeholder="อำเภอ / เขต">
+                            </div>
+                            <div class="form-row span-2">
+                                <label>จังหวัด<span class="req">*</span></label>
+                                <input type="text" id="province" required placeholder="จังหวัด">
+                            </div>
+                            <div class="form-row span-2">
+                                <label>รหัสไปรษณีย์<span class="req">*</span></label>
+                                <input type="text" id="zipcode" required maxlength="5" placeholder="รหัสไปรษณีย์ 5 หลัก">
                             </div>
 
                             <div class="form-row span-4 save-address-toggle" style="margin-top: 10px;">
-                                <label class="custom-checkbox" style="font-weight: 500; color: #0ea5e9;">
+                                <label class="custom-checkbox" style="font-weight: 500; color: var(--primary-color);">
                                     <input type="checkbox" id="saveAddressCheckbox" checked>
                                     <span class="checkmark"></span>
                                     <span style="margin-left: 8px;">บันทึกที่อยู่นี้ไว้ใช้ในครั้งถัดไป</span>
@@ -168,16 +170,14 @@
                             <button type="button" onclick="cancelAddressForm()" class="back-btn">
                                 <i class="fa-solid fa-arrow-left"></i> ยกเลิก
                             </button>
-                            <button type="button" onclick="validateAndGoToStep3()" class="checkout-btn next-step-btn" style="background-color: #0ea5e9;">
+                            <button type="button" onclick="validateAndSaveAddress()" class="checkout-btn next-step-btn">
                                 บันทึกและไปชำระเงิน
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- ========================================== -->
-                <!-- STEP 3: ช่องทางชำระเงินและตรวจสอบสินค้า -->
-                <!-- ========================================== -->
+                <!-- STEP 3: ช่องทางชำระเงินและตรวจสอบสินค้า (เอา COD ออกแล้ว) -->
                 <div id="step3-content" class="checkout-step-page" style="display: none;">
                     <div class="review-order-section">
                         <h3 class="step-title">ตรวจสอบรายการสินค้า</h3>
@@ -200,18 +200,10 @@
                                 <i class="fa-regular fa-credit-card"></i> บัตรเครดิต / บัตรเดบิต
                             </span>
                         </label>
-                        <label class="payment-card-option">
-                            <input type="radio" name="paymentMethod" value="cod">
-                            <span class="payment-label">
-                                <i class="fa-solid fa-truck-fast"></i> เก็บเงินปลายทาง (COD)
-                            </span>
-                        </label>
                     </div>
 
-                    <!-- 🛠️ แก้ไข: พื้นที่เปล่าๆ สำหรับให้ Stripe Elements วาดฟอร์มบัตรเครดิตของจริงลงมาแทนที่ (ลบ input แบบเดิมออก) -->
-                    <div id="creditCardFormContainer" style="display: none; margin-top: 20px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
-                        <!-- JS checkout.js จะวาดหน้าต่างจ่ายเงินของ Stripe ลงในนี้อัตโนมัติ -->
-                    </div>
+                    <!-- พื้นที่สำหรับ Stripe Elements -->
+                    <div id="creditCardFormContainer" style="display: none; margin-top: 20px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;"></div>
 
                     <div class="step-actions split" style="margin-top: 20px;">
                         <button type="button" onclick="goToTypeStep(2)" class="back-btn">
@@ -225,12 +217,8 @@
 
             </section>
 
-            <!-- ========================================== -->
-            <!-- Right Side: Order Summary (แถบด้านขวา) -->
-            <!-- ========================================== -->
+            <!-- Right Side: Order Summary -->
             <aside class="cart-summary-section reveal-on-scroll" id="cartSummarySection" style="display: none;">
-                
-                <!-- สรุปข้อมูลที่อยู่จัดส่ง -->
                 <div class="summary-card shipping-summary-card" id="shippingSummaryBox">
                     <div class="shipping-summary-header">
                         <h3 class="summary-title shipping-summary-title">ที่อยู่จัดส่ง</h3>
@@ -238,12 +226,9 @@
                             <i class="fa-solid fa-pen-to-square"></i> แก้ไข
                         </button>
                     </div>
-                    <div id="summaryAddressText" class="shipping-detail-list">
-                        <!-- JS จะเติมที่อยู่ตรงนี้ -->
-                    </div>
+                    <div id="summaryAddressText" class="shipping-detail-list"></div>
                 </div>
 
-                <!-- Coupons Box -->
                 <div class="summary-card coupon-card">
                     <h3 class="summary-title">คูปองส่วนลด</h3>
                     <p class="coupon-desc">ใส่โค้ดรับส่วนลดพิเศษเพิ่มทันที</p>
@@ -252,7 +237,6 @@
                     </div>
                 </div>
 
-                <!-- Price Details Box -->
                 <div class="summary-card price-details-card">
                     <h3 class="summary-title">สรุปยอดคำสั่งซื้อ</h3>
                     
@@ -285,9 +269,7 @@
         </div>
     </main>
 
-    <!-- ========================================== -->
     <!-- Modal ใบเสร็จรับเงิน -->
-    <!-- ========================================== -->
     <div id="receiptModal" class="receipt-modal-overlay">
         <div class="receipt-box">
             <div class="success-icon">
@@ -296,23 +278,22 @@
             <h3 style="font-size: 1.4rem; font-weight: 700; color: #0f766e; margin-bottom: 6px;">ชำระเงินสำเร็จ!</h3>
             <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">ขอบคุณที่ไว้วางใจใช้บริการ Siam-Healthy</p>
 
-            <div id="receiptPaper" class="receipt-paper">
-                <!-- ข้อมูลใบเสร็จจะถูกเติมผ่าน JS -->
-            </div>
+            <div id="receiptPaper" class="receipt-paper"></div>
 
-            <button type="button" onclick="window.location.href='../index.html'" class="checkout-btn" style="width: 100%;">
-                <span>กลับสู่หน้าแรก</span>
-            </button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button type="button" onclick="viewOrderDetails()" class="checkout-btn" style="background-color: #0ea5e9; flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-file-invoice"></i> ดูรายละเอียด
+                </button>
+                <button type="button" onclick="window.location.href='../index.html'" class="checkout-btn" style="background-color: #64748b; flex: 1;">
+                    <span>กลับสู่หน้าแรก</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Contact & Footer -->
     <contact-section></contact-section>
     <my-footer></my-footer>
 
-    <!-- ========================================== -->
-    <!-- Scripts -->
-    <!-- ========================================== -->
     <script src="./js/cart.js"></script>
     <script src="./js/checkout.js"></script>
 </body>

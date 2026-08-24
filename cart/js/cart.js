@@ -199,18 +199,18 @@ function renderCart() {
   const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   itemsHTML += `
-    <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
-      <button type="button" onclick="window.location.href='../shop/'" class="back-btn" style="max-width: 200px;">
+    <div class="cart-footer-actions-wrapper" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <button type="button" onclick="window.location.href='../shop/'" class="back-btn cart-footer-back-btn">
         เลือกซื้อสินค้าเพิ่มเติม
       </button>
 
-      <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+      <div class="cart-footer-summary-group" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
         <div style="text-align: right;">
           <span style="font-size: 0.9rem; color: var(--text-muted); margin-right: 8px;">ยอดรวมสุทธิ:</span>
           <span style="font-size: 1.25rem; font-weight: 700; color: var(--primary-color);">฿${subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
         </div>
 
-        <button type="button" onclick="goToTypeStep(2)" class="checkout-btn" style="max-width: 280px; margin: 0;" ${selectedItems.length === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+        <button type="button" onclick="goToTypeStep(2)" class="checkout-btn cart-footer-checkout-btn" ${selectedItems.length === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
           <span>ไปหน้าที่อยู่จัดส่ง</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
