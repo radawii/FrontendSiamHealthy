@@ -13,8 +13,8 @@ if (!localStorage.getItem('cache_cleared_v14')) {
 }
 
 // 🔴 ตั้งค่า URL ให้ตรงกับ Backend และ Storage ของคุณ
-var SIAM_API_URL = 'http://localhost:3000'; 
-var SUPABASE_STORAGE_URL = 'http://192.168.1.199:8000'; 
+var SIAM_API_URL = window.location.origin; 
+var SUPABASE_STORAGE_URL = 'https://chiwitchiwa.com'; 
 
 // 1. ดึง ID หรือชื่อสินค้าจาก URL
 var currentSearchParams = new URLSearchParams(window.location.search);

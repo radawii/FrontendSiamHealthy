@@ -141,9 +141,26 @@
                             ${itemsHTML}
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; margin-bottom: 10px;">
-                            <span style="font-size: 0.85rem; color: var(--text-muted);">ยอดสุทธิรวมทั้งสิ้น</span>
-                            <span style="font-size: 1.15rem; font-weight: 700; color: var(--text-heading);">฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                        <div style="border-top: 1px dashed #e2e8f0; padding-top: 10px; margin-bottom: 10px;">
+                            <!-- ยอดรวมก่อนหักส่วนลด -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">ยอดรวมสินค้า</span>
+                                <span style="font-size: 0.9rem; color: var(--text-heading);">฿${(order.subtotal || order.grandTotal).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            
+                            <!-- แสดงส่วนลด (ถ้ามี) -->
+                            ${(order.discount && order.discount > 0) ? `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-size: 0.85rem; color: #e11d48;">ส่วนลดคูปอง</span>
+                                <span style="font-size: 0.9rem; color: #e11d48; font-weight: 600;">-฿${order.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            ` : ''}
+
+                            <!-- ยอดชำระสุทธิ -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                <span style="font-size: 0.85rem; color: var(--text-heading); font-weight: 600;">ยอดสุทธิรวมทั้งสิ้น</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: #0d5c2e;">฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
                         </div>
 
                         <div class="order-footer">

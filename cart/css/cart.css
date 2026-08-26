@@ -418,8 +418,28 @@ body {
   gap: 8px;
   box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25);
   transition: all 0.25s ease;
-  flex: 1; /* ดันปุ่มให้กว้างเต็มพื้นที่ที่เหลือ */
-  max-width: 300px; /* จำกัดความกว้างสูงสุดไม่ให้ล้นน่าเกลียด */
+  flex: 1;
+  width: 100%;
+  max-width: 250px; 
+}
+
+.checkout-btn-3{
+  padding: 14px 32px;
+  background: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(13, 92, 46, 0.25);
+  transition: all 0.25s ease;
+  flex: 1;
+  width: 100%;
 }
 
 .checkout-btn:hover {
@@ -1037,4 +1057,50 @@ body {
         width: 100% !important;
         max-width: 100% !important;
     }
+}
+
+.coupon-input-group {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.coupon-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    outline: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    background-color: var(--card-bg);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coupon-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(13, 92, 46, 0.1);
+}
+
+.add-coupon-btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.add-coupon-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.coupon-message {
+    font-size: 0.85rem;
+    margin-top: 8px;
+    color: var(--text-muted);
 }

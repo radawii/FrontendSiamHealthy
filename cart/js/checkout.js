@@ -3,6 +3,7 @@
 window.savedAddresses = [];
 window.currentAddress = null;
 let editingIndex = null;
+let checkPaymentInterval = null;
 
 // 🔒 ฟังก์ชันตรวจสอบว่าลูกค้าล็อกอินแล้วหรือยัง
 function checkUserLoginStatus() {
@@ -88,7 +89,8 @@ function handleSuccessfulRedirectReturn() {
     if (selectedItems.length > 0) {
         const remainingCart = cart.filter(i => !i.selected);
         const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const discount = 0; 
+        const savedCoupon = JSON.parse(localStorage.getItem('siam_healthy_coupon'));
+        const discount = savedCoupon ? savedCoupon.discount : 0;
         const grandTotal = Math.max(0, subtotal - discount);
     
         localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
@@ -112,6 +114,8 @@ function handleSuccessfulRedirectReturn() {
             grandTotal: grandTotal
         };
         localStorage.setItem('latest_order', JSON.stringify(orderData));
+
+        localStorage.removeItem('siam_healthy_coupon');
 
         Swal.fire({
             icon: 'success',
@@ -344,7 +348,7 @@ function validateAndGoToStep3() {
     }
 }
 
-// 📦 ฟังก์ชันเรนเดอร์รายการสินค้าที่เลือกสำหรับตรวจสอบใน Step 3 (ดีไซน์เดียวกับตะกร้า)
+// 📦 ฟังก์ชันเรนเดอร์รายการสินค้าที่เลือกสำหรับตรวจสอบใน Step 3 
 function renderCheckoutReviewItems() {
     const container = document.getElementById('checkoutItemsReviewList');
     if (!container) return;
@@ -375,18 +379,13 @@ function renderCheckoutReviewItems() {
 
         html += `
             <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: #fafcfb; border-radius: 12px; border: 1px solid #f0f4f1;">
-                <!-- รูปภาพสินค้า -->
                 <div style="width: 90px; height: 90px; background: #ffffff; border-radius: 12px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid #f1f5f9;">
                     <img src="${imgPath}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='../shop/img/elsie/elsie1.png';">
                 </div>
-
-                <!-- รายละเอียดสินค้า -->
                 <div style="flex: 1; min-width: 0;">
                     <h3 style="font-size: 1.05rem; font-weight: 600; color: #1e293b; margin: 0 0 2px 0;">${item.name}</h3>
                     <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 2px 0;">จัดจำหน่ายโดย: Siam-Healthy Official</p>
                     <p style="font-size: 0.78rem; color: var(--primary-color); margin-bottom: 8px;">${item.tag || '#ผลิตภัณฑ์เสริมอาหาร'}</p>
-
-                    <!-- ราคาและจำนวน -->
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                         <div style="display: flex; align-items: baseline; gap: 8px;">
                             <span style="font-size: 1.05rem; font-weight: 600; color: var(--primary-color);">฿${(item.price || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
@@ -448,6 +447,80 @@ async function fetchStripePublishableKey() {
     return null;
 }
 
+// ฟังก์ชันสำหรับถาม Backend ทุกๆ 3 วินาที (Polling) - อัปเดตดักทาง paymentStatus CamelCase
+function startPaymentPolling(orderId, items, subtotal, discount, grandTotal) {
+    if (checkPaymentInterval) clearInterval(checkPaymentInterval);
+    
+    checkPaymentInterval = setInterval(async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/orders/${orderId}`);
+            if (response.ok) {
+                const responseData = await response.json();
+                
+                // ดักเผื่อ Backend ห่อข้อมูลมาใน .data หรือส่งมาเป็น Array
+                const order = responseData.data || responseData[0] || responseData;
+                
+                // หัวใจสำคัญ: ดักรับทั้ง paymentStatus (CamelCase) และ payment_status
+                const currentStatus = order.paymentStatus || order.payment_status || order.status || '';
+                
+                // ปรับให้เป็นตัวพิมพ์ใหญ่ทั้งหมดเพื่อเช็คค่า
+                const statusStr = currentStatus.toString().trim().toUpperCase();
+                
+                // รายชื่อคำที่ถือว่าชำระเงินสำเร็จ
+                const successStatuses = ['PAID', 'SUCCESS', 'COMPLETED', 'ชำระเงินสำเร็จ'];
+                
+                if (successStatuses.includes(statusStr)) {
+                    // ถ้าตรงกับเงื่อนไข ให้หยุดถาม Backend แล้วโชว์ใบเสร็จทันที!
+                    clearInterval(checkPaymentInterval);
+                    triggerPaymentSuccess(orderId, items, subtotal, discount, grandTotal);
+                }
+            }
+        } catch (error) {
+            console.log('กำลังรอการชำระเงิน...', error);
+        }
+    }, 3000); 
+}
+
+// ฟังก์ชันแสดงผลเมื่อชำระเงินสำเร็จ (รันทันทีที่ Backend บอกว่า PAID)
+function triggerPaymentSuccess(orderId, items, subtotal, discount, grandTotal) {
+    Swal.close(); 
+    
+    const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
+    const remainingCart = cart.filter(i => !i.selected);
+    localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
+    
+    localStorage.removeItem('siam_healthy_payment_session');
+    localStorage.removeItem('siam_healthy_coupon');
+
+    const savedAddress = localStorage.getItem('siam_healthy_last_address');
+    if (savedAddress) {
+        window.currentAddress = JSON.parse(savedAddress);
+    }
+
+    const orderData = {
+        orderId: orderId,
+        date: new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }),
+        items: items,
+        shippingAddress: window.currentAddress,
+        paymentMethod: 'promptpay',
+        subtotal: subtotal,
+        discount: discount,
+        grandTotal: grandTotal
+    };
+    localStorage.setItem('latest_order', JSON.stringify(orderData));
+
+    Swal.fire({
+        icon: 'success',
+        title: 'ชำระเงินสำเร็จ!',
+        text: 'ระบบได้รับยอดชำระของคุณเรียบร้อยแล้ว',
+        confirmButtonColor: '#0f766e',
+        allowOutsideClick: false
+    }).then(() => {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        showReceiptModal('promptpay', items, subtotal, discount, grandTotal);
+    });
+}
+
 // 🚀 ฟังก์ชันหลักเมื่อกดปุ่ม "ยืนยันการชำระเงิน"
 async function processPayment() {
     const currentUser = checkUserLoginStatus();
@@ -471,7 +544,8 @@ async function processPayment() {
     }
 
     const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = 0; 
+    const savedCoupon = JSON.parse(localStorage.getItem('siam_healthy_coupon'));
+    const discount = savedCoupon ? savedCoupon.discount : 0;
     const grandTotal = Math.max(0, subtotal - discount);
 
     Swal.fire({
@@ -613,14 +687,20 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
     const stripe = Stripe(publishableKey);
 
     if (paymentType === 'promptpay') {
-        Swal.update({
-            title: 'กำลังโหลด QR Code...',
-            html: 'กรุณารอสักครู่ ระบบกำลังเปิดหน้าจอชำระเงิน',
-            showConfirmButton: false 
+        Swal.fire({
+            title: 'กำลังรอการชำระเงิน...',
+            html: 'กรุณาสแกน QR Code ที่หน้าต่าง Stripe<br><br><span style="color: #e11d48; font-size: 0.9em; font-weight: bold;">⚠️ โปรดอย่าปิดหน้าต่างนี้จนกว่าการชำระเงินจะสำเร็จ (อาจใช้เวลา 10-30 วินาที)</span>',
+            allowOutsideClick: false, // ล็อคไม่ให้คลิกพื้นหลังปิด
+            showConfirmButton: false, 
+            didOpen: () => { Swal.showLoading(); }
         });
 
         setTimeout(() => {
             Swal.close(); 
+            
+            // เรียกใช้ Polling ทันที
+            startPaymentPolling(orderId, selectedItems, subtotal, discount, grandTotal);
+
             stripe.confirmPromptPayPayment(clientSecret, {
                 payment_method: {
                     billing_details: {
@@ -629,10 +709,33 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
                     }
                 },
                 return_url: window.location.href.split('?')[0] + `?payment=success&order_id=${orderId}`
-            }).then(({ error }) => {
+            }).then(async ({ error }) => {
                 if (error) {
-                    Swal.fire('ชำระเงินไม่สำเร็จ', error.message, 'error');
-                    localStorage.removeItem('siam_healthy_payment_session');
+                    // ดักเผื่อลูกค้าจ่ายตังค์แล้ว แต่เผลอกดปิด Modal QR Code
+                    try {
+                        const res = await fetch(`http://localhost:3000/orders/${orderId}`);
+                        const data = await res.json();
+                        const order = data.data || data[0] || data;
+                        
+                        const currentStatus = order.paymentStatus || order.payment_status || order.status || '';
+                        const statusStr = currentStatus.toString().trim().toUpperCase();
+                        const successStatuses = ['PAID', 'SUCCESS', 'COMPLETED', 'ชำระเงินสำเร็จ'];
+                        
+                        if (successStatuses.includes(statusStr)) {
+                            triggerPaymentSuccess(orderId, selectedItems, subtotal, discount, grandTotal);
+                            return;
+                        }
+                    } catch (e) { console.log(e); }
+
+                    // ถ้ายังไม่ได้จ่ายจริงๆ
+                    if (checkPaymentInterval) clearInterval(checkPaymentInterval);
+                    
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'ยังชำระเงินไม่สมบูรณ์',
+                        text: 'หากชำระเงินไปแล้วกรุณารอประมวลผล หากยังไม่ชำระเงิน คุณสามารถกด "ยืนยันและชำระเงิน" อีกครั้งได้ครับ',
+                        confirmButtonColor: '#0f766e'
+                    });
                 }
             });
         }, 800); 
@@ -718,6 +821,8 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
             };
             localStorage.setItem('latest_order', JSON.stringify(orderData));
 
+            localStorage.removeItem('siam_healthy_coupon');
+
             Swal.fire({
                 icon: 'success',
                 title: 'ชำระเงินสำเร็จ!',
@@ -784,7 +889,7 @@ function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0,
                 <span>ส่วนลดคูปอง:</span>
                 <span>-฿${discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
             </div>
-            <div style="font-size: 1rem; display: flex; justify-content: space-between; font-weight: 700; color: #0f766e; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 10px;">
+            <div style="font-size: 1rem; display: flex; justify-content: space-between; font-weight: 700; color: #0d5c2e; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 10px;">
                 <span>ยอดชำระสุทธิ:</span>
                 <span>฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
             </div>

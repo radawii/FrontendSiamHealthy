@@ -5,6 +5,17 @@ let currentStep = 1;
 document.addEventListener('DOMContentLoaded', () => {
   renderCart();
   goToTypeStep(1);
+
+  const couponInput = document.getElementById('couponCodeInput');
+    if (couponInput) {
+        couponInput.addEventListener('keypress', function(event) {
+            // ถ้าปุ่มที่กดคือปุ่ม Enter
+            if (event.key === 'Enter') {
+                event.preventDefault(); // ป้องกันไม่ให้หน้าเว็บรีโหลด
+                applyCoupon(); // เรียกใช้ฟังก์ชันตรวจสอบคูปองทันที
+            }
+        });
+    }
 });
 
 // ฟังก์ชันตรวจสอบสถานะการเข้าสู่ระบบอย่างแม่นยำ
@@ -89,6 +100,13 @@ function goToTypeStep(stepNumber) {
     } else if (stepNumber === 3) {
       document.getElementById('shippingSummaryBox').style.display = 'block';
       document.getElementById('checkoutBtn').style.display = 'flex';
+
+      if (!window.currentAddress && window.savedAddresses && window.savedAddresses.length > 0) {
+          window.currentAddress = window.savedAddresses[0];
+      }
+      if (typeof updateShippingSummaryUI === 'function') {
+          updateShippingSummaryUI(); 
+      }
       if (typeof renderCheckoutReviewItems === 'function') renderCheckoutReviewItems();
     }
   }
@@ -305,7 +323,8 @@ function calculateSummary() {
   const selectedItems = cart.filter(i => i.selected);
 
   const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = 0; 
+  const savedCoupon = JSON.parse(localStorage.getItem('siam_healthy_coupon'));
+  const discount = savedCoupon ? savedCoupon.discount : 0;
   const grandTotal = Math.max(0, subtotal - discount);
 
   const subtotalEl = document.getElementById('subtotalAmount');
@@ -315,6 +334,8 @@ function calculateSummary() {
   if (subtotalEl) subtotalEl.innerText = `฿${subtotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
   if (discountEl) discountEl.innerText = subtotal > 0 ? `-฿${discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}` : '฿0.00';
   if (grandTotalEl) grandTotalEl.innerText = `฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
+
+  renderCouponUI();
 }
 
 function updateCartBadge() {
@@ -337,4 +358,99 @@ function refreshAllUI() {
   calculateSummary();
   updateCartBadge();
   renderCart();
+}
+
+async function applyCoupon() {
+    const codeInput = document.getElementById('couponCodeInput').value.trim();
+    if (!codeInput) {
+        Swal.fire('แจ้งเตือน', 'กรุณากรอกโค้ดส่วนลด', 'warning');
+        return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('siam_healthy_cart')) || [];
+    const selectedItems = cart.filter(i => i.selected);
+    const subtotal = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    if (subtotal === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีสินค้าที่เลือกในตะกร้า', 'warning');
+
+    try {
+        const response = await fetch(`http://localhost:3000/coupons/validate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: codeInput, subtotal: subtotal })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.valid) {
+            // บันทึกคูปองลง LocalStorage
+            localStorage.setItem('siam_healthy_coupon', JSON.stringify({ 
+                code: codeInput, 
+                discount: data.discount_amount 
+            }));
+            
+            Swal.fire({
+                title: data.message || 'ใช้คูปองส่วนลดสำเร็จ',
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            
+            calculateSummary(); 
+        } else {
+            Swal.fire('ข้อผิดพลาด', data.message || 'ไม่สามารถใช้คูปองได้', 'error');
+            localStorage.removeItem('siam_healthy_coupon');
+            calculateSummary();
+        }
+    } catch (error) {
+        Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อระบบคูปองได้', 'error');
+    }
+}
+
+// ฟังก์ชันปรับหน้าตาช่องกรอกคูปองให้ตรงกับข้อมูลที่บันทึกไว้
+function renderCouponUI() {
+    const savedCoupon = JSON.parse(localStorage.getItem('siam_healthy_coupon'));
+    const codeInput = document.getElementById('couponCodeInput');
+    const couponBtn = document.getElementById('couponBtn');
+
+    if (!codeInput || !couponBtn) return;
+
+    if (savedCoupon) {
+        // กรณีมีคูปองใช้งานอยู่: แสดงชื่อโค้ด ล็อคช่องพิมพ์ และเปลี่ยนปุ่มเป็นสีแดง
+        codeInput.value = savedCoupon.code;
+        codeInput.disabled = true; 
+        codeInput.style.backgroundColor = '#f1f5f9';
+        codeInput.style.cursor = 'not-allowed';
+        
+        couponBtn.innerText = 'ยกเลิกโค้ด';
+        couponBtn.style.backgroundColor = '#e11d48';
+        couponBtn.onclick = removeCoupon;
+    } else {
+        // กรณีไม่มีคูปอง: เคลียร์ช่องให้ว่างและเปลี่ยนปุ่มกลับเป็นสีเขียว
+        codeInput.value = '';
+        codeInput.disabled = false;
+        codeInput.style.backgroundColor = 'var(--card-bg)';
+        codeInput.style.cursor = 'text';
+        
+        couponBtn.innerText = 'ใช้โค้ด';
+        couponBtn.style.backgroundColor = 'var(--primary-color)';
+        couponBtn.onclick = applyCoupon;
+    }
+}
+
+// ฟังก์ชันสำหรับกดยกเลิกคูปอง
+function removeCoupon() {
+    localStorage.removeItem('siam_healthy_coupon');
+    calculateSummary(); // สั่งคำนวณราคาใหม่
+    
+    Swal.fire({
+        title: 'ยกเลิกคูปองส่วนลดแล้ว',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500
+    });
 }

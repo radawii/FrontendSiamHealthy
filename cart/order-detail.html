@@ -7,7 +7,6 @@
     <!-- CSS -->
     <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/contact.css">
-    <link rel="stylesheet" href="../css/footer.css">
     <link rel="stylesheet" href="./css/order-detail.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -79,14 +78,14 @@
 
             const storedOrders = JSON.parse(localStorage.getItem('siam_healthy_orders')) || [];
             if (targetOrderId) {
-                order = storedOrders.find(o => o.orderId === targetOrderId);
+                order = storedOrders.find(o => String(o.orderId) === String(targetOrderId));
             }
 
             if (!order) {
                 const latestOrderJSON = localStorage.getItem('latest_order');
                 if (latestOrderJSON) {
                     const parsedLatest = JSON.parse(latestOrderJSON);
-                    if (!targetOrderId || parsedLatest.orderId === targetOrderId) {
+                    if (!targetOrderId || String(parsedLatest.orderId) === String(targetOrderId)) {
                         order = parsedLatest;
                     }
                 }
@@ -150,9 +149,29 @@
                     <p class="receiver-address">${fullAddressText}</p>
                 </div>
 
-                <div class="order-total-section">
-                    <p class="grand-total-text">ยอดชำระสุทธิ: ฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</p>
+                <div class="order-total-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+    
+                <!-- ยอดรวมก่อนหักส่วนลด -->
+                <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px;">
+                    <span style="color: var(--text-muted); font-size: 0.95rem;">ยอดรวมสินค้า:</span>
+                    <span style="font-size: 0.95rem;">฿${(order.subtotal || order.grandTotal).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
                 </div>
+
+                <!-- แสดงส่วนลด (ถ้ามี) -->
+                ${(order.discount && order.discount > 0) ? `
+                <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; color: #e11d48;">
+                    <span style="font-size: 0.95rem;">ส่วนลดคูปอง:</span>
+                    <span style="font-weight: 600; font-size: 0.95rem;">-฿${order.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                </div>
+                ` : ''}
+
+                <!-- ยอดชำระสุทธิ -->
+                <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; font-size: 1.15rem; font-weight: 700; color: #0d5c2e; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+                    <span>ยอดชำระสุทธิ:</span>
+                    <span>฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                </div>
+
+            </div>
             `;
         });
     </script>

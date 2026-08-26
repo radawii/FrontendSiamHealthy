@@ -53,8 +53,9 @@
   color: #0d5c2e;
 }
 
+/* --- อัปเดต Column 4 (Contact & Social) --- */
 .contact-header-wrap {
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .contact-header-wrap h3 {
@@ -71,79 +72,118 @@
   margin: 0;
 }
 
-.contact-tabs-container {
-  display: flex;
-  flex-direction: column;
-  gap: 6px; 
-}
-
-.contact-tab {
+/* Customer Support Box */
+.cs-box {
   display: flex;
   align-items: center;
-  padding: 8px 12px; 
   background: #ffffff;
-  border: 1px solid #eef2ef;
-  border-radius: 10px;
-  text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-.contact-tab:hover {
-  transform: translateX(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-color: var(--brand-color);
+.cs-box:hover {
+  border-color: #0d5c2e;
+  box-shadow: 0 6px 16px rgba(13, 92, 46, 0.08);
+  transform: translateY(-2px);
 }
 
-.tab-icon {
-  width: 36px; 
-  height: 36px;
-  border-radius: 8px;
+.cs-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f0fdf4;
+  color: #0d5c2e;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 10px;
   flex-shrink: 0;
-  color: #ffffff;
-  background-color: var(--brand-color);
-  transition: transform 0.3s ease;
+  margin-right: 14px;
 }
 
-.contact-tab:hover .tab-icon {
-  transform: scale(1.05) rotate(2deg);
+.cs-details {
+  display: flex;
+  flex-direction: column;
 }
 
-.tab-info {
-  flex-grow: 1;
-}
-
-.tab-info h4 {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 2px 0;
-}
-
-.tab-info p {
-  font-size: 0.75rem;
-  color: #94a3b8; 
-  margin: 0;
-  line-height: 1.2;
-}
-
-.tab-cta {
-  display: inline-block;
+.cs-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--brand-color);
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
 }
 
-/* Brand Colors */
-.tab-line { --brand-color: #00B900; }
-.tab-fb { --brand-color: #1877F2; }
-.tab-tk { --brand-color: #000000; }
-.tab-sp { --brand-color: #EE4D2D; }
-.tab-cs { --brand-color: #0d5c2e; }
+.cs-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-decoration: none;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  transition: color 0.2s ease;
+}
+
+.cs-box:hover .cs-number {
+  color: #0d5c2e;
+}
+
+.cs-time {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* Social Icons Grid */
+.social-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.social-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.social-icons-grid {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.social-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px; 
+  border: none; 
+  color: #ffffff; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.social-badge.badge-line { background-color: transparent; }
+.social-badge.badge-fb { background-color: #1877F2; }
+.social-badge.badge-tk { background-color: #000000; }
+.social-badge.badge-sp { background-color: #EE4D2D; }
+
+.social-badge:hover {
+  transform: translateY(-3px) scale(1.05);
+  color: #ffffff;
+}
+
+.social-badge.badge-line:hover { box-shadow: 0 4px 12px rgba(0, 185, 0, 0.4); }
+.social-badge.badge-fb:hover { box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4); }
+.social-badge.badge-tk:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+.social-badge.badge-sp:hover { box-shadow: 0 4px 12px rgba(238, 77, 45, 0.4); }
 
 /* ป้าย DBD */
 .push-bottom {

@@ -232,9 +232,11 @@
                 <div class="summary-card coupon-card">
                     <h3 class="summary-title">คูปองส่วนลด</h3>
                     <p class="coupon-desc">ใส่โค้ดรับส่วนลดพิเศษเพิ่มทันที</p>
-                    <div class="coupon-input-group" style="margin-top: 12px;">
-                        <button type="button" class="add-coupon-btn">+ ใช้โค้ดส่วนลด</button>
+                    <div class="coupon-input-group">
+                        <input type="text" id="couponCodeInput" class="coupon-input" placeholder="กรอกโค้ดส่วนลด">
+                        <button type="button" id="couponBtn" onclick="applyCoupon()" class="add-coupon-btn">ใช้โค้ด</button>
                     </div>
+                    <div id="couponMessage" class="coupon-message" style="display: none;"></div>
                 </div>
 
                 <div class="summary-card price-details-card">
@@ -260,7 +262,7 @@
                         <span class="total-amount" id="grandTotalAmount">฿0.00</span>
                     </div>
 
-                    <button type="button" class="checkout-btn" id="checkoutBtn" onclick="processPayment()">
+                    <button type="button" class="checkout-btn-3" id="checkoutBtn" onclick="processPayment()">
                         <span>ยืนยันการชำระเงิน</span>
                         <i class="fa-solid fa-check-circle"></i>
                     </button>
@@ -275,13 +277,13 @@
             <div class="success-icon">
                 <i class="fa-solid fa-check"></i>
             </div>
-            <h3 style="font-size: 1.4rem; font-weight: 700; color: #0f766e; margin-bottom: 6px;">ชำระเงินสำเร็จ!</h3>
+            <h3 style="font-size: 1.4rem; font-weight: 700; color: #0d5c2e; margin-bottom: 6px;">ชำระเงินสำเร็จ!</h3>
             <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">ขอบคุณที่ไว้วางใจใช้บริการ Siam-Healthy</p>
 
             <div id="receiptPaper" class="receipt-paper"></div>
 
             <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button type="button" onclick="viewOrderDetails()" class="checkout-btn" style="background-color: #0ea5e9; flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <button type="button" onclick="viewOrderDetails()" class="checkout-btn" style="background-color: #0d5c2e; flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i class="fa-solid fa-file-invoice"></i> ดูรายละเอียด
                 </button>
                 <button type="button" onclick="window.location.href='../index.html'" class="checkout-btn" style="background-color: #64748b; flex: 1;">

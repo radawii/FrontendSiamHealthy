@@ -121,7 +121,6 @@ class MyHeader extends HTMLElement {
     this.initSearchSystem();
     this.initContactScroll();
     this.initProfileSystem();
-
     this.updateCartBadge();
 
     window.addEventListener("cartUpdated", () => {
@@ -130,9 +129,59 @@ class MyHeader extends HTMLElement {
   }
 
   // ==========================================
-  // 🔐 ฟังก์ชันจัดการสถานะ Login และ Dropdown Menu
+  // 🔐 ฟังก์ชันผูก Event ควบคุม Dropdown
   // ==========================================
   initProfileSystem() {
+    const desktopToggle = this.querySelector('#desktopProfileToggle');
+    const desktopContainer = this.querySelector('#desktopProfileContainer');
+    const mobileToggle = this.querySelector('#mobileProfileToggle');
+    const mobileContainer = this.querySelector('#mobileProfileContainer');
+
+    // Toggle Dropdown Event (Desktop)
+    if (desktopToggle && desktopContainer) {
+      desktopToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        desktopContainer.classList.toggle('active');
+      });
+    }
+
+    // Toggle Dropdown Event (Mobile)
+    if (mobileToggle && mobileContainer) {
+      mobileToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        mobileContainer.classList.toggle('active');
+      });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      if (desktopContainer) desktopContainer.classList.remove('active');
+      if (mobileContainer) mobileContainer.classList.remove('active');
+    });
+
+    // วาด UI ครั้งแรกเมื่อโหลด
+    this.updateProfileUI();
+
+    // อัปเดต UI อัตโนมัติเมื่อกลับมาโฟกัสที่หน้าเดิม (แก้ปัญหาตอนกลับมาจากหน้าล็อกอิน)
+    window.addEventListener('focus', () => {
+      this.updateProfileUI();
+    });
+
+    // อัปเดต UI เมื่อ localStorage เปลี่ยนแปลงจากแท็บอื่น
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'siam_healthy_user' || e.key === 'sb-qqzgfnjrnenncgxbrqel-auth-token') {
+        this.updateProfileUI();
+      }
+    });
+    
+    // เผื่อไว้กรณีต้องการสั่งอัปเดตเองจากสคริปต์หน้าอื่นผ่าน Custom Event
+    window.addEventListener('authStatusChanged', () => {
+      this.updateProfileUI();
+    });
+  }
+
+  updateProfileUI() {
     const customToken = localStorage.getItem('siam_healthy_user');
     const supabaseToken = localStorage.getItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
 
@@ -141,7 +190,6 @@ class MyHeader extends HTMLElement {
 
     const isLoggedIn = hasCustomAuth || hasSupabaseAuth;
 
-    // Set HTML content for Dropdowns (แก้ไขลิงก์ชี้ไปที่ /cart/orders.html)
     const dropdownContent = isLoggedIn ? `
       <a href="/cart/orders.html" class="dropdown-item" style="display: flex; align-items: center; gap: 8px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -178,36 +226,12 @@ class MyHeader extends HTMLElement {
     if (desktopDropdown) desktopDropdown.innerHTML = dropdownContent;
     if (mobileDropdown) mobileDropdown.innerHTML = dropdownContent;
 
-    // Toggle Dropdown Event (Desktop)
-    const desktopToggle = this.querySelector('#desktopProfileToggle');
-    const desktopContainer = this.querySelector('#desktopProfileContainer');
-    
-    if (desktopToggle && desktopContainer) {
-      desktopToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        desktopContainer.classList.toggle('active');
-      });
-    }
+    // Bind Logout Event ใหม่ทุกครั้งที่มีการสร้างปุ่มขึ้นมาใหม่
+    this.bindLogoutEvents();
+  }
 
-    // Toggle Dropdown Event (Mobile)
-    const mobileToggle = this.querySelector('#mobileProfileToggle');
-    const mobileContainer = this.querySelector('#mobileProfileContainer');
-
-    if (mobileToggle && mobileContainer) {
-      mobileToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        mobileContainer.classList.toggle('active');
-      });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', () => {
-      if (desktopContainer) desktopContainer.classList.remove('active');
-      if (mobileContainer) mobileContainer.classList.remove('active');
-    });
-
-    // Logout Handler Function
+  // ฟังก์ชันผูก Event การออกจากระบบ
+  bindLogoutEvents() {
     const execSwalLogout = () => {
       Swal.fire({
         title: 'ออกจากระบบ?',
@@ -235,7 +259,6 @@ class MyHeader extends HTMLElement {
       });
     };
 
-    // Bind Logout Event to all logout buttons inside component
     this.querySelectorAll('.logout-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -342,7 +365,6 @@ class MyHeader extends HTMLElement {
     const resultsContainer = this.querySelector("#searchResults");
 
     const searchData = [
-      // ... (ใส่ข้อมูล searchData 17 รายการ + หมวดหมู่ + บทความ เหมือนเดิม) ...
       { name: "Andicellix (แอนไดเซลลิกซ์)", type: "product", tag: "การได้ยิน, หูอื้อ, หูดับ, เสียงดังในหู, เสียงจิ้งหรีด, บ้านหมุน, เส้นประสาทหู", url: "/shop/product.html?id=1" },
       { name: "Astin (แอสติน)", type: "product", tag: "เบาหวาน, คุมน้ำตาล, ความดัน, ไขมันในเลือด, หัวใจ, หลอดเลือด, ชาปลายมือปลายเท้า", url: "/shop/product.html?id=2" },
       { name: "Back Pro (แบคโปร)", type: "product", tag: "ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะบ่อย, ปัสสาวะไม่สุด, สุขภาพเพศชาย, ฮอร์โมนชาย", url: "product.html?id=3" },
