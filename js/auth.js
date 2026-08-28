@@ -1,8 +1,6 @@
 // js/auth.js
-const API_BASE_URL = 'http://localhost:3000';
-// 📌 ตั้งค่า URL ของ Backend
-const API_URL = 'http://localhost:3000/auth/login';
-
+const API_BASE_URL = window.location.origin;
+const API_URL = `${API_BASE_URL}/auth/login`;
 document.addEventListener('DOMContentLoaded', () => {
     console.log("🟢 Auth.js โหลดเสร็จสมบูรณ์ พร้อมทำงาน!");
 

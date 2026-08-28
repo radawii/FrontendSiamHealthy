@@ -102,13 +102,13 @@ function handleSuccessfulRedirectReturn() {
 
         const urlParams = new URLSearchParams(window.location.search);
         const orderIdFromUrl = urlParams.get('order_id') || ('SH-' + Date.now().toString().slice(-6));
-
+        const paymentMethodFromUrl = urlParams.get('method') || 'promptpay';
         const orderData = {
             orderId: orderIdFromUrl,
             date: new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }),
             items: selectedItems,
             shippingAddress: window.currentAddress,
-            paymentMethod: 'promptpay',
+            paymentMethod: paymentMethodFromUrl,
             subtotal: subtotal,
             discount: discount,
             grandTotal: grandTotal
@@ -124,7 +124,7 @@ function handleSuccessfulRedirectReturn() {
             confirmButtonColor: '#0f766e'
         }).then(() => {
             window.history.replaceState({}, document.title, window.location.pathname);
-            showReceiptModal('promptpay', selectedItems, subtotal, discount, grandTotal);
+            showReceiptModal(paymentMethodFromUrl, selectedItems, subtotal, discount, grandTotal);
         });
     } else {
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -708,7 +708,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
                         email: userEmail || 'customer@siam-healthy.com' 
                     }
                 },
-                return_url: window.location.href.split('?')[0] + `?payment=success&order_id=${orderId}`
+                return_url: window.location.href.split('?')[0] + `?payment=success&order_id=${orderId}&method=promptpay`
             }).then(async ({ error }) => {
                 if (error) {
                     // ดักเผื่อลูกค้าจ่ายตังค์แล้ว แต่เผลอกดปิด Modal QR Code
@@ -796,8 +796,8 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: window.location.href.split('?')[0] + `?payment=success&order_id=${orderId}`,
-                receipt_email: userEmail || undefined, 
+                return_url: window.location.href.split('?')[0] + `?payment=success&order_id=${orderId}&method=credit`,
+                receipt_email: userEmail || undefined,
             },
         });
 
