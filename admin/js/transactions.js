@@ -1,6 +1,7 @@
-// admin/js/transactions.js
-
 let globalTransactions = [];
+let currentFilteredData = [];
+let currentPage = 1;
+const itemsPerPage = 10; // กำหนดจำนวนรายการต่อหน้า (สามารถปรับเป็น 15, 20 ได้ตามต้องการ)
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchTransactions();
@@ -32,7 +33,16 @@ async function fetchTransactions() {
             }
         }
 
+        // เรียงลำดับจากล่าสุดไปเก่าสุดเสมอ (เทียบจาก createdAt หรือ id)
+        data.sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.created_at || 0).getTime();
+            const dateB = new Date(b.createdAt || b.created_at || 0).getTime();
+            return dateB - dateA || (b.id - a.id);
+        });
+
         globalTransactions = data;
+        currentFilteredData = data;
+        currentPage = 1;
         
         updateSummaryCards(data);
         renderTransactionsTable(data);
@@ -51,6 +61,8 @@ async function fetchTransactions() {
                 </td>
             </tr>
         `;
+        document.getElementById('paginationInfo').innerHTML = 'เกิดข้อผิดพลาด';
+        renderPaginationButtons(0);
     }
 }
 
@@ -80,13 +92,13 @@ function updateSummaryCards(transactions) {
     document.getElementById('stat-refund-count').innerText = `${refundCount} รายการ`;
 }
 
-// 3. วาดตารางข้อมูล
+// 3. วาดตารางข้อมูลพร้อมแบ่งหน้า (Pagination)
 function renderTransactionsTable(transactions) {
     const tbody = document.getElementById('transactionsTableBody');
     tbody.innerHTML = '';
     
     const totalCountElem = document.getElementById('total-count');
-    if(totalCountElem) totalCountElem.innerText = transactions.length;
+    if (totalCountElem) totalCountElem.innerText = transactions.length;
 
     if (transactions.length === 0) {
         tbody.innerHTML = `
@@ -97,12 +109,20 @@ function renderTransactionsTable(transactions) {
                 </td>
             </tr>`;
         document.getElementById('paginationInfo').innerHTML = 'ไม่พบข้อมูล';
+        renderPaginationButtons(0);
         return;
     }
 
-    const sorted = transactions.sort((a, b) => b.id - a.id);
+    const totalPages = Math.ceil(transactions.length / itemsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
 
-    sorted.forEach(t => {
+    // คำนวณช่วงข้อมูลเฉพาะหน้าปัจจุบัน
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, transactions.length);
+    const pageItems = transactions.slice(startIndex, endIndex);
+
+    pageItems.forEach(t => {
         const orderIdFormat = `ORD2026${String(t.id).padStart(5, '0')}`;
         
         const dateObj = new Date(t.createdAt || t.created_at || new Date());
@@ -145,7 +165,7 @@ function renderTransactionsTable(transactions) {
 
         if (pStatus === 'PAID') {
             paymentBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[11px] font-medium"><i class="fas fa-check-circle mr-1.5"></i> ชำระเงินสำเร็จ</span>`;
-            canRefund = true; // อนุญาตให้คืนเงินเฉพาะออเดอร์ที่จ่ายสำเร็จแล้ว
+            canRefund = true;
         } else if (pStatus.includes('REFUND')) {
             paymentBadge = `<span class="inline-flex items-center px-2.5 py-1 border border-gray-200 text-gray-600 rounded-full text-[11px] font-medium"><i class="fas fa-undo mr-1.5"></i> คืนเงินแล้ว</span>`;
         }
@@ -158,7 +178,6 @@ function renderTransactionsTable(transactions) {
             shippingBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-[11px] font-medium"><i class="fas fa-box mr-1.5"></i> Processing</span>`;
         }
 
-        // ปุ่มจัดการ (ดูรายละเอียด และ คืนเงิน)
         let actionBtns = `
             <a href="order-details.html?order_id=${orderIdFormat}" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-colors" title="ดูรายละเอียด">
                 <i class="fas fa-eye text-xs"></i>
@@ -200,10 +219,60 @@ function renderTransactionsTable(transactions) {
         tbody.innerHTML += row;
     });
 
-    document.getElementById('paginationInfo').innerHTML = `แสดง 1 ถึง ${sorted.length} จากทั้งหมด <span class="font-bold text-gray-800">${sorted.length}</span> รายการ`;
+    // อัปเดตข้อความบอกหน้าและจำนวนรายการ
+    document.getElementById('paginationInfo').innerHTML = `แสดง <b>${startIndex + 1}</b> ถึง <b>${endIndex}</b> จากทั้งหมด <span class="font-bold text-gray-800">${transactions.length}</span> รายการ`;
+    
+    // สร้างปุ่ม Pagination
+    renderPaginationButtons(totalPages);
 }
 
-// 4. ฟังก์ชันคืนเงิน (Refund) ทั้งแบบเต็มจำนวน และ บางส่วน
+// ฟังก์ชันสร้างปุ่มกดเปลี่ยนหน้า
+function renderPaginationButtons(totalPages) {
+    const paginationContainer = document.querySelector('#paginationInfo').nextElementSibling;
+    if (!paginationContainer) return;
+
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    let buttonsHtml = `
+        <button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="px-2.5 py-1 border border-gray-200 rounded-md text-gray-300 cursor-not-allowed"' : 'class="px-2.5 py-1 border border-gray-200 rounded-md hover:bg-gray-100 text-gray-600 transition"'} title="หน้าก่อนหน้า">
+            <i class="fas fa-chevron-left text-xs"></i>
+        </button>
+    `;
+
+    for (let i = 1; i <= totalPages; i++) {
+        // แสดงเฉพาะหน้าใกล้เคียงเพื่อไม่ให้ปุ่มยาวเกินไป
+        if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            if (i === currentPage) {
+                buttonsHtml += `<button class="px-3 py-1 bg-indigo-600 text-white rounded-md font-medium text-xs shadow-sm">${i}</button>`;
+            } else {
+                buttonsHtml += `<button onclick="goToPage(${i})" class="px-3 py-1 border border-gray-200 rounded-md hover:bg-gray-100 text-gray-600 text-xs transition">${i}</button>`;
+            }
+        } else if (i === currentPage - 2 || i === currentPage + 2) {
+            buttonsHtml += `<span class="px-1 text-gray-400 text-xs">...</span>`;
+        }
+    }
+
+    buttonsHtml += `
+        <button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="px-2.5 py-1 border border-gray-200 rounded-md text-gray-300 cursor-not-allowed"' : 'class="px-2.5 py-1 border border-gray-200 rounded-md hover:bg-gray-100 text-gray-600 transition"'} title="หน้าถัดไป">
+            <i class="fas fa-chevron-right text-xs"></i>
+        </button>
+    `;
+
+    paginationContainer.innerHTML = buttonsHtml;
+}
+
+// ฟังก์ชันเปลี่ยนหน้า
+function goToPage(page) {
+    const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    renderTransactionsTable(currentFilteredData);
+}
+
+// 4. ฟังก์ชันคืนเงิน (Refund)
 function processRefund(orderId, maxAmount) {
     const formattedOrderId = `ORD2026${String(orderId).padStart(5, '0')}`;
     
@@ -254,7 +323,6 @@ function processRefund(orderId, maxAmount) {
                 const headers = { 'Content-Type': 'application/json' };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                // ส่ง Request ไปที่ Backend (ปรับ URL ให้ตรงกับ Endpoint ของคุณ)
                 const response = await fetch(`http://localhost:3000/payments/refund/${orderId}`, {
                     method: 'POST',
                     headers: headers,
@@ -273,7 +341,7 @@ function processRefund(orderId, maxAmount) {
                     confirmButtonColor: '#4f46e5',
                     customClass: { popup: 'rounded-2xl shadow-xl' }
                 }).then(() => {
-                    fetchTransactions(); // รีเฟรชตารางหลังคืนเงินสำเร็จ
+                    fetchTransactions();
                 });
 
             } catch (error) {
@@ -309,20 +377,176 @@ function filterTransactions() {
         const matchPayment = !paymentVal || (t.paymentStatus || t.payment_status || 'PENDING').toUpperCase() === paymentVal;
         
         let currentShipStatus = (t.orderStatus || t.order_status || 'PENDING').toUpperCase();
-        if(currentShipStatus === 'DELIVERED') currentShipStatus = 'COMPLETED';
+        if (currentShipStatus === 'DELIVERED') currentShipStatus = 'COMPLETED';
         const matchShipping = !shippingVal || currentShipStatus === shippingVal;
 
         return matchSearch && matchMethod && matchPayment && matchShipping;
     });
 
+    currentFilteredData = filtered;
+    currentPage = 1; // เมื่อค้นหาหรือฟิลเตอร์ ให้เริ่มที่หน้า 1 เสมอ
     renderTransactionsTable(filtered);
 }
 
+// เปิด-ปิดเมนู Export
+function toggleExportMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('exportDropdownMenu');
+    menu.classList.toggle('hidden');
+}
+
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('exportDropdownMenu');
+    if (menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+    }
+});
+
 // 6. ส่งออกข้อมูล (Export CSV & Excel)
+function prepareExportData() {
+    if (!currentFilteredData || currentFilteredData.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'ไม่พบข้อมูล',
+            text: 'ไม่มีข้อมูลธุรกรรมสำหรับส่งออก',
+            confirmButtonColor: '#4f46e5'
+        });
+        return null;
+    }
+
+    return currentFilteredData.map((t, index) => {
+        const orderIdFormat = `ORD2026${String(t.id).padStart(5, '0')}`;
+        const dateObj = new Date(t.createdAt || t.created_at || new Date());
+        const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+        
+        let customerName = 'ลูกค้าทั่วไป';
+        if (t.shippingAddress?.fullname) {
+            customerName = t.shippingAddress.fullname;
+        } else if (t.user?.name || t.user?.username) {
+            customerName = t.user.name || t.user.username;
+        }
+
+        const customerEmail = t.user?.email || '-';
+
+        let productName = 'ไม่ระบุสินค้า';
+        if (t.orderItems && t.orderItems.length > 0) {
+            productName = t.orderItems[0].productName || t.orderItems[0].product_name || 'ไม่ระบุสินค้า';
+            if (t.orderItems.length > 1) {
+                productName += ` (+${t.orderItems.length - 1} รายการ)`;
+            }
+        }
+
+        const grandTotal = Number(t.grandTotal || t.grand_total || 0);
+
+        const method = (t.paymentMethod || 'promptpay').toLowerCase();
+        let methodText = 'PromptPay';
+        if (method.includes('card') || method.includes('stripe')) methodText = 'Credit Card';
+        else if (method.includes('wallet')) methodText = 'E-Wallet';
+        else if (method.includes('cod')) methodText = 'เก็บเงินปลายทาง (COD)';
+
+        const pStatus = (t.paymentStatus || t.payment_status || 'PENDING').toUpperCase();
+        let paymentStatusText = 'รอชำระเงิน';
+        if (pStatus === 'PAID') paymentStatusText = 'ชำระเงินสำเร็จ';
+        else if (pStatus.includes('REFUND')) paymentStatusText = 'คืนเงินแล้ว';
+        else if (pStatus === 'CANCELLED') paymentStatusText = 'ยกเลิก';
+
+        const oStatus = (t.orderStatus || t.order_status || 'PROCESSING').toUpperCase();
+        let shippingStatusText = 'Pending';
+        if (oStatus === 'COMPLETED' || oStatus === 'DELIVERED') shippingStatusText = 'Delivered';
+        else if (oStatus === 'PROCESSING' || pStatus === 'PAID') shippingStatusText = 'Processing';
+
+        return {
+            'ลำดับ': index + 1,
+            'รหัสคำสั่งซื้อ': orderIdFormat,
+            'วันที่-เวลา': dateStr,
+            'ชื่อลูกค้า': customerName,
+            'อีเมล': customerEmail,
+            'รายการสินค้า': productName,
+            'ยอดสุทธิ (บาท)': grandTotal,
+            'ช่องทางชำระเงิน': methodText,
+            'สถานะการชำระ': paymentStatusText,
+            'สถานะการจัดส่ง': shippingStatusText
+        };
+    });
+}
+
 function exportToCSV() {
-    Swal.fire('สำเร็จ', 'ฟังก์ชัน Export CSV พร้อมใช้งานแล้ว', 'success');
+    const data = prepareExportData();
+    if (!data) return;
+
+    try {
+        const headers = Object.keys(data[0]);
+        const csvRows = [
+            headers.join(','),
+            ...data.map(row => 
+                headers.map(fieldName => {
+                    let val = row[fieldName] !== undefined && row[fieldName] !== null ? String(row[fieldName]) : '';
+                    if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+                        val = `"${val.replace(/"/g, '""')}"`;
+                    }
+                    return val;
+                }).join(',')
+            )
+        ];
+
+        const csvString = csvRows.join('\r\n');
+        const blob = new Blob(['\uFEFF' + csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `transactions_${timestamp}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'ส่งออก CSV สำเร็จ!',
+            text: `ดาวน์โหลดไฟล์เรียบร้อยแล้ว (${data.length} รายการ)`,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    } catch (err) {
+        console.error('CSV Export Error:', err);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งออกไฟล์ CSV ได้', 'error');
+    }
 }
 
 function exportToExcel() {
-    Swal.fire('สำเร็จ', 'ฟังก์ชัน Export Excel พร้อมใช้งานแล้ว', 'success');
+    const data = prepareExportData();
+    if (!data) return;
+
+    if (typeof XLSX === 'undefined') {
+        Swal.fire('ข้อผิดพลาด', 'ไม่พบไลบรารี SheetJS (XLSX) ในหน้าเว็บ', 'error');
+        return;
+    }
+
+    try {
+        const ws = XLSX.utils.json_to_sheet(data);
+        ws['!cols'] = [
+            { wch: 8 },  { wch: 18 }, { wch: 20 }, { wch: 22 },
+            { wch: 26 }, { wch: 30 }, { wch: 16 }, { wch: 20 },
+            { wch: 18 }, { wch: 16 }
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'รายการธุรกรรม');
+
+        const timestamp = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `transactions_${timestamp}.xlsx`);
+
+        Swal.fire({
+            icon: 'success',
+            title: 'ส่งออก Excel สำเร็จ!',
+            text: `ดาวน์โหลดไฟล์เรียบร้อยแล้ว (${data.length} รายการ)`,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    } catch (err) {
+        console.error('Excel Export Error:', err);
+        Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถส่งออกไฟล์ Excel ได้', 'error');
+    }
 }

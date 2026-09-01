@@ -190,7 +190,45 @@ class MyHeader extends HTMLElement {
 
     const isLoggedIn = hasCustomAuth || hasSupabaseAuth;
 
+    // ดึงข้อมูลชื่อ/อีเมลผู้ใช้
+    let displayName = 'ผู้ใช้งาน';
+    let userEmail = '';
+
+    if (hasCustomAuth) {
+      try {
+        const parsed = JSON.parse(customToken);
+        displayName = parsed.name || parsed.username || parsed.full_name || parsed.email || 'ผู้ใช้งาน';
+        userEmail = parsed.email || '';
+      } catch (e) {
+        displayName = customToken;
+      }
+    } else if (hasSupabaseAuth) {
+      try {
+        const parsed = JSON.parse(supabaseToken);
+        const userObj = parsed.user || parsed;
+        displayName = userObj.user_metadata?.full_name || userObj.user_metadata?.name || userObj.email?.split('@')[0] || 'ผู้ใช้งาน';
+        userEmail = userObj.email || '';
+      } catch (e) {
+        displayName = 'ผู้ใช้งาน';
+      }
+    }
+
+    // อัปเดตข้อความบนปุ่ม Mobile Nav
+    const mobileProfileText = this.querySelector('#mobileProfileText');
+    if (mobileProfileText) {
+      mobileProfileText.innerText = isLoggedIn ? displayName : 'บัญชีของฉัน';
+    }
+
     const dropdownContent = isLoggedIn ? `
+      <!-- ส่วนแสดงข้อมูล User ที่ Login อยู่ -->
+      <div class="dropdown-header-user" style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 11px; color: #64748b; font-weight: 500;">เข้าสู่ระบบในชื่อ</span>
+        <span style="font-size: 14px; font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          ${displayName}
+        </span>
+        ${userEmail && userEmail !== displayName ? `<span style="font-size: 12px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>` : ''}
+      </div>
+
       <a href="/cart/orders.html" class="dropdown-item" style="display: flex; align-items: center; gap: 8px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -226,7 +264,6 @@ class MyHeader extends HTMLElement {
     if (desktopDropdown) desktopDropdown.innerHTML = dropdownContent;
     if (mobileDropdown) mobileDropdown.innerHTML = dropdownContent;
 
-    // Bind Logout Event ใหม่ทุกครั้งที่มีการสร้างปุ่มขึ้นมาใหม่
     this.bindLogoutEvents();
   }
 
@@ -395,14 +432,14 @@ class MyHeader extends HTMLElement {
       { name: "สุขภาพเพศชาย", type: "category", tag: "เพิ่มพละกำลัง, ฟื้นฟูกำลัง, สมดุลฮอร์โมนชาย, ต่อมลูกหมาก, ปัสสาวะ", url: "/shop/?category=mens-health" },
 
       { name: "ลุกก็โอย นั่งก็โอย เจ็บหัวเข่าแปล๊บๆ... สัญญาณข้อเข่าเสื่อม", type: "article", tag: "บทความ, กระดูก, ข้อเข่า, ปวดเข่า, ข้อเสื่อม, ข้อเข่าเสื่อม", url: "/articles/article1.html" },
-      { name: "หน้าจอมือถือทำลายดวงตามากกว่าที่คิด วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง", type: "article", tag: "บทความ, ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, แสงสีฟ้า", url: "article2.html" },
-      { name: "หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย", type: "article", tag: "บทความ, การได้ยิน, หูอื้อ, ฟังไม่ชัด, ประสาทหูเสื่อม", url: "article3.html" },
-      { name: "พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนัก", type: "article", tag: "บทความ, ลำไส้, ขับถ่าย, ริดสีดวง, ริดสีดวงทวาร", url: "article4.html" },
-      { name: "เช็ก 3 พฤติกรรมยิ่งแก้ ยิ่งท้องผูก! เผยวิธีใหม่ช่วยให้ขับถ่ายง่าย", type: "article", tag: "บทความ, ท้องผูก, ขับถ่าย, ลำไส้, ปรับสมดุลลำไส้, ดีท็อกซ์", url: "article5.html" },
-      { name: "ไม่อยากกินยาคุมเบาหวานไปตลอดชีวิต? เผย 5 สมุนไพรธรรมชาติ", type: "article", tag: "บทความ, เบาหวาน, คุมเบาหวาน, คุมน้ำตาล, ลดน้ำตาล", url: "article6.html" },
-      { name: "สัญญาณเตือนความดันโลหิตสูง วิธีสังเกตอาการ โดยไม่ต้องใช้เครื่องวัด", type: "article", tag: "บทความ, ความดัน, ความดันโลหิตสูง, หัวใจ, หลอดเลือด", url: "article7.html" },
-      { name: "ลดน้ำหนักแบบคนขี้เกียจ 5 เคล็ดลับเบิร์นไขมันเก่า", type: "article", tag: "บทความ, ลดน้ำหนัก, เบิร์นไขมัน, ไขมัน, หุ่นลีน", url: "article8.html" },
-      { name: "เสื่อมสมรรถภาพ ปัสสาวะแสบขัด เจาะลึกปัญหาต่อมลูกหมากโต", type: "article", tag: "บทความ, สุขภาพชาย, ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะแสบขัด, สมรรถภาพ", url: "article9.html" }
+      { name: "หน้าจอมือถือทำลายดวงตามากกว่าที่คิด วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง", type: "article", tag: "บทความ, ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, แสงสีฟ้า", url: "/articles/article2.html" },
+      { name: "หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย", type: "article", tag: "บทความ, การได้ยิน, หูอื้อ, ฟังไม่ชัด, ประสาทหูเสื่อม", url: "/articles/article3.html" },
+      { name: "พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนัก", type: "article", tag: "บทความ, ลำไส้, ขับถ่าย, ริดสีดวง, ริดสีดวงทวาร", url: "/articles/article4.html" },
+      { name: "เช็ก 3 พฤติกรรมยิ่งแก้ ยิ่งท้องผูก! เผยวิธีใหม่ช่วยให้ขับถ่ายง่าย", type: "article", tag: "บทความ, ท้องผูก, ขับถ่าย, ลำไส้, ปรับสมดุลลำไส้, ดีท็อกซ์", url: "/articles/article5.html" },
+      { name: "ไม่อยากกินยาคุมเบาหวานไปตลอดชีวิต? เผย 5 สมุนไพรธรรมชาติ", type: "article", tag: "บทความ, เบาหวาน, คุมเบาหวาน, คุมน้ำตาล, ลดน้ำตาล", url: "/articles/article6.html" },
+      { name: "สัญญาณเตือนความดันโลหิตสูง วิธีสังเกตอาการ โดยไม่ต้องใช้เครื่องวัด", type: "article", tag: "บทความ, ความดัน, ความดันโลหิตสูง, หัวใจ, หลอดเลือด", url: "/articles/article7.html" },
+      { name: "ลดน้ำหนักแบบคนขี้เกียจ 5 เคล็ดลับเบิร์นไขมันเก่า", type: "article", tag: "บทความ, ลดน้ำหนัก, เบิร์นไขมัน, ไขมัน, หุ่นลีน", url: "/articles/article8.html" },
+      { name: "เสื่อมสมรรถภาพ ปัสสาวะแสบขัด เจาะลึกปัญหาต่อมลูกหมากโต", type: "article", tag: "บทความ, สุขภาพชาย, ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะแสบขัด, สมรรถภาพ", url: "/articles/article9.html" }
     ];
 
     if (!input || !resultsContainer) return;

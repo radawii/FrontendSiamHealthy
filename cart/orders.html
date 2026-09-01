@@ -13,6 +13,119 @@
     <link rel="stylesheet" href="../css/contact.css">
     <link rel="stylesheet" href="./css/orders.css">
 
+    <style>
+        /* Skeleton Loading & Shimmer Animation */
+        .skeleton-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #edf2f7;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite ease-in-out;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #edf2f7;
+        }
+
+        .skeleton-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .skeleton-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid #edf2f7;
+            margin-top: 12px;
+        }
+
+        /* Fade-in Transition */
+        .order-card {
+            animation: fadeInOrder 0.35s ease-out forwards;
+        }
+
+        @keyframes fadeInOrder {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 32px 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #475569;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .page-btn:hover:not(:disabled):not(.active) {
+            border-color: #0d5c2e;
+            color: #0d5c2e;
+            background: #f0fdfa;
+        }
+
+        .page-btn.active {
+            background: #0d5c2e;
+            color: #ffffff;
+            border-color: #0d5c2e;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+    </style>
+
     <!-- Web Components -->
     <script src="../js/header.js" defer></script>
     <script src="../js/contact.js" defer></script>
@@ -33,6 +146,9 @@
         <div id="ordersContainer" class="orders-list">
             <!-- รายการออเดอร์จะถูกเรนเดอร์ผ่าน JavaScript ตรงนี้ -->
         </div>
+
+        <!--  Pagination -->
+        <div id="paginationContainer" class="pagination-container"></div>
     </main>
     
     <!-- Contact & Footer -->
@@ -42,13 +158,32 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // ฟังก์ชันช่วยจัดรูปแบบเลขออเดอร์ให้เป็นรูปแบบเดียวกับ Admin
+        // ตัวแปรสำหรับ Pagination
+        let allOrders = [];
+        let currentPage = 1;
+        const itemsPerPage = 5;
+
+        function checkUserLoginStatus() {
+            try {
+                const storedUser = localStorage.getItem('siam_healthy_user');
+                if (storedUser && storedUser !== 'login_success_token') {
+                    const parsedUser = JSON.parse(storedUser);
+                    if (parsedUser && (parsedUser.id || parsedUser.user_id)) return parsedUser;
+                }
+                const supabaseAuth = localStorage.getItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
+                if (supabaseAuth) {
+                    const parsedAuth = JSON.parse(supabaseAuth);
+                    if (parsedAuth.user && parsedAuth.user.id) return parsedAuth.user;
+                }
+            } catch (e) {
+                console.warn('เกิดข้อผิดพลาดในการตรวจสอบสถานะผู้ใช้งาน', e);
+            }
+            return null;
+        }
+
         function formatOrderId(id) {
             if (!id) return '-';
-            // ถ้ามีคำว่า ORD อยู่แล้ว แสดงตามนั้นได้เลย
             if (id.toString().startsWith('ORD')) return id;
-            
-            // ถ้าเป็นเลขสั้นๆ หรือมี SH- ให้แปลงเป็นรูปแบบ ORD + ปี (2026) + เลขรหัส
             const cleanId = id.toString().replace('SH-', '');
             if (cleanId.length <= 6) {
                 return `ORD2026${cleanId.padStart(6, '0')}`;
@@ -56,37 +191,147 @@
             return `ORD${cleanId}`;
         }
 
+        // ฟังก์ชันแปลงชื่อสินค้าเป็นรูปภาพ
+        function resolveProductImage(name, rawImage) {
+            if (rawImage && typeof rawImage === 'string' && rawImage.trim() !== '') {
+                let img = rawImage.replace(/^\.\//, '').replace(/^\//, '');
+                if (!img.startsWith('../shop/') && !img.startsWith('http')) {
+                    return img.startsWith('shop/') ? '../' + img : '../shop/' + img;
+                }
+                return img;
+            }
+
+            const cleanName = (name || '').toLowerCase().replace(/[\s\-_]/g, '');
+
+            // 1. andicellix
+            if (cleanName.includes('andicellix') || cleanName.includes('andi')) return '../shop/img/andicellix/andicellix1.png';
+            // 2. astin
+            if (cleanName.includes('astin')) return '../shop/img/astin/astin1.png';
+            // 3. backpro
+            if (cleanName.includes('backpro') || cleanName.includes('back')) return '../shop/img/backpro/backpro1.png';
+            // 4. blackrhino
+            if (cleanName.includes('blackrhino') || cleanName.includes('rhino')) return '../shop/img/blackrhino/blackrhino1.png';
+            // 5. carthisin
+            if (cleanName.includes('carthisin')) return '../shop/img/carthisin/carthisin1.png';
+            // 6. cartirex
+            if (cleanName.includes('cartirex')) return '../shop/img/cartirex/cartirex1.png';
+            // 7. elsie
+            if (cleanName.includes('elsie')) return '../shop/img/elsie/elsie1.png';
+            // 8. extera
+            if (cleanName.includes('extera')) return '../shop/img/extera/extera1.png';
+            // 9. genesis
+            if (cleanName.includes('genesis')) return '../shop/img/genesis/genesis1.png';
+            // 10. geralox
+            if (cleanName.includes('geralox')) return '../shop/img/geralox/geralox1.png';
+            // 11. helmina
+            if (cleanName.includes('helmina')) return '../shop/img/helmina/helmina1.png';
+            // 12. oclarizin
+            if (cleanName.includes('oclarizin')) return '../shop/img/oclarizin/oclarizin1.png';
+            // 13. onix
+            if (cleanName.includes('onix')) return '../shop/img/onix/onix1.png';
+            // 14. philola
+            if (cleanName.includes('philola')) return '../shop/img/philola/philola1.png';
+            // 15. scomplex
+            if (cleanName.includes('scomplex') || cleanName.includes('complex')) return '../shop/img/scomplex/scomplex1.png';
+            // 16. tchrome
+            if (cleanName.includes('tchrome') || cleanName.includes('chrome')) return '../shop/img/tchrome/tchrome1.png';
+            // 17. turbine
+            if (cleanName.includes('turbine')) return '../shop/img/turbine/turbine1.png';
+
+            // fallback อัตโนมัติไปยังโฟลเดอร์ตามชื่อสินค้า
+            return `../shop/img/${cleanName}/${cleanName}1.png`;
+        }
+
+        function renderSkeletons(container, count = 3) {
+            let skeletonHtml = '';
+            for (let i = 0; i < count; i++) {
+                skeletonHtml += `
+                    <div class="skeleton-card">
+                        <div class="skeleton-header">
+                            <div class="skeleton-shimmer" style="width: 140px; height: 18px;"></div>
+                            <div class="skeleton-shimmer" style="width: 100px; height: 14px;"></div>
+                        </div>
+                        <div class="skeleton-item">
+                            <div class="skeleton-shimmer" style="width: 52px; height: 52px; border-radius: 10px; flex-shrink: 0;"></div>
+                            <div style="flex: 1;">
+                                <div class="skeleton-shimmer" style="width: 55%; height: 14px; margin-bottom: 8px;"></div>
+                                <div class="skeleton-shimmer" style="width: 25%; height: 12px;"></div>
+                            </div>
+                            <div class="skeleton-shimmer" style="width: 70px; height: 16px;"></div>
+                        </div>
+                        <div style="margin: 16px 0 10px 0; border-top: 1px dashed #edf2f7; padding-top: 10px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                <div class="skeleton-shimmer" style="width: 80px; height: 12px;"></div>
+                                <div class="skeleton-shimmer" style="width: 60px; height: 12px;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                                <div class="skeleton-shimmer" style="width: 100px; height: 16px;"></div>
+                                <div class="skeleton-shimmer" style="width: 90px; height: 18px;"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-footer">
+                            <div class="skeleton-shimmer" style="width: 110px; height: 26px; border-radius: 20px;"></div>
+                            <div class="skeleton-shimmer" style="width: 130px; height: 32px; border-radius: 8px;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = skeletonHtml;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            renderUserOrders();
+            fetchUserOrders();
         });
 
-        function renderUserOrders() {
+        window.addEventListener('pageshow', () => {
+            fetchUserOrders();
+        });
+
+        async function fetchUserOrders() {
             const container = document.getElementById('ordersContainer');
-            
-            // ดึงข้อมูลออเดอร์จาก LocalStorage (รองรับทั้งออเดอร์ล่าสุด และเก็บสะสมเป็นอาเรย์)
-            let orders = [];
-            
-            const storedOrders = localStorage.getItem('siam_healthy_orders');
-            if (storedOrders) {
-                try {
-                    orders = JSON.parse(storedOrders);
-                } catch (e) {
-                    orders = [];
-                }
+            const paginationBox = document.getElementById('paginationContainer');
+            const currentUser = checkUserLoginStatus();
+
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="empty-orders">
+                        <h3>กรุณาเข้าสู่ระบบ</h3>
+                        <p>คุณต้องเข้าสู่ระบบก่อนเพื่อตรวจสอบประวัติคำสั่งซื้อของคุณ</p>
+                        <a href="../login.html" onclick="localStorage.setItem('siam_healthy_redirect_after_login', window.location.href)" class="btn-shop">เข้าสู่ระบบ</a>
+                    </div>
+                `;
+                if (paginationBox) paginationBox.innerHTML = '';
+                return;
             }
 
-            const latestOrder = localStorage.getItem('latest_order');
-            if (latestOrder) {
-                try {
-                    const parsedLatest = JSON.parse(latestOrder);
-                    if (!orders.some(o => o.orderId === parsedLatest.orderId)) {
-                        orders.unshift(parsedLatest);
-                        localStorage.setItem('siam_healthy_orders', JSON.stringify(orders));
-                    }
-                } catch (e) {}
-            }
+            renderSkeletons(container, 3);
 
-            if (orders.length === 0) {
+            const currentUserId = currentUser.id || currentUser.user_id;
+
+            try {
+                const response = await fetch(`http://localhost:3000/orders/user/${currentUserId}`);
+                if (!response.ok) throw new Error('ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้');
+
+                allOrders = await response.json();
+                currentPage = 1;
+                renderPaginatedOrders();
+
+            } catch (err) {
+                console.error('Fetch Orders Error:', err);
+                container.innerHTML = `
+                    <div class="empty-orders">
+                        <p style="color: #e11d48;">เกิดข้อผิดพลาดในการโหลดข้อมูลคำสั่งซื้อ</p>
+                    </div>
+                `;
+                if (paginationBox) paginationBox.innerHTML = '';
+            }
+        }
+
+        // 📦 ฟังก์ชันคำนวณและตัดแสดงเฉพาะหน้าปัจจุบัน (10 รายการ)
+        function renderPaginatedOrders() {
+            const container = document.getElementById('ordersContainer');
+
+            if (!allOrders || allOrders.length === 0) {
                 container.innerHTML = `
                     <div class="empty-orders">
                         <h3>ยังไม่มีประวัติคำสั่งซื้อ</h3>
@@ -94,38 +339,48 @@
                         <a href="../shop/" class="btn-shop">เลือกซื้อสินค้าเลย</a>
                     </div>
                 `;
+                renderPaginationButtons(0);
                 return;
             }
 
-            container.innerHTML = orders.map(order => {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentOrders = allOrders.slice(startIndex, endIndex);
+
+            container.innerHTML = currentOrders.map(order => {
                 let paymentLabel = 'ชำระเงินเรียบร้อย';
-                if (order.paymentMethod === 'cod') paymentLabel = 'เก็บเงินปลายทาง';
-                else if (order.paymentMethod === 'promptpay') paymentLabel = 'พร้อมเพย์ (PromptPay)';
-                else if (order.paymentMethod === 'credit') paymentLabel = 'บัตรเครดิต / เดบิต';
+                const method = (order.paymentMethod || '').toLowerCase();
+                if (method === 'cod') paymentLabel = 'เก็บเงินปลายทาง';
+                else if (method === 'promptpay') paymentLabel = 'พร้อมเพย์ (PromptPay)';
+                else if (method === 'credit' || method === 'card') paymentLabel = 'บัตรเครดิต / เดบิต';
 
-                // แปลงหมายเลขคำสั่งซื้อให้เป็นรูปแบบเต็ม
-                const displayOrderId = formatOrderId(order.orderId);
+                const displayOrderId = formatOrderId(order.id);
+                const formattedDate = order.createdAt 
+                    ? new Date(order.createdAt).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })
+                    : 'เมื่อเร็วๆ นี้';
 
-                // วนลูปแสดงรายการสินค้าในออร์เดอร์
-                const itemsHTML = (order.items || []).map(item => {
-                    const itemName = item.name || item.product_name || 'สินค้าสุขภาพ';
-                    const itemImage = item.image || '../images/default-product.png';
+                const itemsList = order.orderItems || order.items || [];
+                const itemsHTML = itemsList.map(item => {
+                    const itemName = item.productName || item.name || 'สินค้าสุขภาพ';
+                    const itemImage = resolveProductImage(itemName, item.image || item.productImage);
                     const itemQty = item.quantity || 1;
-                    const itemPrice = item.price || 0;
+                    const itemPrice = Number(item.price) || 0;
 
                     return `
                         <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
-                            <img src="${itemImage}" alt="${itemName}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" onerror="this.src='../images/default-product.png'">
+                            <img src="${itemImage}" alt="${itemName}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0;" onerror="this.onerror=null; this.src='../shop/img/elsie/elsie1.png';">
                             <div style="flex: 1;">
                                 <div style="font-weight: 500; color: var(--text-heading); font-size: 0.9rem;">${itemName}</div>
                                 <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">จำนวน: ${itemQty} ชิ้น</div>
                             </div>
-                            <div style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">
+                            <div style="font-weight: 600; color: var(--primary-color, #0f766e); font-size: 0.9rem;">
                                 ฿${(itemPrice * itemQty).toLocaleString('th-TH', {minimumFractionDigits: 2})}
                             </div>
                         </div>
                     `;
                 }).join('');
+
+                const isPaid = (order.paymentStatus || '').toUpperCase() === 'PAID';
 
                 return `
                     <div class="order-card" style="margin-bottom: 16px;">
@@ -133,7 +388,7 @@
                             <span class="order-id">คำสั่งซื้อ #${displayOrderId}</span>
                             <span class="order-date">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                ${order.date || 'เมื่อเร็วๆ นี้'}
+                                ${formattedDate}
                             </span>
                         </div>
                         
@@ -142,36 +397,111 @@
                         </div>
 
                         <div style="border-top: 1px dashed #e2e8f0; padding-top: 10px; margin-bottom: 10px;">
-                            <!-- ยอดรวมก่อนหักส่วนลด -->
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                                 <span style="font-size: 0.85rem; color: var(--text-muted);">ยอดรวมสินค้า</span>
-                                <span style="font-size: 0.9rem; color: var(--text-heading);">฿${(order.subtotal || order.grandTotal).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                                <span style="font-size: 0.9rem; color: var(--text-heading);">฿${Number(order.totalAmount || order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
                             </div>
                             
-                            <!-- แสดงส่วนลด (ถ้ามี) -->
-                            ${(order.discount && order.discount > 0) ? `
+                            ${(order.discountAmount && Number(order.discountAmount) > 0) ? `
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                                 <span style="font-size: 0.85rem; color: #e11d48;">ส่วนลดคูปอง</span>
-                                <span style="font-size: 0.9rem; color: #e11d48; font-weight: 600;">-฿${order.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                                <span style="font-size: 0.9rem; color: #e11d48; font-weight: 600;">-฿${Number(order.discountAmount).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
                             </div>
                             ` : ''}
 
-                            <!-- ยอดชำระสุทธิ -->
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                                 <span style="font-size: 0.85rem; color: var(--text-heading); font-weight: 600;">ยอดสุทธิรวมทั้งสิ้น</span>
-                                <span style="font-size: 1.15rem; font-weight: 700; color: #0d5c2e;">฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                                <span style="font-size: 1.15rem; font-weight: 700; color: #0d5c2e;">฿${Number(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
                             </div>
                         </div>
 
                         <div class="order-footer">
                             <div>
-                                <span class="badge-status success">ชำระเงินแล้ว (${paymentLabel})</span>
+                                <span class="badge-status ${isPaid ? 'success' : 'pending'}">${isPaid ? 'ชำระเงินแล้ว' : 'รอการชำระเงิน'} (${paymentLabel})</span>
                             </div>
-                            <a href="./order-detail.html?id=${order.orderId}" class="btn-detail">ดูรายละเอียดเพิ่มเติม</a>
+                            <a href="./order-detail.html?id=${order.id}" class="btn-detail">ดูรายละเอียดเพิ่มเติม</a>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            const totalPages = Math.ceil(allOrders.length / itemsPerPage);
+            renderPaginationButtons(totalPages);
+        }
+
+        // 🔘 เรนเดอร์ปุ่มเลขหน้า (1, 2, 3...)
+        function renderPaginationButtons(totalPages) {
+            const paginationBox = document.getElementById('paginationContainer');
+            if (!paginationBox) return;
+
+            if (totalPages <= 1) {
+                paginationBox.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // 1. ปุ่มย้อนกลับ
+            html += `
+                <button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="หน้าก่อนหน้า">
+                    <i class="fa-solid fa-angle-left"></i>
+                </button>
+            `;
+
+            // 2. คำนวณช่วงตัวเลขที่ต้องแสดง
+            let pages = [];
+            if (totalPages <= 7) {
+                for (let i = 1; i <= totalPages; i++) pages.push(i);
+            } else {
+                if (currentPage <= 4) {
+                    pages = [1, 2, 3, 4, 5, '...', totalPages];
+                } else if (currentPage >= totalPages - 3) {
+                    pages = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+                } else {
+                    pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                }
+            }
+
+            // 3. เรนเดอร์ปุ่มตัวเลขและจุดไข่ปลา
+            pages.forEach(p => {
+                if (p === '...') {
+                    html += `
+                        <span class="page-ellipsis" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 40px; color: #94a3b8; font-weight: 600; font-size: 0.95rem; user-select: none;">
+                            •••
+                        </span>
+                    `;
+                } else {
+                    html += `
+                        <button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">
+                            ${p}
+                        </button>
+                    `;
+                }
+            });
+
+            // 4. ปุ่มหน้าถัดไป
+            html += `
+                <button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="หน้าถัดไป">
+                    <i class="fa-solid fa-angle-right"></i>
+                </button>
+            `;
+
+            paginationBox.innerHTML = html;
+        }
+
+        // ฟังก์ชันเปลี่ยนหน้า
+        function goToPage(pageNumber) {
+            const totalPages = Math.ceil(allOrders.length / itemsPerPage);
+            if (pageNumber < 1 || pageNumber > totalPages) return;
+
+            currentPage = pageNumber;
+            renderPaginatedOrders();
+
+            // เลื่อนจอกลับไปด้านบนของรายการคำสั่งซื้ออย่างนุ่มนวล
+            const topHeader = document.querySelector('.page-header-centered');
+            if (topHeader) {
+                topHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     </script>
 </body>

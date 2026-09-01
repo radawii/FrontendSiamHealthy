@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             btn.classList.add('active');
             const tabId = btn.getAttribute('data-tab');
-            document.getElementById(`${tabId}Form`).classList.add('active');
+            const targetPanel = document.getElementById(`${tabId}Form`);
+            if (targetPanel) targetPanel.classList.add('active');
         });
     });
 
@@ -45,14 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePasswordBtns.forEach(btn => {
         btn.addEventListener('click', function () {
             const input = this.previousElementSibling;
+            if (!input) return;
             const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
             input.setAttribute('type', type);
-
-            if (type === 'text') {
-                this.style.opacity = '0.5';
-            } else {
-                this.style.opacity = '1';
-            }
+            this.style.opacity = (type === 'text') ? '0.5' : '1';
         });
     });
 
@@ -62,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // ป้องกันการรีเฟรชหน้าเว็บ
+            e.preventDefault();
             console.log("👉 กดปุ่ม 'สมัครสมาชิก' แล้ว!");
 
-            const username = document.getElementById('regUsername').value;
-            const email = document.getElementById('regEmail').value;
-            const phone = document.getElementById('regPhone').value;
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
             const password = document.getElementById('regPassword').value;
-            const acceptTerms = document.getElementById('acceptTerms').checked;
+            const acceptTerms = document.getElementById('acceptTerms')?.checked;
 
             if (!acceptTerms) {
                 Swal.fire({ icon: 'warning', text: 'กรุณายอมรับเงื่อนไขการใช้งานก่อนสมัครสมาชิก' });
@@ -77,22 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                console.log("กำลังส่งข้อมูลไปที่:", `${API_BASE_URL}/auth/register`);
-
-                // ยิง API ไปที่ Backend
                 const response = await fetch(`${API_BASE_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        username: username, 
-                        email: email, 
-                        phone: phone, 
-                        password: password 
-                    })
+                    body: JSON.stringify({ username, email, phone, password })
                 });
 
                 const data = await response.json();
-                console.log("Backend ตอบกลับมาว่า:", data);
 
                 if (response.ok) {
                     Swal.fire({
@@ -101,9 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         text: 'กรุณาเข้าสู่ระบบด้วยบัญชีที่คุณเพิ่งสร้าง',
                         confirmButtonColor: '#0f766e'
                     }).then(() => {
-                        // สลับไปหน้าเข้าสู่ระบบอัตโนมัติ
-                        document.querySelector('[data-tab="login"]').click();
-                        document.getElementById('loginIdentifier').value = username;
+                        const loginTab = document.querySelector('[data-tab="login"]');
+                        if (loginTab) loginTab.click();
+                        const loginIdInput = document.getElementById('loginIdentifier');
+                        if (loginIdInput) loginIdInput.value = username;
                     });
                 } else {
                     Swal.fire({
@@ -112,18 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         text: data.message || 'เกิดข้อผิดพลาดจากเซิร์ฟเวอร์'
                     });
                 }
-
             } catch (error) {
                 console.error('❌ Register Error:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'ข้อผิดพลาดระบบ',
-                    text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ (กรุณาเช็ค CORS หรือ Backend)'
+                    text: 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้'
                 });
             }
         });
-    } else {
-        console.error("❌ หา Form 'registerForm' ไม่เจอในหน้าเว็บ");
     }
 
     // ----------------------------------------------------
@@ -133,24 +119,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            console.log("👉 กดปุ่ม 'เข้าสู่ระบบ' แล้ว!");
 
-            const identifier = document.getElementById('loginIdentifier').value;
+            const identifier = document.getElementById('loginIdentifier').value.trim();
             const password = document.getElementById('loginPassword').value;
-            const rememberMe = document.getElementById('rememberMe') ? document.getElementById('rememberMe').checked : false;
+            const rememberMe = document.getElementById('rememberMe')?.checked || false;
 
             try {
                 const response = await fetch(`${API_BASE_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: identifier, password: password }) 
+                    body: JSON.stringify({ username: identifier, password: password })
                 });
 
                 const data = await response.json();
-                console.log("Backend ตอบกลับมาว่า:", data);
 
                 if (response.ok) {
-                    // 🛠️ จัดการการจดจำข้อมูลเข้าสู่ระบบ (Remember Me)
+                    // Remember Me
                     if (rememberMe) {
                         localStorage.setItem('remembered_identifier', identifier);
                         localStorage.setItem('remembered_password', password);
@@ -163,15 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const token = data.access_token || data.token || 'login_success_token';
 
-                    // 🟢 1. แกะอีเมลจาก Response ที่ Backend ส่งกลับมา
-                    let userEmail = data.user?.email || data.email || '';
+                    // ดึง User Object จาก Response (ดักรับทุกรูปแบบ Key ที่ Backend อาจส่งมา)
+                    const userPayload = data.user || data.data || data;
+                    const resolvedId = userPayload.id ?? userPayload.userId ?? userPayload.user_id ?? data.userId ?? data.id;
 
-                    // 🟢 2. ถ้ากรอกช่อง Identifier มาเป็นอีเมล ให้ใช้ค่านั้นทันที
+                    let userEmail = userPayload.email || '';
                     if (!userEmail && identifier.includes('@')) {
                         userEmail = identifier;
                     }
 
-                    // 🟢 3. ถ้ายังหาอีเมลไม่เจอ (กรณีล็อกอินด้วย Username เช่น 'IT') ให้ลองดึงข้อมูล Profile เพิ่มเติม
+                    // ดึง Profile เพิ่มเติมถ้ายังไม่มี Email
                     if (!userEmail && token !== 'login_success_token') {
                         try {
                             const profileRes = await fetch(`${API_BASE_URL}/auth/profile`, {
@@ -186,29 +171,35 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // 🟢 ปรับปรุงการเซฟข้อมูลลง siam_healthy_user ให้เป็น JSON มีโครงสร้างที่สมบูรณ์
+                    // บันทึก Session ลง LocalStorage
                     const userObj = {
                         token: token,
-                        id: data.user?.id || data.userId || null,
+                        id: resolvedId,
+                        user_id: resolvedId,
                         email: userEmail,
-                        username: data.user?.username || identifier,
-                        name: data.user?.name || data.user?.fullname || identifier
+                        username: userPayload.username || identifier,
+                        name: userPayload.name || userPayload.fullname || identifier
                     };
 
-                    // บันทึกเข้า Local Storage เป็น JSON String
                     localStorage.setItem('siam_healthy_user', JSON.stringify(userObj));
 
                     Swal.fire({
                         icon: 'success',
                         title: 'เข้าสู่ระบบสำเร็จ!',
                         text: 'ยินดีต้อนรับกลับมาครับ',
-                        timer: 1500,
+                        timer: 1200,
                         showConfirmButton: false
                     }).then(() => {
-                        if (document.referrer && document.referrer.includes('cart')) {
-                            window.history.back(); 
+                        // 🚀 จุดสำคัญ: ลำดับการ Redirect
+                        const redirectUrl = localStorage.getItem('siam_healthy_redirect_after_login');
+
+                        if (redirectUrl) {
+                            localStorage.removeItem('siam_healthy_redirect_after_login');
+                            window.location.replace(redirectUrl);
+                        } else if (document.referrer && (document.referrer.includes('cart') || document.referrer.includes('orders') || document.referrer.includes('order-detail'))) {
+                            window.location.replace(document.referrer);
                         } else {
-                            window.location.href = '../index.html'; 
+                            window.location.replace('../index.html');
                         }
                     });
                 } else {
@@ -218,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         text: data.message || 'อีเมล/Username หรือรหัสผ่านไม่ถูกต้อง'
                     });
                 }
-
             } catch (error) {
                 console.error('❌ Login Error:', error);
                 Swal.fire({

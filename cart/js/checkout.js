@@ -37,7 +37,7 @@ function promptLogin() {
         confirmButtonText: 'เข้าสู่ระบบทันที',
         showCancelButton: true,
         cancelButtonText: 'กลับไปหน้าหลัก',
-        confirmButtonColor: '#0f766e',
+        confirmButtonColor: '#0d5c2e',
         cancelButtonColor: '#94a3b8',
         allowOutsideClick: false
     }).then((result) => {
@@ -121,7 +121,7 @@ function handleSuccessfulRedirectReturn() {
             icon: 'success',
             title: 'ชำระเงินสำเร็จ!',
             text: 'ระบบได้รับยอดชำระของคุณและส่งอีเมลยืนยันเรียบร้อยแล้ว',
-            confirmButtonColor: '#0f766e'
+            confirmButtonColor: '#0d5c2e'
         }).then(() => {
             window.history.replaceState({}, document.title, window.location.pathname);
             showReceiptModal(paymentMethodFromUrl, selectedItems, subtotal, discount, grandTotal);
@@ -513,7 +513,7 @@ function triggerPaymentSuccess(orderId, items, subtotal, discount, grandTotal) {
         icon: 'success',
         title: 'ชำระเงินสำเร็จ!',
         text: 'ระบบได้รับยอดชำระของคุณเรียบร้อยแล้ว',
-        confirmButtonColor: '#0f766e',
+        confirmButtonColor: '#0d5c2e',
         allowOutsideClick: false
     }).then(() => {
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -667,7 +667,7 @@ async function processPayment() {
             icon: 'error',
             title: 'เกิดข้อผิดพลาด',
             text: error.message || 'ไม่สามารถเชื่อมต่อระบบชำระเงินได้',
-            confirmButtonColor: '#0f766e'
+            confirmButtonColor: '#0d5c2e'
         });
     }
 }
@@ -679,7 +679,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
             icon: 'error',
             title: 'ข้อผิดพลาด',
             text: 'ไม่พบ Stripe Publishable Key จากระบบ',
-            confirmButtonColor: '#0f766e'
+            confirmButtonColor: '#0d5c2e'
         });
         return;
     }
@@ -689,7 +689,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
     if (paymentType === 'promptpay') {
         Swal.fire({
             title: 'กำลังรอการชำระเงิน...',
-            html: 'กรุณาสแกน QR Code ที่หน้าต่าง Stripe<br><br><span style="color: #e11d48; font-size: 0.9em; font-weight: bold;">⚠️ โปรดอย่าปิดหน้าต่างนี้จนกว่าการชำระเงินจะสำเร็จ (อาจใช้เวลา 10-30 วินาที)</span>',
+            html: 'กรุณาสแกน QR Code ที่หน้าต่าง Stripe<br><br><span style="color: #e11d48; font-size: 0.9em; font-weight: bold;">โปรดอย่าปิดหน้าต่างนี้จนกว่าการชำระเงินจะสำเร็จ (อาจใช้เวลา 10-30 วินาที)</span>',
             allowOutsideClick: false, // ล็อคไม่ให้คลิกพื้นหลังปิด
             showConfirmButton: false, 
             didOpen: () => { Swal.showLoading(); }
@@ -734,7 +734,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
                         icon: 'warning',
                         title: 'ยังชำระเงินไม่สมบูรณ์',
                         text: 'หากชำระเงินไปแล้วกรุณารอประมวลผล หากยังไม่ชำระเงิน คุณสามารถกด "ยืนยันและชำระเงิน" อีกครั้งได้ครับ',
-                        confirmButtonColor: '#0f766e'
+                        confirmButtonColor: '#0d5c2e'
                     });
                 }
             });
@@ -767,11 +767,11 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
     container.style.display = 'block';
     container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <p style="font-weight: 600; color: #0f766e; margin: 0;">ชำระเงินผ่านบัตรเครดิต/เดบิต</p>
+            <p style="font-weight: 600; color: #0d5c2e; margin: 0;">ชำระเงินผ่านบัตรเครดิต/เดบิต</p>
             <span style="font-size: 0.75rem; color: #64748b;">(ปลอดภัยด้วย Stripe)</span>
         </div>
         <div id="stripe-payment-element" style="margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;"></div>
-        <button type="button" id="confirmStripePaymentBtn" class="checkout-btn" style="width: 100%; background: #0f766e; color: white; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
+        <button type="button" id="confirmStripePaymentBtn" class="checkout-btn" style="width: 100%; background: #0d5c2e; color: white; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600;">
             ยืนยันและชำระเงิน ฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}
         </button>
     `;
@@ -827,7 +827,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
                 icon: 'success',
                 title: 'ชำระเงินสำเร็จ!',
                 text: 'ระบบได้รับยอดชำระผ่านบัตรเครดิตและส่งอีเมลยืนยันเรียบร้อยแล้ว',
-                confirmButtonColor: '#0f766e'
+                confirmButtonColor: '#0d5c2e'
             }).then(() => {
                 showReceiptModal('credit', selectedItems, subtotal, discount, grandTotal);
             });
@@ -856,7 +856,6 @@ function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0,
         const orderNo = formatOrderId(rawOrderId);
 
         const displayAddress = buildFullAddress(window.currentAddress);
-
         let paymentStr = (paymentMethod === 'promptpay') ? 'สแกน QR Code / พร้อมเพย์' : 'บัตรเครดิต / Stripe';
 
         receiptPaper.innerHTML = `
@@ -894,6 +893,12 @@ function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0,
                 <span>฿${grandTotal.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
             </div>
         `;
+
+        // 🌟 อัปเดตปุ่ม "ดูรายละเอียด" ใน Receipt Modal ให้ผูก ID ของออเดอร์นั้น
+        const detailBtn = document.querySelector('#receiptModal button[onclick*="viewOrderDetails"]');
+        if (detailBtn) {
+            detailBtn.setAttribute('onclick', `window.location.href='./order-detail.html?id=${rawOrderId}'`);
+        }
     }
 
     const modal = document.getElementById('receiptModal');
@@ -920,7 +925,14 @@ function cancelOrder() {
 }
 
 function viewOrderDetails() {
-    window.location.href = './order-detail.html'; 
+    const latestOrder = JSON.parse(localStorage.getItem('latest_order')) || {};
+    const orderId = latestOrder.orderId;
+    
+    if (orderId) {
+        window.location.href = `./order-detail.html?id=${orderId}`;
+    } else {
+        window.location.href = './orders.html';
+    }
 }
 
 function validateAndSaveAddress() {

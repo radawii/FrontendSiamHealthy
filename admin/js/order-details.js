@@ -178,12 +178,278 @@ window.onclick = function(event) {
     }
 }
 
-function exportCSV() {
-    Swal.fire('สำเร็จ', 'ฟังก์ชัน Export CSV พร้อมใช้งาน', 'success');
+// ฟังก์ชันแปลงและจัดกลุ่มข้อมูลคำสั่งซื้อให้อยู่ในโครงสร้างพร้อม Export
+function prepareOrderExportData() {
+    if (!currentOrderData) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'ไม่พบข้อมูล',
+            text: 'ยังไม่มีข้อมูลคำสั่งซื้อสำหรับส่งออก',
+            confirmButtonColor: '#4f46e5'
+        });
+        return null;
+    }
+
+    const order = currentOrderData;
+    const formattedOrderId = `ORD2026${String(order.id).padStart(5, '0')}`;
+    const dateObj = new Date(order.createdAt || order.created_at || Date.now());
+    const dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+    // ข้อมูลลูกค้าและที่อยู่
+    const user = order.user || {};
+    const addr = order.shippingAddress || {};
+    const customerName = user.name || user.username || addr.fullname || 'ลูกค้าทั่วไป';
+    const customerEmail = user.email || '-';
+    const customerPhone = addr.phoneNumber || user.phone || '-';
+    const fullAddress = `${addr.address || '-'} ต.${addr.subdistrict || '-'} อ.${addr.district || '-'} จ.${addr.province || '-'} ${addr.zipcode || ''}`.trim();
+
+    // สถานะและการเงิน
+    const oStatus = (order.orderStatus || order.order_status || 'PROCESSING').toUpperCase();
+    const pStatus = (order.paymentStatus || order.payment_status || 'PENDING').toUpperCase();
+    const paymentMethod = (order.paymentMethod || 'PROMPTPAY').toUpperCase();
+
+    const items = order.orderItems || order.items || [];
+    let subtotal = 0;
+
+    const formattedItems = items.map((item, index) => {
+        const price = Number(item.price || 0);
+        const qty = Number(item.quantity || 1);
+        const total = price * qty;
+        subtotal += total;
+
+        return {
+            'ลำดับ': index + 1,
+            'รหัสสินค้า': item.productId || item.product_id || '-',
+            'ชื่อสินค้า': item.productName || item.product_name || 'สินค้า',
+            'ราคาต่อหน่วย (บาท)': price,
+            'จำนวน': qty,
+            'ยอดรวม (บาท)': total
+        };
+    });
+
+    const discount = Number(order.discountAmount || order.discount_amount || 0);
+    const shippingFee = Number(order.shippingFee || order.shipping_fee || 0);
+    const grandTotal = Number(order.grandTotal || order.grand_total || (subtotal - discount + shippingFee));
+
+    const orderSummary = [
+        { 'หัวข้อ': 'รหัสคำสั่งซื้อ', 'ข้อมูล': formattedOrderId },
+        { 'หัวข้อ': 'วันที่สั่งซื้อ', 'ข้อมูล': dateStr },
+        { 'หัวข้อ': 'สถานะคำสั่งซื้อ', 'ข้อมูล': oStatus },
+        { 'หัวข้อ': 'สถานะการชำระเงิน', 'ข้อมูล': pStatus },
+        { 'หัวข้อ': 'ช่องทางชำระเงิน', 'ข้อมูล': paymentMethod },
+        { 'หัวข้อ': 'ชื่อลูกค้า', 'ข้อมูล': customerName },
+        { 'หัวข้อ': 'อีเมล', 'ข้อมูล': customerEmail },
+        { 'หัวข้อ': 'เบอร์โทรศัพท์', 'ข้อมูล': customerPhone },
+        { 'หัวข้อ': 'ที่อยู่จัดส่ง', 'ข้อมูล': fullAddress },
+        { 'หัวข้อ': 'ยอดรวมราคาสินค้า (บาท)', 'ข้อมูล': subtotal },
+        { 'หัวข้อ': 'ส่วนลด (บาท)', 'ข้อมูล': discount },
+        { 'หัวข้อ': 'ค่าจัดส่ง (บาท)', 'ข้อมูล': shippingFee },
+        { 'หัวข้อ': 'ยอดสุทธิ (บาท)', 'ข้อมูล': grandTotal }
+    ];
+
+    return {
+        orderId: formattedOrderId,
+        summary: orderSummary,
+        items: formattedItems
+    };
 }
 
+// 3.1 ส่งออกเป็น CSV (UTF-8 BOM พร้อมแยก Section ชัดเจน)
+function exportCSV() {
+    if (!currentOrderData) {
+        Swal.fire('ข้อผิดพลาด', 'ยังไม่มีข้อมูลคำสั่งซื้อสำหรับส่งออก', 'error');
+        return;
+    }
+
+    const order = currentOrderData;
+    const formattedOrderId = `ORD2026${String(order.id).padStart(5, '0')}`;
+    const dateObj = new Date(order.createdAt || order.created_at || Date.now());
+    const dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' น.';
+
+    const user = order.user || {};
+    const addr = order.shippingAddress || {};
+    const customerName = user.name || user.username || 'ลูกค้าทั่วไป';
+    const customerEmail = user.email || 'ไม่มีอีเมล';
+    const customerPhone = addr.phoneNumber || user.phone || '-';
+
+    const recipientName = addr.fullname || '-';
+    const recipientPhone = addr.phoneNumber || '-';
+    const recipientAddr = `${addr.address || '-'} ต.${addr.subdistrict || '-'} อ.${addr.district || '-'} จ.${addr.province || '-'} ${addr.zipcode || ''}`.trim();
+
+    const oStatus = (order.orderStatus || order.order_status || 'PROCESSING').toUpperCase();
+    const pStatus = (order.paymentStatus || order.payment_status || 'PENDING').toUpperCase();
+    const paymentMethod = (order.paymentMethod || 'PROMPTPAY').toUpperCase();
+
+    const items = order.orderItems || order.items || [];
+    let subtotal = 0;
+
+    // Helper escape CSV
+    const esc = (val) => {
+        let str = val !== undefined && val !== null ? String(val) : '';
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            str = `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+    };
+
+    let csvRows = [
+        [esc('ใบสรุปรายการคำสั่งซื้อ (Order Details)'), '', '', '', ''],
+        [esc(`รหัสคำสั่งซื้อ: #${formattedOrderId}`), '', esc(`วันที่สั่งซื้อ: ${dateStr}`), '', ''],
+        [esc(`สถานะคำสั่งซื้อ: ${oStatus}`), '', esc(`การชำระเงิน: ${pStatus} (${paymentMethod})`), '', ''],
+        ['', '', '', '', ''],
+        [esc('--- ข้อมูลผู้สั่งซื้อ (Customer) ---'), '', esc('--- ที่อยู่สำหรับจัดส่ง (Shipping Address) ---'), '', ''],
+        [esc(`ชื่อลูกค้า: ${customerName}`), '', esc(`ผู้รับ: คุณ ${recipientName}`), '', ''],
+        [esc(`เบอร์โทร: ${customerPhone}`), '', esc(`โทร: ${recipientPhone}`), '', ''],
+        [esc(`อีเมล: ${customerEmail}`), '', esc(`ที่อยู่: ${recipientAddr}`), '', ''],
+        ['', '', '', '', ''],
+        [esc('--- รายการสินค้า (Order Items) ---'), '', '', '', ''],
+        [esc('ลำดับ'), esc('สินค้า / รหัสสินค้า'), esc('ราคาต่อหน่วย (฿)'), esc('จำนวน'), esc('ยอดรวม (฿)')]
+    ];
+
+    items.forEach((item, index) => {
+        const price = Number(item.price || 0);
+        const qty = Number(item.quantity || 1);
+        const total = price * qty;
+        subtotal += total;
+
+        const prodName = `${item.productName || item.product_name || 'สินค้า'} (รหัส: ${item.productId || item.product_id || '-'})`;
+        csvRows.push([
+            esc(index + 1),
+            esc(prodName),
+            esc(price.toFixed(2)),
+            esc(qty),
+            esc(total.toFixed(2))
+        ]);
+    });
+
+    const discount = Number(order.discountAmount || order.discount_amount || 0);
+    const shippingFee = Number(order.shippingFee || order.shipping_fee || 0);
+    const grandTotal = Number(order.grandTotal || order.grand_total || (subtotal - discount + shippingFee));
+
+    csvRows.push(['', '', '', '', '']);
+    csvRows.push(['', '', '', esc('ยอดรวมราคาสินค้า (Total Amount):'), esc(subtotal.toFixed(2))]);
+    csvRows.push(['', '', '', esc('ส่วนลด (Discount):'), esc((-discount).toFixed(2))]);
+    csvRows.push(['', '', '', esc('ค่าจัดส่ง (Shipping Fee):'), esc(shippingFee.toFixed(2))]);
+    csvRows.push(['', '', '', esc('ยอดสุทธิ (Grand Total):'), esc(grandTotal.toFixed(2))]);
+
+    const csvString = csvRows.map(row => row.join(',')).join('\r\n');
+
+    // ใส่ UTF-8 BOM (\uFEFF) เพื่อให้อ่านภาษาไทยในโปรแกรม Excel ได้ทันที สระไม่เพี้ยน
+    const blob = new Blob(['\uFEFF' + csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Order_${formattedOrderId}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    const menu = document.getElementById('export-menu');
+    if (menu) menu.classList.add('hidden');
+
+    Swal.fire({
+        icon: 'success',
+        title: 'ส่งออก CSV สำเร็จ!',
+        text: `ดาวน์โหลดไฟล์ Order_${formattedOrderId}.csv เรียบร้อยแล้ว`,
+        timer: 2000,
+        showConfirmButton: false
+    });
+}
+
+// 3.2 ส่งออกเป็น Excel (.xlsx) ด้วย SheetJS แยก 2 ชีท (สรุปออเดอร์ + รายการสินค้า)
 function exportExcel() {
-    Swal.fire('สำเร็จ', 'ฟังก์ชัน Export Excel พร้อมใช้งาน', 'success');
+    if (!currentOrderData) {
+        Swal.fire('ข้อผิดพลาด', 'ยังไม่มีข้อมูลคำสั่งซื้อสำหรับส่งออก', 'error');
+        return;
+    }
+
+    if (typeof XLSX === 'undefined') {
+        Swal.fire('ข้อผิดพลาด', 'ไม่พบไลบรารี SheetJS (XLSX)', 'error');
+        return;
+    }
+
+    const order = currentOrderData;
+    const formattedOrderId = `ORD2026${String(order.id).padStart(5, '0')}`;
+    const dateObj = new Date(order.createdAt || order.created_at || Date.now());
+    const dateStr = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' น.';
+
+    const user = order.user || {};
+    const addr = order.shippingAddress || {};
+    const customerName = user.name || user.username || 'ลูกค้าทั่วไป';
+    const customerEmail = user.email || 'ไม่มีอีเมล';
+    const customerPhone = addr.phoneNumber || user.phone || '-';
+
+    const recipientName = addr.fullname || '-';
+    const recipientPhone = addr.phoneNumber || '-';
+    const recipientAddr = `${addr.address || '-'} ต.${addr.subdistrict || '-'} อ.${addr.district || '-'} จ.${addr.province || '-'} ${addr.zipcode || ''}`.trim();
+
+    const oStatus = (order.orderStatus || order.order_status || 'PROCESSING').toUpperCase();
+    const pStatus = (order.paymentStatus || order.payment_status || 'PENDING').toUpperCase();
+    const paymentMethod = (order.paymentMethod || 'PROMPTPAY').toUpperCase();
+
+    const items = order.orderItems || order.items || [];
+    let subtotal = 0;
+
+    const aoaData = [
+        ['ใบสรุปรายการคำสั่งซื้อ (Order Details)'],
+        [`รหัสคำสั่งซื้อ: #${formattedOrderId}`, '', `วันที่สั่งซื้อ: ${dateStr}`],
+        [`สถานะคำสั่งซื้อ: ${oStatus}`, '', `การชำระเงิน: ${pStatus} (${paymentMethod})`],
+        [],
+        ['ข้อมูลผู้สั่งซื้อ (Customer)', '', 'ที่อยู่สำหรับจัดส่ง (Shipping Address)'],
+        ['ชื่อลูกค้า:', customerName, 'ผู้รับ:', `คุณ ${recipientName} (${recipientPhone})`],
+        ['เบอร์โทร:', customerPhone, 'ที่อยู่:', recipientAddr],
+        ['อีเมล:', customerEmail, '', ''],
+        [],
+        ['รายการสินค้า (Order Items)'],
+        ['ลำดับ', 'สินค้า / รหัสสินค้า', 'ราคาต่อหน่วย (฿)', 'จำนวน', 'ยอดรวม (฿)']
+    ];
+
+    items.forEach((item, index) => {
+        const price = Number(item.price || 0);
+        const qty = Number(item.quantity || 1);
+        const total = price * qty;
+        subtotal += total;
+
+        const prodName = `${item.productName || item.product_name || 'สินค้า'} (รหัส: ${item.productId || item.product_id || '-'})`;
+        aoaData.push([index + 1, prodName, price, qty, total]);
+    });
+
+    const discount = Number(order.discountAmount || order.discount_amount || 0);
+    const shippingFee = Number(order.shippingFee || order.shipping_fee || 0);
+    const grandTotal = Number(order.grandTotal || order.grand_total || (subtotal - discount + shippingFee));
+
+    aoaData.push([]);
+    aoaData.push(['', '', '', 'ยอดรวมราคาสินค้า (Total Amount):', subtotal]);
+    aoaData.push(['', '', '', 'ส่วนลด (Discount):', -discount]);
+    aoaData.push(['', '', '', 'ค่าจัดส่ง (Shipping Fee):', shippingFee]);
+    aoaData.push(['', '', '', 'ยอดสุทธิ (Grand Total):', grandTotal]);
+
+    const ws = XLSX.utils.aoa_to_sheet(aoaData);
+
+    ws['!cols'] = [
+        { wch: 10 },
+        { wch: 38 },
+        { wch: 20 },
+        { wch: 14 },
+        { wch: 22 }
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, formattedOrderId);
+
+    XLSX.writeFile(wb, `Order_${formattedOrderId}.xlsx`);
+
+    const menu = document.getElementById('export-menu');
+    if (menu) menu.classList.add('hidden');
+
+    Swal.fire({
+        icon: 'success',
+        title: 'ส่งออก Excel สำเร็จ!',
+        text: `ดาวน์โหลดไฟล์ Order_${formattedOrderId}.xlsx เรียบร้อยแล้ว`,
+        timer: 2000,
+        showConfirmButton: false
+    });
 }
 
 // 4. Modal อัปเดตสถานะ

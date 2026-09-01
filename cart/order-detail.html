@@ -12,6 +12,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+    <style>
+        /* Skeleton Loading & Shimmer Animation */
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite ease-in-out;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-box {
+            background: #fafcfb;
+            border: 1px solid #edf2f7;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .skeleton-item-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .skeleton-fade-in {
+            animation: fadeInDetail 0.35s ease-out forwards;
+        }
+
+        @keyframes fadeInDetail {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
     <script src="../js/header.js" defer></script>
     <script src="../js/contact.js" defer></script>
     <script src="../js/footer.js" defer></script>
@@ -50,129 +96,240 @@
             return `ORD${cleanId}`;
         }
 
-        // ฟังก์ชันช่วยจัดรูปแบบที่อยู่จัดส่งให้เป็นข้อความอ่านง่าย
-        function buildFullAddress(addr) {
-            if (!addr) return 'ไม่พบข้อมูลที่อยู่';
-            if (typeof addr === 'string') return addr; 
+        // ฟังก์ชันแปลงชื่อสินค้าเป็นรูปภาพที่ถูกต้องตามโฟลเดอร์ของร้าน
+        function resolveProductImage(name, rawImage) {
+            if (rawImage && typeof rawImage === 'string' && rawImage.trim() !== '') {
+                let img = rawImage.replace(/^\.\//, '').replace(/^\//, '');
+                if (!img.startsWith('../shop/') && !img.startsWith('http')) {
+                    return img.startsWith('shop/') ? '../' + img : '../shop/' + img;
+                }
+                return img;
+            }
 
-            let parts = [];
-            if(addr.houseNo) parts.push(`เลขที่ ${addr.houseNo}`);
-            if(addr.moo) parts.push(`หมู่ที่ ${addr.moo}`);
-            if(addr.village) parts.push(`หมู่บ้าน ${addr.village}`);
-            if(addr.soi) parts.push(`ซอย ${addr.soi}`);
-            if(addr.road) parts.push(`ถนน ${addr.road}`);
-            if(addr.subdistrict) parts.push(`ต.${addr.subdistrict}`);
-            if(addr.district) parts.push(`อ.${addr.district}`);
-            if(addr.province) parts.push(`จ.${addr.province}`);
-            if(addr.zipcode) parts.push(`${addr.zipcode}`);
-            return parts.join(' ');
+            const cleanName = (name || '').toLowerCase().replace(/[\s\-_]/g, '');
+
+            // 1. andicellix
+            if (cleanName.includes('andicellix') || cleanName.includes('andi')) return '../shop/img/andicellix/andicellix1.png';
+            // 2. astin
+            if (cleanName.includes('astin')) return '../shop/img/astin/astin1.png';
+            // 3. backpro
+            if (cleanName.includes('backpro') || cleanName.includes('back')) return '../shop/img/backpro/backpro1.png';
+            // 4. blackrhino
+            if (cleanName.includes('blackrhino') || cleanName.includes('rhino')) return '../shop/img/blackrhino/blackrhino1.png';
+            // 5. carthisin
+            if (cleanName.includes('carthisin')) return '../shop/img/carthisin/carthisin1.png';
+            // 6. cartirex
+            if (cleanName.includes('cartirex')) return '../shop/img/cartirex/cartirex1.png';
+            // 7. elsie
+            if (cleanName.includes('elsie')) return '../shop/img/elsie/elsie1.png';
+            // 8. extera
+            if (cleanName.includes('extera')) return '../shop/img/extera/extera1.png';
+            // 9. genesis
+            if (cleanName.includes('genesis')) return '../shop/img/genesis/genesis1.png';
+            // 10. geralox
+            if (cleanName.includes('geralox')) return '../shop/img/geralox/geralox1.png';
+            // 11. helmina
+            if (cleanName.includes('helmina')) return '../shop/img/helmina/helmina1.png';
+            // 12. oclarizin
+            if (cleanName.includes('oclarizin')) return '../shop/img/oclarizin/oclarizin1.png';
+            // 13. onix
+            if (cleanName.includes('onix')) return '../shop/img/onix/onix1.png';
+            // 14. philola
+            if (cleanName.includes('philola')) return '../shop/img/philola/philola1.png';
+            // 15. scomplex
+            if (cleanName.includes('scomplex') || cleanName.includes('complex')) return '../shop/img/scomplex/scomplex1.png';
+            // 16. tchrome
+            if (cleanName.includes('tchrome') || cleanName.includes('chrome')) return '../shop/img/tchrome/tchrome1.png';
+            // 17. turbine
+            if (cleanName.includes('turbine')) return '../shop/img/turbine/turbine1.png';
+
+            // fallback อัตโนมัติไปยังโฟลเดอร์ตามชื่อสินค้า
+            return `../shop/img/${cleanName}/${cleanName}1.png`;
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('orderDetailsContainer');
+        // ฟังก์ชันรวมที่อยู่จัดส่งให้ครบถ้วนทั้งบ้านเลขที่ ตำบล อำเภอ จังหวัด และรหัสไปรษณีย์
+        function buildFullAddress(addr) {
+            if (!addr) return 'ไม่พบข้อมูลที่อยู่';
+            if (typeof addr === 'string') return addr;
 
+            let baseAddress = addr.address || '';
+            if (!baseAddress) {
+                let parts = [];
+                if (addr.houseNo) parts.push(`เลขที่ ${addr.houseNo}`);
+                if (addr.moo) parts.push(`หมู่ที่ ${addr.moo}`);
+                if (addr.village) parts.push(`หมู่บ้าน ${addr.village}`);
+                if (addr.soi) parts.push(`ซอย ${addr.soi}`);
+                if (addr.road) parts.push(`ถนน ${addr.road}`);
+                baseAddress = parts.join(' ');
+            }
+
+            const subdistrict = addr.subdistrict ? `ต.${addr.subdistrict.replace(/^ต\./, '')}` : '';
+            const district = addr.district ? `อ.${addr.district.replace(/^อ\./, '')}` : '';
+            const province = addr.province ? `จ.${addr.province.replace(/^จ\./, '')}` : '';
+            const zipcode = addr.zipcode ? `${addr.zipcode}` : '';
+
+            const fullText = [baseAddress, subdistrict, district, province, zipcode]
+                .filter(part => part && part.trim() !== '' && part.trim() !== '-')
+                .join(' ');
+
+            return fullText || 'ไม่พบข้อมูลที่อยู่';
+        }
+
+        // แสดง Shimmer Skeleton Placeholder ระหว่างรอ API
+        function renderDetailSkeleton(container) {
+            container.innerHTML = `
+                <div class="skeleton-box">
+                    <div class="skeleton-shimmer" style="width: 45%; height: 16px; margin-bottom: 10px;"></div>
+                    <div class="skeleton-shimmer" style="width: 35%; height: 14px; margin-bottom: 10px;"></div>
+                    <div class="skeleton-shimmer" style="width: 30%; height: 14px; margin-bottom: 10px;"></div>
+                    <div class="skeleton-shimmer" style="width: 40%; height: 14px;"></div>
+                </div>
+
+                <div class="skeleton-shimmer" style="width: 160px; height: 18px; margin-bottom: 16px;"></div>
+
+                <div style="margin-bottom: 24px;">
+                    <div class="skeleton-item-row">
+                        <div class="skeleton-shimmer" style="width: 54px; height: 54px; border-radius: 8px; flex-shrink: 0;"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton-shimmer" style="width: 50%; height: 16px; margin-bottom: 8px;"></div>
+                            <div class="skeleton-shimmer" style="width: 20%; height: 12px;"></div>
+                        </div>
+                        <div class="skeleton-shimmer" style="width: 70px; height: 16px;"></div>
+                    </div>
+                    <div class="skeleton-item-row">
+                        <div class="skeleton-shimmer" style="width: 54px; height: 54px; border-radius: 8px; flex-shrink: 0;"></div>
+                        <div style="flex: 1;">
+                            <div class="skeleton-shimmer" style="width: 40%; height: 16px; margin-bottom: 8px;"></div>
+                            <div class="skeleton-shimmer" style="width: 20%; height: 12px;"></div>
+                        </div>
+                        <div class="skeleton-shimmer" style="width: 70px; height: 16px;"></div>
+                    </div>
+                </div>
+
+                <div class="skeleton-box" style="margin-bottom: 20px;">
+                    <div class="skeleton-shimmer" style="width: 100px; height: 16px; margin-bottom: 12px;"></div>
+                    <div class="skeleton-shimmer" style="width: 40%; height: 14px; margin-bottom: 8px;"></div>
+                    <div class="skeleton-shimmer" style="width: 80%; height: 14px;"></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                    <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px;">
+                        <div class="skeleton-shimmer" style="width: 80px; height: 14px;"></div>
+                        <div class="skeleton-shimmer" style="width: 60px; height: 14px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; padding-top: 8px;">
+                        <div class="skeleton-shimmer" style="width: 110px; height: 18px;"></div>
+                        <div class="skeleton-shimmer" style="width: 90px; height: 20px;"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('orderDetailsContainer');
             const urlParams = new URLSearchParams(window.location.search);
             const targetOrderId = urlParams.get('id');
 
-            let order = null;
-
-            const storedOrders = JSON.parse(localStorage.getItem('siam_healthy_orders')) || [];
-            if (targetOrderId) {
-                order = storedOrders.find(o => String(o.orderId) === String(targetOrderId));
-            }
-
-            if (!order) {
-                const latestOrderJSON = localStorage.getItem('latest_order');
-                if (latestOrderJSON) {
-                    const parsedLatest = JSON.parse(latestOrderJSON);
-                    if (!targetOrderId || String(parsedLatest.orderId) === String(targetOrderId)) {
-                        order = parsedLatest;
-                    }
-                }
-            }
-
-            if (!order) {
+            if (!targetOrderId) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px;">
-                        <p style="color: var(--text-muted); margin-bottom: 15px;">ไม่พบข้อมูลคำสั่งซื้อที่คุณต้องการ</p>
+                        <p style="color: var(--text-muted); margin-bottom: 15px;">ไม่พบรหัสคำสั่งซื้อ</p>
                         <a href="./orders.html" class="btn-primary-custom">กลับไปหน้าประวัติคำสั่งซื้อ</a>
                     </div>
                 `;
                 return;
             }
 
-            let itemsHTML = (order.items || []).map(item => {
-                const itemName = item.name || item.product_name || 'สินค้า';
-                const itemImage = item.image || '../images/default-product.png';
-                const itemQty = item.quantity || 1;
-                const itemPrice = item.price || 0;
+            // แสดงโครงร่าง Shimmer ระหว่างโหลดข้อมูล
+            renderDetailSkeleton(container);
 
-                return `
-                    <div class="order-item-row">
-                        <img src="${itemImage}" alt="${itemName}" onerror="this.src='../images/default-product.png'">
-                        <div class="order-item-info">
-                            <h4>${itemName}</h4>
-                            <p>จำนวน: ${itemQty} ชิ้น</p>
+            try {
+                const res = await fetch(`http://localhost:3000/orders/${targetOrderId}`);
+                if (!res.ok) throw new Error('Order not found');
+                const order = await res.json();
+
+                const itemsList = order.orderItems || order.items || [];
+                let itemsHTML = itemsList.map(item => {
+                    const itemName = item.productName || item.name || 'สินค้า';
+                    const itemImage = resolveProductImage(itemName, item.image || item.productImage);
+                    const itemQty = item.quantity || 1;
+                    const itemPrice = Number(item.price) || 0;
+
+                    return `
+                        <div class="order-item-row">
+                            <img src="${itemImage}" alt="${itemName}" onerror="this.onerror=null; this.src='../shop/img/elsie/elsie1.png';">
+                            <div class="order-item-info">
+                                <h4>${itemName}</h4>
+                                <p>จำนวน: ${itemQty} ชิ้น</p>
+                            </div>
+                            <span class="order-item-price">฿${(itemPrice * itemQty).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
                         </div>
-                        <span class="order-item-price">฿${(itemPrice * itemQty).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                    `;
+                }).join('');
+
+                let paymentStr = order.paymentMethod || '';
+                const method = paymentStr.toLowerCase();
+                if (method === 'promptpay') paymentStr = 'สแกน QR Code / พร้อมเพย์';
+                else if (method === 'credit' || method === 'card' || method === 'stripe') paymentStr = 'บัตรเครดิต / เดบิต';
+                else if (method === 'cod') paymentStr = 'เก็บเงินปลายทาง (COD)';
+
+                const addressObj = order.shippingAddress;
+                // ส่ง addressObj ให้ buildFullAddress รวมข้อความที่อยู่ทุกฟิลด์
+                const fullAddressText = buildFullAddress(addressObj);
+                const receiverName = addressObj?.fullname || addressObj?.fullName || 'คุณลูกค้า';
+                const rawPhone = addressObj?.phoneNumber || addressObj?.phone;
+                const receiverPhone = rawPhone ? `(${rawPhone})` : '';
+                const fullOrderId = formatOrderId(order.id);
+                const orderDate = order.createdAt 
+                    ? new Date(order.createdAt).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' })
+                    : '-';
+                
+                const isPaid = (order.paymentStatus || '').toUpperCase() === 'PAID';
+
+                container.innerHTML = `
+                    <div class="skeleton-fade-in">
+                        <div class="order-meta-box">
+                            <p><strong>หมายเลขคำสั่งซื้อ:</strong> ${fullOrderId}</p>
+                            <p><strong>วันที่สั่งซื้อ:</strong> ${orderDate}</p>
+                            <p><strong>สถานะคำสั่งซื้อ:</strong> <span class="${isPaid ? 'status-success' : 'status-pending'}">${isPaid ? 'ชำระเงินเรียบร้อยแล้ว' : 'รอการชำระเงิน'}</span></p>
+                            <p><strong>ช่องทางชำระเงิน:</strong> ${paymentStr}</p>
+                        </div>
+
+                        <h3 class="section-title">รายการสินค้าที่สั่งซื้อ</h3>
+                        <div class="order-items-container">${itemsHTML}</div>
+
+                        <div class="order-address-box">
+                            <h3 class="section-title" style="margin-bottom: 8px;">ที่อยู่จัดส่ง</h3>
+                            <p class="receiver-name">${receiverName} ${receiverPhone}</p>
+                            <p class="receiver-address">${fullAddressText}</p>
+                        </div>
+
+                        <div class="order-total-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                            <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px;">
+                                <span style="color: var(--text-muted); font-size: 0.95rem;">ยอดรวมสินค้า:</span>
+                                <span style="font-size: 0.95rem;">฿${Number(order.totalAmount || order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            ${(order.discountAmount && Number(order.discountAmount) > 0) ? `
+                            <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; color: #e11d48;">
+                                <span style="font-size: 0.95rem;">ส่วนลดคูปอง:</span>
+                                <span style="font-weight: 600; font-size: 0.95rem;">-฿${Number(order.discountAmount).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            ` : ''}
+                            <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; font-size: 1.15rem; font-weight: 700; color: #0d5c2e; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+                                <span>ยอดชำระสุทธิ:</span>
+                                <span>฿${Number(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
+                            </div>
+                        </div>
                     </div>
                 `;
-            }).join('');
-
-            let paymentStr = order.paymentMethod;
-            if (paymentStr === 'promptpay') paymentStr = 'สแกน QR Code / พร้อมเพย์';
-            else if (paymentStr === 'credit' || paymentStr === 'card' || paymentStr === 'stripe') paymentStr = 'บัตรเครดิต / เดบิต';
-            else if (paymentStr === 'cod') paymentStr = 'เก็บเงินปลายทาง (COD)';
-
-            const addressObj = order.shippingAddress;
-            const fullAddressText = buildFullAddress(addressObj);
-            const receiverName = addressObj?.fullname || 'คุณลูกค้า';
-            const receiverPhone = addressObj?.phone ? `(${addressObj.phone})` : '';
-
-            // แปลงหมายเลขคำสั่งซื้อให้เป็นรูปแบบเต็ม
-            const fullOrderId = formatOrderId(order.orderId);
-
-            container.innerHTML = `
-                <div class="order-meta-box">
-                    <p><strong>หมายเลขคำสั่งซื้อ:</strong> ${fullOrderId}</p>
-                    <p><strong>วันที่สั่งซื้อ:</strong> ${order.date || '-'}</p>
-                    <p><strong>สถานะคำสั่งซื้อ:</strong> <span class="status-success">ชำระเงินเรียบร้อยแล้ว</span></p>
-                    <p><strong>ช่องทางชำระเงิน:</strong> ${paymentStr}</p>
-                </div>
-
-                <h3 class="section-title">รายการสินค้าที่สั่งซื้อ</h3>
-                <div class="order-items-container">${itemsHTML}</div>
-
-                <div class="order-address-box">
-                    <h3 class="section-title" style="margin-bottom: 8px;">ที่อยู่จัดส่ง</h3>
-                    <p class="receiver-name">${receiverName} ${receiverPhone}</p>
-                    <p class="receiver-address">${fullAddressText}</p>
-                </div>
-
-                <div class="order-total-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-    
-                <!-- ยอดรวมก่อนหักส่วนลด -->
-                <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px;">
-                    <span style="color: var(--text-muted); font-size: 0.95rem;">ยอดรวมสินค้า:</span>
-                    <span style="font-size: 0.95rem;">฿${(order.subtotal || order.grandTotal).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-                </div>
-
-                <!-- แสดงส่วนลด (ถ้ามี) -->
-                ${(order.discount && order.discount > 0) ? `
-                <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; color: #e11d48;">
-                    <span style="font-size: 0.95rem;">ส่วนลดคูปอง:</span>
-                    <span style="font-weight: 600; font-size: 0.95rem;">-฿${order.discount.toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-                </div>
-                ` : ''}
-
-                <!-- ยอดชำระสุทธิ -->
-                <div style="display: flex; justify-content: space-between; width: 100%; max-width: 320px; font-size: 1.15rem; font-weight: 700; color: #0d5c2e; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
-                    <span>ยอดชำระสุทธิ:</span>
-                    <span>฿${(order.grandTotal || 0).toLocaleString('th-TH', {minimumFractionDigits: 2})}</span>
-                </div>
-
-            </div>
-            `;
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="color: var(--text-muted); margin-bottom: 15px;">ไม่พบข้อมูลคำสั่งซื้อที่คุณต้องการ</p>
+                        <a href="./orders.html" class="btn-primary-custom">กลับไปหน้าประวัติคำสั่งซื้อ</a>
+                    </div>
+                `;
+            }
         });
     </script>
 </body>

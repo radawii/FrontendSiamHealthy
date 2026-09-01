@@ -37,7 +37,7 @@ body {
     flex: 1;
     max-width: 800px;
     width: 100%;
-    margin: 40px auto 120px;
+    margin: 40px auto 100px;
     padding: 0 20px;
 }
 
@@ -54,34 +54,48 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid var(--border-color);
-    padding-bottom: 15px;
+    padding-bottom: 16px;
     margin-bottom: 20px;
+    gap: 12px;
 }
 
 .order-detail-header h2 {
     color: var(--primary-color);
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .back-to-orders-btn {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s;
+    font-size: 0.92rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .back-to-orders-btn:hover {
     color: var(--primary-hover);
+    background: #dcfce7;
 }
 
 .order-meta-box {
     margin-bottom: 20px;
     background: var(--bg-main);
-    padding: 16px;
+    padding: 16px 20px;
     border-radius: var(--radius);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.92rem;
+    line-height: 1.7;
     border: 1px solid var(--border-color);
+    word-break: break-word;
 }
 
 .status-success {
@@ -89,10 +103,16 @@ body {
     font-weight: 600;
 }
 
+.status-pending {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
 .section-title {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
+    font-size: 1.05rem;
+    margin-bottom: 12px;
     color: var(--text-heading);
+    font-weight: 600;
 }
 
 .order-items-container {
@@ -103,84 +123,166 @@ body {
 .order-item-row {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 12px 0;
+    gap: 14px;
+    padding: 14px 0;
     border-bottom: 1px solid var(--border-color);
 }
 
 .order-item-row img {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .order-item-info {
     flex: 1;
+    min-width: 0;
 }
 
 .order-item-info h4 {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--text-heading);
     margin-bottom: 4px;
+    line-height: 1.4;
+    word-break: break-word;
 }
 
 .order-item-info p {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
 }
 
 .order-item-price {
     font-weight: 600;
     color: var(--primary-color);
+    font-size: 1rem;
+    white-space: nowrap;
 }
 
 .order-address-box {
     margin-top: 20px;
     background: var(--bg-main);
-    padding: 16px;
+    padding: 18px 20px;
     border-radius: var(--radius);
     border: 1px solid var(--border-color);
 }
 
 .receiver-name {
     color: var(--text-heading);
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.95rem;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .receiver-address {
     color: var(--text-muted);
     font-size: 0.9rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    word-break: break-word;
 }
 
 .order-total-section {
     margin-top: 20px;
-    text-align: right;
-    padding-top: 15px;
+    padding-top: 16px;
     border-top: 1px solid var(--border-color);
-}
-
-.grand-total-text {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--primary-color);
 }
 
 .btn-primary-custom {
     display: inline-block;
     background: var(--primary-color);
     color: white;
-    padding: 10px 20px;
+    padding: 10px 22px;
     border-radius: 8px;
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
     transition: background 0.2s;
 }
 
 .btn-primary-custom:hover {
     background: var(--primary-hover);
+}
+
+/* ====================================================
+   📱 RESPONSIVE DESIGN (สำหรับหน้าจอแท็บเล็ตและมือถือ)
+   ==================================================== */
+
+@media (max-width: 768px) {
+    .main-content {
+        margin: 20px auto 60px;
+        padding: 0 12px;
+    }
+
+    .order-detail-card {
+        padding: 20px 16px;
+        border-radius: 16px;
+    }
+
+    .order-detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding-bottom: 12px;
+    }
+
+    .order-detail-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .back-to-orders-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .order-meta-box,
+    .order-address-box {
+        padding: 14px;
+        font-size: 0.88rem;
+    }
+
+    .order-item-row {
+        gap: 10px;
+        padding: 12px 0;
+    }
+
+    .order-item-row img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .order-item-info h4 {
+        font-size: 0.9rem;
+    }
+
+    .order-item-price {
+        font-size: 0.92rem;
+    }
+
+    /* กล่องสรุปยอดเงิน ให้ขยายเต็มความกว้างในมือถือ */
+    .order-total-section > div {
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 0 8px;
+    }
+
+    .order-detail-card {
+        padding: 16px 12px;
+    }
+
+    .order-item-row {
+        align-items: flex-start;
+    }
+
+    .order-item-price {
+        align-self: center;
+    }
 }
