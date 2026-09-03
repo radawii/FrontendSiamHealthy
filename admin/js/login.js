@@ -11,11 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBtn.addEventListener('click', togglePasswordVisibility);
     }
 
-    const savedToken = localStorage.getItem('adminToken');
-    if (savedToken) {
-        window.location.href = 'index.html';
-    }
+    // อย่า redirect อัตโนมัติจาก token ใน storage เพราะ token อาจหมดอายุหรือถูก sign ด้วย JWT_SECRET เก่า
+    // ให้ผู้ใช้สามารถ login ใหม่เพื่อรับ token ชุดล่าสุดได้เสมอ
 });
+
+function cleanStoredToken(token) {
+    const cleaned = token ? String(token).trim().replace(/^"|"$/g, '') : null;
+    return cleaned ? cleaned.replace(/^Bearer\s+/i, '').trim() : null;
+}
 
 function togglePasswordVisibility() {
     const passwordInput = document.getElementById('password');
@@ -78,9 +81,14 @@ async function handleLogin(event) {
             throw new Error('คุณไม่มีสิทธิ์เข้าถึงระบบผู้ดูแลระบบ (Admin Only)');
         }
 
-        // บันทึก Token
-        localStorage.setItem('adminToken', data.accessToken);
-        localStorage.setItem('adminData', JSON.stringify(data.user));
+        const token = cleanStoredToken(data.accessToken || data.adminToken || data.token);
+        if (!token) {
+            throw new Error('ระบบไม่ได้ส่ง Token กลับมา กรุณาตรวจสอบ Backend');
+        }
+
+        // บันทึก Token และข้อมูล Admin สำหรับส่ง Authorization Header
+        localStorage.setItem('adminToken', token);
+        localStorage.setItem('adminData', JSON.stringify(data.user || data.adminData));
 
         submitBtn.classList.replace('bg-indigo-600', 'bg-green-500');
         submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> เข้าสู่ระบบสำเร็จ!';

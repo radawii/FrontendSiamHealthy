@@ -1,23 +1,24 @@
-// js/auth.js
-const API_BASE_URL = window.location.origin;
-const API_URL = `${API_BASE_URL}/auth/login`;
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("🟢 Auth.js โหลดเสร็จสมบูรณ์ พร้อมทำงาน!");
+// Frontend/js/auth.js
 
+const API_BASE_URL = 'http://localhost:3000';
+
+function cleanStoredToken(token) {
+    const cleaned = token ? String(token).trim().replace(/^"|"$/g, '') : null;
+    return cleaned ? cleaned.replace(/^Bearer\s+/i, '').trim() : null;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
     // ----------------------------------------------------
-    // 0. ดึงข้อมูลที่เคยจดจำไว้มาเติมอัตโนมัติ (Remember Me Auto-fill)
+    // 0. ดึงข้อมูลที่เคยจดจำไว้มาเติมอัตโนมัติ (Username / Email)
     // ----------------------------------------------------
     const savedIdentifier = localStorage.getItem('remembered_identifier');
-    const savedPassword = localStorage.getItem('remembered_password');
     const savedStatus = localStorage.getItem('remembered_status');
 
     if (savedStatus === 'true' && savedIdentifier) {
         const loginIdentifierInput = document.getElementById('loginIdentifier');
-        const loginPasswordInput = document.getElementById('loginPassword');
         const rememberMeCheckbox = document.getElementById('rememberMe');
 
         if (loginIdentifierInput) loginIdentifierInput.value = savedIdentifier;
-        if (loginPasswordInput && savedPassword) loginPasswordInput.value = savedPassword;
         if (rememberMeCheckbox) rememberMeCheckbox.checked = true;
     }
 
@@ -60,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            console.log("👉 กดปุ่ม 'สมัครสมาชิก' แล้ว!");
 
             const username = document.getElementById('regUsername').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -134,20 +134,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Remember Me
+                    // จัดการข้อมูลจดจำการเข้าสู่ระบบ
                     if (rememberMe) {
                         localStorage.setItem('remembered_identifier', identifier);
-                        localStorage.setItem('remembered_password', password);
                         localStorage.setItem('remembered_status', 'true');
                     } else {
                         localStorage.removeItem('remembered_identifier');
-                        localStorage.removeItem('remembered_password');
                         localStorage.removeItem('remembered_status');
                     }
+                    localStorage.removeItem('remembered_password');
 
-                    const token = data.access_token || data.token || 'login_success_token';
+                    // ดึง Token
+                    const token = cleanStoredToken(data.access_token || data.accessToken || data.token);
 
-                    // ดึง User Object จาก Response (ดักรับทุกรูปแบบ Key ที่ Backend อาจส่งมา)
+                    if (!token) {
+                        throw new Error('ระบบไม่ได้ส่ง Token กลับมา กรุณาตรวจสอบ Backend');
+                    }
+
+                    // ดึง User Object
                     const userPayload = data.user || data.data || data;
                     const resolvedId = userPayload.id ?? userPayload.userId ?? userPayload.user_id ?? data.userId ?? data.id;
 
@@ -156,32 +160,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         userEmail = identifier;
                     }
 
-                    // ดึง Profile เพิ่มเติมถ้ายังไม่มี Email
-                    if (!userEmail && token !== 'login_success_token') {
-                        try {
-                            const profileRes = await fetch(`${API_BASE_URL}/auth/profile`, {
-                                headers: { 'Authorization': `Bearer ${token}` }
-                            });
-                            if (profileRes.ok) {
-                                const profileData = await profileRes.json();
-                                userEmail = profileData.email || profileData.user?.email || '';
-                            }
-                        } catch (err) {
-                            console.warn("⚠️ ไม่สามารถดึงอีเมลจาก Profile ได้:", err);
-                        }
-                    }
+                    const userRole = (userPayload.role || data.role || 'USER').toUpperCase();
 
-                    // บันทึก Session ลง LocalStorage
+                    // 🟢 บันทึก Token ให้ครบทุกคีย์ (เผื่อให้สิทธิ์เข้าถึง Admin ถ้ากดลิงก์ไปเอง)
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('adminToken', token);
+                    sessionStorage.setItem('adminToken', token);
+
                     const userObj = {
-                        token: token,
+                        token,
                         id: resolvedId,
                         user_id: resolvedId,
                         email: userEmail,
                         username: userPayload.username || identifier,
-                        name: userPayload.name || userPayload.fullname || identifier
+                        name: userPayload.name || userPayload.fullname || identifier,
+                        role: userRole
                     };
 
                     localStorage.setItem('siam_healthy_user', JSON.stringify(userObj));
+                    localStorage.setItem('adminData', JSON.stringify(userObj));
 
                     Swal.fire({
                         icon: 'success',
@@ -190,16 +187,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         timer: 1200,
                         showConfirmButton: false
                     }).then(() => {
-                        // 🚀 จุดสำคัญ: ลำดับการ Redirect
+                        // 🟢 นำทางไปหน้าแรกของฝั่งลูกค้า (ลบเงื่อนไขเช็ค userRole === 'ADMIN' ออกแล้ว)
                         const redirectUrl = localStorage.getItem('siam_healthy_redirect_after_login');
-
+                        
                         if (redirectUrl) {
                             localStorage.removeItem('siam_healthy_redirect_after_login');
                             window.location.replace(redirectUrl);
                         } else if (document.referrer && (document.referrer.includes('cart') || document.referrer.includes('orders') || document.referrer.includes('order-detail'))) {
                             window.location.replace(document.referrer);
                         } else {
-                            window.location.replace('../index.html');
+                            window.location.replace('../index.html'); // กลับไปหน้าแรกเสมอ
                         }
                     });
                 } else {

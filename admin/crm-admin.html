@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Render CRM Admin - Dashboard</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    * { font-family: 'Prompt', sans-serif; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
+    .tab-btn.active {
+      color: #4f46e5;
+      border-bottom: 2px solid #4f46e5;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex h-screen overflow-hidden">
+
+  <!-- โครงสร้างสำหรับ Sidebar ที่เรียกจาก js/sidebar.js -->
+  <div id="sidebar-container"></div>
+
+  <!-- พื้นที่เนื้อหาหลัก (Main Content) -->
+  <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+    <!-- Topbar -->
+    <header class="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center sticky top-0 z-10">
+      <div>
+        <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-network-wired text-indigo-600"></i> จัดการ Sales Render CRM Integration
+        </h1>
+        <p class="text-xs text-gray-500 mt-1">จัดการ Product Mapping, ติดตามสถานะ Sync คำสั่งซื้อ และตรวจสอบประวัติ Logs</p>
+      </div>
+      <div>
+        <button onclick="refreshCurrentTab()" class="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 shadow-sm transition">
+          <i class="fas fa-rotate"></i> รีเฟรชข้อมูล
+        </button>
+      </div>
+    </header>
+
+    <div class="p-8">
+      <!-- Tabs Navigation -->
+      <div class="flex gap-4 border-b border-gray-200 mb-6">
+        <button class="tab-btn pb-3 px-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition active" onclick="switchTab('mappings', this)">
+          <i class="fas fa-cube mr-1"></i> Product Mappings
+        </button>
+        <button class="tab-btn pb-3 px-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition" onclick="switchTab('orders', this)">
+          <i class="fas fa-cart-shopping mr-1"></i> Sync Orders
+        </button>
+        <button class="tab-btn pb-3 px-2 text-sm font-medium text-gray-500 hover:text-indigo-600 transition" onclick="switchTab('logs', this)">
+          <i class="fas fa-clock-rotate-left mr-1"></i> Integration Logs
+        </button>
+      </div>
+
+      <!-- 1. MAPPINGS TAB -->
+      <div id="tab-mappings" class="tab-content bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-base font-semibold text-gray-800">รายการเชื่อมโยงสินค้า (Mapping Rules)</h2>
+          <button onclick="openAddMappingModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl shadow-sm transition">
+            <i class="fas fa-plus"></i> เพิ่ม Mapping ใหม่
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100">
+              <tr>
+                <th class="p-3">ID</th>
+                <th class="p-3">Domain</th>
+                <th class="p-3">Product SKU / ชื่อสินค้า</th>
+                <th class="p-3">CRM Product ID</th>
+                <th class="p-3">CRM Offer ID</th>
+                <th class="p-3">สถานะใช้งาน</th>
+                <th class="p-3 text-right">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="mappings-table-body" class="divide-y divide-gray-100">
+              <tr><td colspan="7" class="text-center p-4 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. ORDERS TAB -->
+      <div id="tab-orders" class="tab-content bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hidden">
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-base font-semibold text-gray-800">สถานะการ Sync คำสั่งซื้อเข้า CRM</h2>
+          <select id="order-filter-status" onchange="loadOrders()" class="text-sm border border-gray-200 rounded-xl px-3 py-2 bg-white">
+            <option value="ALL">ทุกสถานะ</option>
+            <option value="FAILED">เฉพาะที่ FAILED</option>
+            <option value="SYNCED">เฉพาะที่ SYNCED</option>
+          </select>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100">
+              <tr>
+                <th class="p-3">Order ID</th>
+                <th class="p-3">ยอดเงิน</th>
+                <th class="p-3">การชำระเงิน</th>
+                <th class="p-3">Sync Status</th>
+                <th class="p-3">CRM Order ID</th>
+                <th class="p-3">ข้อผิดพลาด (Error)</th>
+                <th class="p-3 text-right">การกระทำ</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body" class="divide-y divide-gray-100">
+              <tr><td colspan="7" class="text-center p-4 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. LOGS TAB -->
+      <div id="tab-logs" class="tab-content bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hidden">
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-base font-semibold text-gray-800">ประวัติบันทึกการส่งข้อมูล (Integration Logs)</h2>
+          <select id="log-filter-level" onchange="loadLogs()" class="text-sm border border-gray-200 rounded-xl px-3 py-2 bg-white">
+            <option value="ALL">ทุกระดับ Log</option>
+            <option value="ERROR">เฉพาะ ERROR</option>
+            <option value="INFO">เฉพาะ INFO</option>
+          </select>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100">
+              <tr>
+                <th class="p-3">เวลา</th>
+                <th class="p-3">ระดับ</th>
+                <th class="p-3">ขั้นตอน (Step)</th>
+                <th class="p-3">Order ID</th>
+                <th class="p-3">ข้อความ</th>
+                <th class="p-3 text-right">รายละเอียด</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body" class="divide-y divide-gray-100">
+              <tr><td colspan="6" class="text-center p-4 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/crm-admin.js"></script>
+</body>
+</html>

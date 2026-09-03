@@ -8,10 +8,10 @@ let checkPaymentInterval = null;
 // 🔒 ฟังก์ชันตรวจสอบว่าลูกค้าล็อกอินแล้วหรือยัง
 function checkUserLoginStatus() {
     try {
-        const storedUser = localStorage.getItem('siam_healthy_user');
+        const storedUser = localStorage.getItem('siam_healthy_user') || localStorage.getItem('adminData');
         if (storedUser && storedUser !== 'login_success_token') {
             const parsedUser = JSON.parse(storedUser);
-            if (parsedUser && (parsedUser.id || parsedUser.user_id)) {
+            if (parsedUser && (parsedUser.id || parsedUser.user_id || parsedUser.sub)) {
                 return parsedUser;
             }
         }
@@ -447,30 +447,60 @@ async function fetchStripePublishableKey() {
     return null;
 }
 
-// ฟังก์ชันสำหรับถาม Backend ทุกๆ 3 วินาที (Polling) - อัปเดตดักทาง paymentStatus CamelCase
+// 🟢 ฟังก์ชันส่งแจ้งเตือนสถานะการชำระเงินไม่สำเร็จไป Backend เพื่อสร้าง Lead ใน CRM ทันที
+async function notifyPaymentFailureToBackend(orderId, reason) {
+    if (!orderId) return;
+    try {
+        const currentUser = checkUserLoginStatus();
+        const userId = currentUser ? (currentUser.id || currentUser.user_id || currentUser.sub) : null;
+        const role = currentUser ? (currentUser.role || 'USER') : 'USER';
+        const token = currentUser?.token || localStorage.getItem('token') || localStorage.getItem('adminToken') || '';
+
+        await fetch(`http://localhost:3000/payments/${orderId}/fail`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'x-admin-id': String(userId || 1),
+                'x-user-role': String(role).toUpperCase()
+            },
+            body: JSON.stringify({ reason: reason || 'การชำระเงินถูกปฏิเสธหรือไม่สำเร็จ' })
+        });
+        console.warn(`[CRM Sync] บันทึกและส่งสถานะล้มเหลวของ Order #${orderId} เข้า CRM แล้ว`);
+    } catch (err) {
+        console.error('ไม่สามารถส่งสถานะ Failure ไปยัง Backend ได้:', err);
+    }
+}
+
+// ฟังก์ชันสำหรับถาม Backend ทุกๆ 3 วินาที (Polling)
 function startPaymentPolling(orderId, items, subtotal, discount, grandTotal) {
     if (checkPaymentInterval) clearInterval(checkPaymentInterval);
     
+    const currentUser = checkUserLoginStatus();
+    const userId = currentUser ? (currentUser.id || currentUser.user_id || currentUser.sub) : null;
+    const role = currentUser ? (currentUser.role || 'USER') : 'USER';
+    const token = currentUser?.token || localStorage.getItem('token') || localStorage.getItem('adminToken') || '';
+
     checkPaymentInterval = setInterval(async () => {
         try {
-            const response = await fetch(`http://localhost:3000/orders/${orderId}`);
+            const response = await fetch(`http://localhost:3000/orders/${orderId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'x-admin-id': String(userId || 1),
+                    'x-user-role': String(role).toUpperCase()
+                }
+            });
             if (response.ok) {
                 const responseData = await response.json();
                 
-                // ดักเผื่อ Backend ห่อข้อมูลมาใน .data หรือส่งมาเป็น Array
                 const order = responseData.data || responseData[0] || responseData;
-                
-                // หัวใจสำคัญ: ดักรับทั้ง paymentStatus (CamelCase) และ payment_status
                 const currentStatus = order.paymentStatus || order.payment_status || order.status || '';
-                
-                // ปรับให้เป็นตัวพิมพ์ใหญ่ทั้งหมดเพื่อเช็คค่า
                 const statusStr = currentStatus.toString().trim().toUpperCase();
                 
-                // รายชื่อคำที่ถือว่าชำระเงินสำเร็จ
                 const successStatuses = ['PAID', 'SUCCESS', 'COMPLETED', 'ชำระเงินสำเร็จ'];
                 
                 if (successStatuses.includes(statusStr)) {
-                    // ถ้าตรงกับเงื่อนไข ให้หยุดถาม Backend แล้วโชว์ใบเสร็จทันที!
                     clearInterval(checkPaymentInterval);
                     triggerPaymentSuccess(orderId, items, subtotal, discount, grandTotal);
                 }
@@ -481,7 +511,7 @@ function startPaymentPolling(orderId, items, subtotal, discount, grandTotal) {
     }, 3000); 
 }
 
-// ฟังก์ชันแสดงผลเมื่อชำระเงินสำเร็จ (รันทันทีที่ Backend บอกว่า PAID)
+// ฟังก์ชันแสดงผลเมื่อชำระเงินสำเร็จ 
 function triggerPaymentSuccess(orderId, items, subtotal, discount, grandTotal) {
     Swal.close(); 
     
@@ -529,7 +559,9 @@ async function processPayment() {
         return;
     }
 
-    const userId = currentUser.id || currentUser.user_id;
+    const userId = currentUser.id || currentUser.user_id || currentUser.sub;
+    const userRole = currentUser.role || 'USER';
+    const userToken = currentUser.token || localStorage.getItem('token') || localStorage.getItem('adminToken') || '';
     const userEmail = currentUser.email || window.currentAddress?.email || '';
 
     const paymentInputs = document.querySelectorAll('input[name="paymentMethod"]:checked');
@@ -585,44 +617,80 @@ async function processPayment() {
         }
     }
 
+    let createdOrderId = null;
+
     try {
         if (window.currentAddress) {
             localStorage.setItem('siam_healthy_last_address', JSON.stringify(window.currentAddress));
         }
 
+        // 🟢 กำหนดข้อมูลทั้งแบบ camelCase และ snake_case เพื่อให้รองรับ DTO ของ NestJS อย่างสมบูรณ์
+        const formattedItems = selectedItems.map(item => ({
+            productId: Number(item.id || item.product_id) || 1,
+            product_id: Number(item.id || item.product_id) || 1,
+            productName: item.name || item.product_name,
+            product_name: item.name || item.product_name,
+            price: Number(item.price),
+            quantity: Number(item.quantity)
+        }));
+
+        const orderPayload = {
+            userId: Number(userId),
+            user_id: Number(userId),
+            totalAmount: subtotal,
+            total_amount: subtotal,
+            discountAmount: discount,
+            discount_amount: discount,
+            shippingFee: 0,
+            shipping_fee: 0,
+            grandTotal: grandTotal,
+            grand_total: grandTotal,
+            paymentMethod: selectedPayment,
+            payment_method: selectedPayment,
+            orderStatus: 'PENDING',
+            order_status: 'PENDING',
+            paymentStatus: 'PENDING',
+            payment_status: 'PENDING',
+            shippingAddress: window.currentAddress,
+            shipping_address: window.currentAddress,
+            items: formattedItems
+        };
+
+        // 🟢 แนบ Headers ครบทั้ง Token และ Custom Headers เพื่อไม่ให้ติด 401
+        const orderHeaders = {
+            'Content-Type': 'application/json',
+            'x-admin-id': String(userId),
+            'x-user-role': String(userRole).toUpperCase(),
+        };
+        if (userToken) {
+            orderHeaders['Authorization'] = `Bearer ${userToken}`;
+        }
+
         const orderResponse = await fetch('http://localhost:3000/orders', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_id: userId,
-                total_amount: subtotal,
-                discount_amount: discount,
-                shipping_fee: 0,
-                grand_total: grandTotal,
-                payment_method: selectedPayment,
-                order_status: 'PENDING',
-                payment_status: 'PENDING',
-                shipping_address: window.currentAddress,
-                items: selectedItems.map(item => ({
-                    product_id: Number(item.id || item.product_id) || 1,
-                    product_name: item.name || item.product_name,
-                    price: Number(item.price),
-                    quantity: Number(item.quantity)
-                }))
-            })
+            headers: orderHeaders,
+            body: JSON.stringify(orderPayload)
         });
 
         const orderResult = await orderResponse.json();
-        if (!orderResponse.ok || !orderResult.order_id) {
-            throw new Error(orderResult.message || 'ไม่สามารถสร้างออเดอร์ในระบบได้');
+        if (!orderResponse.ok) {
+            const errorMsg = Array.isArray(orderResult.message) ? orderResult.message.join(', ') : (orderResult.message || 'ไม่สามารถสร้างออเดอร์ในระบบได้');
+            throw new Error(errorMsg);
         }
 
-        const createdOrderId = orderResult.order_id;
+        createdOrderId = orderResult.order_id || orderResult.id || orderResult.orderId;
+        if (!createdOrderId) {
+            throw new Error('ไม่พบเลขออเดอร์ที่สร้างขึ้นจากระบบ');
+        }
 
         const paymentType = (selectedPayment === 'promptpay') ? 'promptpay' : 'card';
+        
         const paymentIntentRes = await fetch(`http://localhost:3000/payments/create-payment-intent/${createdOrderId}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                ...orderHeaders
+            },
             body: JSON.stringify({ 
                 paymentMethodType: paymentType,
                 email: userEmail 
@@ -630,8 +698,44 @@ async function processPayment() {
         });
 
         const intentData = await paymentIntentRes.json();
-        if (!paymentIntentRes.ok || !intentData.clientSecret) {
+        
+        if (!paymentIntentRes.ok) {
             throw new Error(intentData.message || 'ไม่สามารถสร้าง PaymentIntent ได้');
+        }
+
+        // ดักจับกรณี 0 บาท (Free Order)
+        if (intentData.freeOrder) {
+            localStorage.removeItem('siam_healthy_payment_session');
+            const remainingCart = cart.filter(i => !i.selected);
+            localStorage.setItem('siam_healthy_cart', JSON.stringify(remainingCart));
+
+            const orderData = {
+                orderId: createdOrderId,
+                date: new Date().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }),
+                items: selectedItems,
+                shippingAddress: window.currentAddress,
+                paymentMethod: 'free_order',
+                subtotal: subtotal,
+                discount: discount,
+                grandTotal: grandTotal
+            };
+            localStorage.setItem('latest_order', JSON.stringify(orderData));
+            localStorage.removeItem('siam_healthy_coupon');
+
+            Swal.fire({
+                icon: 'success',
+                title: 'สั่งซื้อสำเร็จ!',
+                text: intentData.message || 'บันทึกคำสั่งซื้อของคุณเรียบร้อยแล้ว',
+                confirmButtonColor: '#0d5c2e'
+            }).then(() => {
+                showReceiptModal('free_order', selectedItems, subtotal, discount, grandTotal);
+            });
+            
+            return;
+        }
+
+        if (!intentData.clientSecret) {
+            throw new Error('ไม่สามารถสร้าง PaymentIntent ได้');
         }
 
         let stripePublishableKey = intentData.publishableKey || intentData.stripePublicKey;
@@ -663,6 +767,11 @@ async function processPayment() {
 
     } catch (error) {
         console.error('Payment Error:', error);
+        
+        if (createdOrderId) {
+            notifyPaymentFailureToBackend(createdOrderId, error.message);
+        }
+
         Swal.fire({
             icon: 'error',
             title: 'เกิดข้อผิดพลาด',
@@ -690,15 +799,13 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
         Swal.fire({
             title: 'กำลังรอการชำระเงิน...',
             html: 'กรุณาสแกน QR Code ที่หน้าต่าง Stripe<br><br><span style="color: #e11d48; font-size: 0.9em; font-weight: bold;">โปรดอย่าปิดหน้าต่างนี้จนกว่าการชำระเงินจะสำเร็จ (อาจใช้เวลา 10-30 วินาที)</span>',
-            allowOutsideClick: false, // ล็อคไม่ให้คลิกพื้นหลังปิด
+            allowOutsideClick: false,
             showConfirmButton: false, 
             didOpen: () => { Swal.showLoading(); }
         });
 
         setTimeout(() => {
             Swal.close(); 
-            
-            // เรียกใช้ Polling ทันที
             startPaymentPolling(orderId, selectedItems, subtotal, discount, grandTotal);
 
             stripe.confirmPromptPayPayment(clientSecret, {
@@ -711,7 +818,6 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
                 return_url: window.location.href.split('?')[0] + `?payment=success&order_id=${orderId}&method=promptpay`
             }).then(async ({ error }) => {
                 if (error) {
-                    // ดักเผื่อลูกค้าจ่ายตังค์แล้ว แต่เผลอกดปิด Modal QR Code
                     try {
                         const res = await fetch(`http://localhost:3000/orders/${orderId}`);
                         const data = await res.json();
@@ -727,13 +833,15 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
                         }
                     } catch (e) { console.log(e); }
 
-                    // ถ้ายังไม่ได้จ่ายจริงๆ
                     if (checkPaymentInterval) clearInterval(checkPaymentInterval);
                     
+                    // 🟢 ส่งสถานะแจ้งเตือน Backend ทันทีเพื่อบันทึก Lead ใน CRM
+                    notifyPaymentFailureToBackend(orderId, error.message);
+
                     Swal.fire({
                         icon: 'warning',
                         title: 'ยังชำระเงินไม่สมบูรณ์',
-                        text: 'หากชำระเงินไปแล้วกรุณารอประมวลผล หากยังไม่ชำระเงิน คุณสามารถกด "ยืนยันและชำระเงิน" อีกครั้งได้ครับ',
+                        text: error.message || 'หากชำระเงินไปแล้วกรุณารอประมวลผล หากยังไม่ชำระเงิน คุณสามารถกด "ยืนยันและชำระเงิน" อีกครั้งได้ครับ',
                         confirmButtonColor: '#0d5c2e'
                     });
                 }
@@ -802,6 +910,9 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
         });
 
         if (error) {
+            // 🟢 ส่งสถานะแจ้งเตือน Backend ทันทีเมื่อบัตรถูกปฏิเสธ
+            notifyPaymentFailureToBackend(orderId, error.message);
+
             Swal.fire('ชำระเงินไม่สำเร็จ', error.message, 'error');
             localStorage.removeItem('siam_healthy_payment_session');
         } else {
@@ -856,7 +967,9 @@ function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0,
         const orderNo = formatOrderId(rawOrderId);
 
         const displayAddress = buildFullAddress(window.currentAddress);
-        let paymentStr = (paymentMethod === 'promptpay') ? 'สแกน QR Code / พร้อมเพย์' : 'บัตรเครดิต / Stripe';
+        let paymentStr = 'สแกน QR Code / พร้อมเพย์';
+        if (paymentMethod === 'credit') paymentStr = 'บัตรเครดิต / Stripe';
+        if (paymentMethod === 'free_order') paymentStr = 'ฟรี (ส่วนลดเต็มจำนวน)';
 
         receiptPaper.innerHTML = `
             <div style="text-align: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 12px;">
@@ -894,7 +1007,6 @@ function showReceiptModal(paymentMethod = 'promptpay', items = [], subtotal = 0,
             </div>
         `;
 
-        // 🌟 อัปเดตปุ่ม "ดูรายละเอียด" ใน Receipt Modal ให้ผูก ID ของออเดอร์นั้น
         const detailBtn = document.querySelector('#receiptModal button[onclick*="viewOrderDetails"]');
         if (detailBtn) {
             detailBtn.setAttribute('onclick', `window.location.href='./order-detail.html?id=${rawOrderId}'`);
