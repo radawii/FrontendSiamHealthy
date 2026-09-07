@@ -244,7 +244,7 @@
             renderDetailSkeleton(container);
 
             try {
-                const res = await fetch(`http://localhost:3000/orders/${targetOrderId}`);
+                const res = await fetch(`${window.location.origin}/orders/${targetOrderId}`);
                 if (!res.ok) throw new Error('Order not found');
                 const order = await res.json();
 

@@ -211,7 +211,7 @@
 
         async function fetchShippings() {
             try {
-                const response = await fetch('http://localhost:3000/shipping');
+                const response = await fetch(`${window.location.origin}/shipping`);
                 if (!response.ok) throw new Error('ไม่สามารถดึงข้อมูลที่อยู่ได้');
                 
                 const data = await response.json();
@@ -361,7 +361,7 @@
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
             try {
-                const res = await fetch(`http://localhost:3000/shipping/${id}`, {
+                const res = await fetch(`${window.location.origin}/shipping/${id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -398,7 +398,7 @@
                 if (result.isConfirmed) {
                     Swal.fire({ title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                     try {
-                        const res = await fetch(`http://localhost:3000/shipping/${id}`, {
+                        const res = await fetch(`${window.location.origin}/shipping/${id}`, {
                             method: 'DELETE'
                         });
                         if (!res.ok) throw new Error('ไม่สามารถลบได้ (อาจมีข้อมูลคำสั่งซื้อผูกอยู่)');

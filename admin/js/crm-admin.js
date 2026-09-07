@@ -1,6 +1,6 @@
 // admin/js/crm-admin.js
 
-const API_BASE = 'http://localhost:3000/api/admin/crm';
+const API_BASE = `${window.location.origin}/api/admin/crm`;
 let currentActiveTab = 'mappings';
 
 function switchTab(tabName, el) {

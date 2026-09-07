@@ -58,7 +58,7 @@ async function handleLogin(event) {
 
     try {
         // 🟢 ยิงไปที่ Path สำหรับ Admin Login โดยเฉพาะ
-        const response = await fetch('http://localhost:3000/auth/admin-login', {
+        const response = await fetch(`${window.location.origin}/auth/admin-login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

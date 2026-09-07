@@ -23,7 +23,7 @@ function fixImageUrl(url) {
 // 1. ดึงข้อมูลสินค้าจาก Backend
 async function fetchProducts() {
     try {
-        const response = await fetch('http://localhost:3000/products');
+        const response = await fetch(`${window.location.origin}/products`);
         if (!response.ok) throw new Error('Network response was not ok');
         const products = await response.json();
         globalProducts = products; 
@@ -87,9 +87,11 @@ function renderProductsTable(productsToRender) {
             stockBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">${stockNum} ชิ้น</span>`;
         }
 
-        const dateObj = new Date(product.createdAt || product.created_at || new Date());
-        const dateFormatted = `<div class="font-medium text-gray-900">${dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
-                               <div class="text-xs text-gray-400">${dateObj.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.</div>`;
+        const dateObj = product.createdAt || product.created_at ? new Date(product.createdAt || product.created_at) : null;
+        const dateFormatted = dateObj 
+  ? `<div class="font-medium text-gray-900">${dateObj.toLocaleDateString("th-TH", { year: "numeric", month: "2-digit", day: "2-digit" })}</div>
+     <div class="text-xs text-gray-400">${dateObj.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })} น.</div>`
+  : `<span class="text-gray-400 italic text-xs">-</span>`;
 
         // ปรับแต่ง Description & FDA พร้อมระบบตัดคำ (Hover อ่านเต็มได้)
         const descHtml = product.description 
@@ -404,7 +406,7 @@ function openAddProductModal() {
         if (result.isConfirmed) {
             Swal.fire({ title: 'กำลังบันทึกข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             try {
-                const res = await fetch('http://localhost:3000/products', {
+                const res = await fetch(`${window.location.origin}/products`, {
                     method: 'POST',
                     body: result.value
                 });
@@ -510,7 +512,7 @@ function openEditProductModal(product) {
         if (result.isConfirmed) {
             Swal.fire({ title: 'กำลังบันทึกการแก้ไข...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             try {
-                const res = await fetch(`http://localhost:3000/products/${product.id}`, {
+                const res = await fetch(`${window.location.origin}/products/${product.id}`, {
                     method: 'PATCH',
                     body: result.value 
                 });
@@ -539,7 +541,7 @@ function deleteProduct(id) {
         if (result.isConfirmed) {
             Swal.fire({ title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             try {
-                const res = await fetch(`http://localhost:3000/products/${id}`, {
+                const res = await fetch(`${window.location.origin}/products/${id}`, {
                     method: 'DELETE'
                 });
                 if (!res.ok) throw new Error('ไม่สามารถลบสินค้านี้ได้');
@@ -557,7 +559,7 @@ async function toggleProductStatus(id, newStatus) {
         const formData = new FormData();
         formData.append('isActive', newStatus);
 
-        const res = await fetch(`http://localhost:3000/products/${id}`, {
+        const res = await fetch(`${window.location.origin}/products/${id}`, {
             method: 'PATCH',
             body: formData
         });

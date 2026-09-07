@@ -2519,7 +2519,7 @@ const productsData = {
 };
 
 // 📌 ตั้งค่า URL ของ NestJS Backend
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = window.location.hostname === 'localhost' ? '${window.location.origin}' : window.location.origin;
 
 // 1. ดึง ID สินค้าจาก URL
 const urlParams = new URLSearchParams(window.location.search);

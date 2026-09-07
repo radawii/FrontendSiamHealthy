@@ -309,7 +309,7 @@
             const currentUserId = currentUser.id || currentUser.user_id;
 
             try {
-                const response = await fetch(`http://localhost:3000/orders/user/${currentUserId}`);
+                const response = await fetch(`${window.location.origin}/orders/user/${currentUserId}`);
                 if (!response.ok) throw new Error('ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้');
 
                 allOrders = await response.json();

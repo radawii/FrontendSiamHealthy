@@ -3,7 +3,7 @@
 let globalUsers = [];
 
 // 1. กำหนด Base URL ชี้ไปที่ NestJS Backend
-const API_BASE = 'http://localhost:3000';
+const API_BASE = window.location.hostname === 'localhost' ? '${window.location.origin}' : window.location.origin;
 
 // ชุดสีสำหรับ Avatar วงกลมตัวย่อชื่อ
 const avatarColors = [

@@ -14,7 +14,7 @@ async function fetchTransactions() {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const response = await fetch('http://localhost:3000/orders', { headers });
+        const response = await fetch(`${window.location.origin}/orders`, { headers });
         
         if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
@@ -323,7 +323,7 @@ function processRefund(orderId, maxAmount) {
                 const headers = { 'Content-Type': 'application/json' };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                const response = await fetch(`http://localhost:3000/payments/refund/${orderId}`, {
+                const response = await fetch(`${window.location.origin}/payments/refund/${orderId}`, {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify(refundAmount ? { amount: refundAmount } : {}) 

@@ -2,7 +2,7 @@
 
 let allProducts = [];
 let currentProduct = null;
-const API_URL = 'http://localhost:3000/products';
+const API_URL = `${window.location.origin}/products`;
 const SUPABASE_BASE_URL = 'http://192.168.1.199:8000';
 
 document.addEventListener('DOMContentLoaded', () => {

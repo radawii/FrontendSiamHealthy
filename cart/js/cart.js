@@ -374,7 +374,7 @@ async function applyCoupon() {
     if (subtotal === 0) return Swal.fire('แจ้งเตือน', 'ไม่มีสินค้าที่เลือกในตะกร้า', 'warning');
 
     try {
-        const response = await fetch(`http://localhost:3000/coupons/validate`, {
+        const response = await fetch(`${window.location.origin}/coupons/validate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ code: codeInput, subtotal: subtotal })

@@ -39,7 +39,7 @@ async function fetchOrderDetails(orderId) {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const response = await fetch(`http://localhost:3000/orders/${orderId}`, { headers });
+        const response = await fetch(`${window.location.origin}/orders/${orderId}`, { headers });
         if (!response.ok) throw new Error('ไม่สามารถดึงข้อมูลออเดอร์ได้');
 
         const order = await response.json();
@@ -473,7 +473,7 @@ async function saveStatusChanges() {
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
         // 🟢 ส่งค่าไปทั้ง order_status และ payment_status
-        const res = await fetch(`http://localhost:3000/orders/${currentOrderId}/status`, {
+        const res = await fetch(`${window.location.origin}/orders/${currentOrderId}/status`, {
             method: 'PATCH',
             headers: headers,
             body: JSON.stringify({ 

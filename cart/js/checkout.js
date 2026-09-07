@@ -436,7 +436,7 @@ function updatePaymentUI(method) {
 
 async function fetchStripePublishableKey() {
     try {
-        const res = await fetch('http://localhost:3000/payments/config');
+        const res = await fetch(`${window.location.origin}/payments/config`);
         if (res.ok) {
             const data = await res.json();
             return data.publishableKey || data.stripePublicKey || data.key || null;
@@ -456,7 +456,7 @@ async function notifyPaymentFailureToBackend(orderId, reason) {
         const role = currentUser ? (currentUser.role || 'USER') : 'USER';
         const token = currentUser?.token || localStorage.getItem('token') || localStorage.getItem('adminToken') || '';
 
-        await fetch(`http://localhost:3000/payments/${orderId}/fail`, {
+        await fetch(`${window.location.origin}/payments/${orderId}/fail`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -483,7 +483,7 @@ function startPaymentPolling(orderId, items, subtotal, discount, grandTotal) {
 
     checkPaymentInterval = setInterval(async () => {
         try {
-            const response = await fetch(`http://localhost:3000/orders/${orderId}`, {
+            const response = await fetch(`${window.location.origin}/orders/${orderId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -666,7 +666,7 @@ async function processPayment() {
             orderHeaders['Authorization'] = `Bearer ${userToken}`;
         }
 
-        const orderResponse = await fetch('http://localhost:3000/orders', {
+        const orderResponse = await fetch(`${window.location.origin}/orders`, {
             method: 'POST',
             headers: orderHeaders,
             body: JSON.stringify(orderPayload)
@@ -685,7 +685,7 @@ async function processPayment() {
 
         const paymentType = (selectedPayment === 'promptpay') ? 'promptpay' : 'card';
         
-        const paymentIntentRes = await fetch(`http://localhost:3000/payments/create-payment-intent/${createdOrderId}`, {
+        const paymentIntentRes = await fetch(`${window.location.origin}/payments/create-payment-intent/${createdOrderId}`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -819,7 +819,7 @@ function initStripePayment(clientSecret, publishableKey, orderId, paymentType, c
             }).then(async ({ error }) => {
                 if (error) {
                     try {
-                        const res = await fetch(`http://localhost:3000/orders/${orderId}`);
+                        const res = await fetch(`${window.location.origin}/orders/${orderId}`);
                         const data = await res.json();
                         const order = data.data || data[0] || data;
                         

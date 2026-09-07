@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 2. เชื่อมต่อ Server-Sent Events (SSE) กับ Node.js Server (Port 3000)
 function connectRealtimeStream() {
-    const evtSource = new EventSource('http://localhost:3000/api/notifications/stream');
+    const evtSource = new EventSource(`${window.location.origin}/api/notifications/stream`);
 
     evtSource.onopen = () => {
         console.log('[Notification System] Connected to Real-time Stream Server (localhost:3000)');

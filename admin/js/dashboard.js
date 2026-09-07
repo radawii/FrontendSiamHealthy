@@ -15,7 +15,7 @@ async function fetchDashboardData() {
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const response = await fetch('http://localhost:3000/orders/stats/dashboard', { headers });
+        const response = await fetch(`${window.location.origin}/orders/stats/dashboard`, { headers });
         if (!response.ok) throw new Error('ไม่สามารถเชื่อมต่อฐานข้อมูลได้');
 
         const data = await response.json();
@@ -282,7 +282,7 @@ function processRefund(orderId, maxAmount) {
                 const headers = { 'Content-Type': 'application/json' };
                 if (token) headers['Authorization'] = `Bearer ${token}`;
 
-                const response = await fetch(`http://localhost:3000/payments/refund/${orderId}`, {
+                const response = await fetch(`${window.location.origin}/payments/refund/${orderId}`, {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify(refundAmount ? { amount: refundAmount } : {}) 
