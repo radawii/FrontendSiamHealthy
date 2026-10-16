@@ -216,4 +216,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // ----------------------------------------------------
+    // 5. ระบบเข้าสู่ระบบผ่าน Social (Google & Facebook)
+    // ----------------------------------------------------
+    const googleBtn = document.getElementById('googleLoginBtn');
+    const facebookBtn = document.getElementById('facebookLoginBtn');
+
+    if (googleBtn) {
+      googleBtn.addEventListener('click', () => {
+        // วิ่งไปที่ NestJS Endpoint เพื่อให้ Passport พาไป Google Consent Screen
+        window.location.href = `${API_BASE_URL}/auth/google`;
+      });
+    }
+
+    if (facebookBtn) {
+        facebookBtn.addEventListener('click', () => {
+            window.location.href = `${API_BASE_URL}/auth/facebook`;
+        });
+    }
+
+    const googleRegBtn = document.getElementById('googleRegBtn');
+    const facebookRegBtn = document.getElementById('facebookRegBtn');
+
+    if (googleRegBtn) {
+        googleRegBtn.addEventListener('click', () => {
+            window.location.href = `${API_BASE_URL}/auth/google`;
+        });
+    }
+
+    if (facebookRegBtn) {
+        facebookRegBtn.addEventListener('click', () => {
+            window.location.href = `${API_BASE_URL}/auth/facebook`;
+        });
+    }
 });

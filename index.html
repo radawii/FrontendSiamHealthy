@@ -20,6 +20,7 @@
     <script src="./js/header.js" defer></script>
     <script src="./js/contact.js" defer></script>
     <script src="./js/footer.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -176,7 +177,7 @@
         <!-- Secondary Promotional Banner -->
         <section class="banner2-section reveal-on-scroll">
             <div class="banner2">
-                <img src="./img/banner4.png" alt="โปรโมชันพิเศษ Siam-Healthy">
+                <img src="./img/banner3.png" alt="โปรโมชันพิเศษ Siam-Healthy">
             </div>
         </section>
 
@@ -429,6 +430,46 @@
     <my-footer></my-footer>
 
     <script src="./js/carousel.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const userParam = urlParams.get('user');
+
+        if (token) {
+        // 1. บันทึก Token ลง LocalStorage
+        localStorage.setItem('token', token);
+
+        // 2. จัดเก็บข้อมูลผู้ใช้
+        if (userParam) {
+            try {
+            const userObj = JSON.parse(decodeURIComponent(userParam));
+            userObj.token = token;
+            localStorage.setItem('siam_healthy_user', JSON.stringify(userObj));
+            } catch (err) {
+            console.error('Error parsing user data:', err);
+            }
+        }
+
+        // 3. ลบ Query Parameter ออกจากแถบ URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // 4. แสดง Pop-up แจ้งเตือนเข้าสู่ระบบสำเร็จ
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+            icon: 'success',
+            title: 'เข้าสู่ระบบสำเร็จ!',
+            timer: 1500,
+            showConfirmButton: false,
+            }).then(() => {
+            window.location.reload();
+            });
+        } else {
+            window.location.reload();
+        }
+        }
+    });
+    </script>
 </body>
 
 </html>
