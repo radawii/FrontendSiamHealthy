@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- =================================================== -->
+  <!-- 1. หน้าหลัก (Homepage)                              -->
+  <!-- =================================================== -->
+  <url>
+    <loc>https://chiwitchiwa.com/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+
+  <!-- =================================================== -->
+  <!-- 2. หน้ารวมสินค้า และ หน้ารายละเอียดสินค้า (1-17)     -->
+  <!-- =================================================== -->
+  <url>
+    <loc>https://chiwitchiwa.com/shop/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=1</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=2</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=3</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=4</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=5</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=6</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=7</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=8</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=9</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=10</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=11</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=12</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=13</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=14</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=15</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=16</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/shop/product.html?id=17</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+
+  <!-- =================================================== -->
+  <!-- 3. หน้ารวมบทความ และ หน้าบทความ (1-9)              -->
+  <!-- =================================================== -->
+  <url>
+    <loc>https://chiwitchiwa.com/articles/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/knee-osteoarthritis-symptoms.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/screen-time-blurry-vision.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/age-related-hearing-loss.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/phone-use-toilet-hemorrhoids.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/constipation-causes-habits.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/herbs-for-blood-sugar.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/high-blood-pressure-symptoms.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/weight-loss-without-intense-exercise.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://chiwitchiwa.com/articles/enlarged-prostate-symptoms.html</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+
+  <!-- =================================================== -->
+  <!-- 4. หน้าข้อมูลทั่วไป (Static Content)                 -->
+  <!-- =================================================== -->
+  <url>
+    <loc>https://chiwitchiwa.com/about/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+
+</urlset>
