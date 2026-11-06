@@ -126,7 +126,6 @@ body.article-detail-page {
 .article-hero-image img {
   width: 100%;
   height: auto;
-  max-height: 450px;
   object-fit: cover;
   display: block;
 }
