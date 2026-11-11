@@ -569,3 +569,443 @@ body.article-detail-page {
     grid-template-columns: 1fr;
   }
 }
+
+/* คอนเทนเนอร์ครอบตาราง */
+.custom-table-card {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #edf2f7;
+    overflow: hidden;
+    margin: 24px 0;
+}
+
+/* ตาราง */
+.styled-medical-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+/* หัวตาราง */
+.styled-medical-table thead tr {
+    background: #f0fdf4; /* เขียวพาสเทลอ่อน */
+    border-bottom: 2px solid #bbf7d0;
+}
+
+.styled-medical-table th {
+    padding: 16px 20px;
+    color: #166534;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.styled-medical-table th i {
+    margin-right: 8px;
+}
+
+/* แถวข้อมูล */
+.styled-medical-table td {
+    padding: 18px 20px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.styled-medical-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.styled-medical-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* สไตล์ชื่อวิธีตรวจ */
+.styled-medical-table .col-name strong {
+    display: block;
+    font-size: 1.15rem;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.styled-medical-table .col-name .sub-name {
+    display: block;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+/* สไตล์คำอธิบาย */
+.styled-medical-table .col-desc {
+    color: #334155;
+    font-size: 0.98rem;
+    line-height: 1.65;
+}
+
+.styled-medical-table .col-desc strong {
+    color: #047857;
+}
+
+/* Responsive หน้าจอมือถือ */
+@media (max-width: 600px) {
+    .styled-medical-table th, 
+    .styled-medical-table td {
+        padding: 14px 16px;
+    }
+}
+
+.lipid-profile-wrapper {
+    margin: 32px 0;
+    width: 100%;
+}
+
+/* 🟢 ปรับให้เรียงแถวละ 1 เรื่อง (Single Column) */
+.lipid-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* การ์ดแต่ละเรื่อง */
+.lipid-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 24px 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lipid-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+/* ส่วนหัวการ์ด */
+.lipid-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 14px;
+}
+
+.lipid-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lipid-badge.good {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.lipid-badge.bad {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.lipid-title-box h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.lipid-title-box .thai-title {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* เนื้อหาภายในการ์ด */
+.lipid-body {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #334155;
+}
+
+.lipid-body p {
+    margin: 0;
+}
+
+/* กล่องสูตรคำนวณ */
+.formula-box {
+    background: #e1eefc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 0 auto 18px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: fit-content;
+}
+
+.formula-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.formula-math {
+    font-family: monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e293b;
+}
+
+/* ป้ายกำกับหน้าที่ (Role Pill) */
+.role-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+
+.pill-good {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+/* กล่องเตือนไตรกลีเซอไรด์ */
+.lipid-callout.warn {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.92rem;
+    color: #92400e;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.6;
+}
+
+.lipid-callout.warn i {
+    margin-top: 3px;
+}
+
+/* หน้าจอมือถือ */
+@media (max-width: 640px) {
+    .lipid-card {
+        padding: 18px;
+    }
+    .formula-box {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* คอนเทนเนอร์หลัก */
+.lipid-table-section {
+    margin: 28px 0;
+    width: 100%;
+}
+
+.lipid-table-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+/* สไตล์ Desktop Table */
+.lipid-benchmark-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.lipid-benchmark-table thead tr {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.lipid-benchmark-table th {
+    padding: 16px 18px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    vertical-align: middle;
+}
+
+.lipid-benchmark-table th i {
+    margin-right: 6px;
+}
+
+.lipid-benchmark-table th .unit {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+/* สีเฉพาะของแต่ละหัวตาราง */
+.lipid-benchmark-table th.th-normal i { color: #16a34a; }
+.lipid-benchmark-table th.th-borderline i { color: #d97706; }
+.lipid-benchmark-table th.th-high i { color: #dc2626; }
+
+/* แถวและช่องตาราง */
+.lipid-benchmark-table td {
+    padding: 16px 18px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.lipid-benchmark-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.lipid-benchmark-table tbody tr:hover {
+    background-color: #fafbfc;
+}
+
+/* ชื่อไขมัน */
+.td-lipid-name strong {
+    display: block;
+    font-size: 1.05rem;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.td-lipid-name .sub-txt {
+    display: block;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+/* ป้ายกำกับตัวเลข (Badges) */
+.val-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.val-badge.normal {
+    background-color: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.val-badge.borderline {
+    background-color: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.val-badge.high {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.val-badge small {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.text-muted {
+    color: #94a3b8;
+    font-weight: 600;
+    padding-left: 20px;
+}
+
+/* ==========================================
+   📱 Mobile Responsive (หน้าจอเล็กกว่า 768px)
+   แปลงเป็น Card Stack ไม่ต้องเลื่อนข้าง
+   ========================================== */
+@media (max-width: 768px) {
+    .lipid-table-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    .lipid-benchmark-table,
+    .lipid-benchmark-table thead,
+    .lipid-benchmark-table tbody,
+    .lipid-benchmark-table tr,
+    .lipid-benchmark-table td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* ซ่อนหัวตารางเดิม */
+    .lipid-benchmark-table thead {
+        display: none;
+    }
+
+    /* แต่ละแถวกลายเป็นการ์ด 1 ใบ */
+    .lipid-benchmark-table tbody tr {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+        margin-bottom: 16px;
+        padding: 14px 16px;
+    }
+
+    /* หัวข้อชนิดไขมันในการ์ด */
+    .lipid-benchmark-table td.td-lipid-name {
+        padding: 0 0 12px 0;
+        margin-bottom: 10px;
+        border-bottom: 1.5px dashed #e2e8f0;
+    }
+
+    .td-lipid-name strong {
+        font-size: 1.15rem;
+    }
+
+    /* แต่ละค่าใน Card แสดง Label กำกับผ่าน data-label */
+    .lipid-benchmark-table td.td-val,
+    .lipid-benchmark-table td.text-muted {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 7px 0;
+        border-bottom: none;
+    }
+
+    .lipid-benchmark-table td[data-label]::before {
+        content: attr(data-label);
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .text-muted {
+        padding-left: 0;
+    }
+
+    .val-badge {
+        padding: 4px 10px;
+        font-size: 0.88rem;
+    }
+}
