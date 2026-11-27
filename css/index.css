@@ -927,3 +927,13 @@ body {
     line-height: 1.3;
   }
 }
+
+/* Keep translated text within the original card layout. */
+html[lang="en"] .shop{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+html[lang="en"] .product-card,html[lang="en"] .icon-block{min-width:0}
+html[lang="en"] .product-hashtag{overflow-wrap:anywhere}
+.shop .product-card{min-width:0}
+.shop .product-price{flex-wrap:wrap}
+html[lang="en"] .icon-sup{grid-template-columns:repeat(3,minmax(0,1fr))}
+html[lang="en"] .icon-title{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:767px){.shop{grid-template-columns:repeat(2,minmax(0,1fr))}html[lang="en"] .icon-sup{grid-template-columns:repeat(2,minmax(0,1fr))}}

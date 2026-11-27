@@ -1,0 +1,11 @@
+/* The page backdrop from /about/, shared with the knowledge base. */
+:root {
+  --about-background-color: #f8faf8;
+}
+
+.about-main,
+.kb-site .kb-main {
+  background:
+    radial-gradient(ellipse at 5% 5%, #e7f6ed 0, transparent 36%),
+    radial-gradient(ellipse at 95% 55%, #eff3e4 0, transparent 40%);
+}

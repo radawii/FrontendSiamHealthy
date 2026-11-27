@@ -1,5 +1,34 @@
 class MyHeader extends HTMLElement {
   connectedCallback() {
+    if (this.dataset.ready) return;
+    this.dataset.ready = "true";
+    this.isKnowledgePage = /^\/(th|en)\/(ingredients|wellness)(\/|$)/.test(
+      location.pathname,
+    );
+    const pathLocale = location.pathname.match(/^\/(th|en)\//)?.[1];
+    let saved;
+    try {
+      saved = localStorage.getItem("siam_locale");
+    } catch {}
+    this.locale =
+      pathLocale ||
+      new URLSearchParams(location.search).get("lang") ||
+      saved ||
+      "th";
+    if (!["th", "en"].includes(this.locale)) this.locale = "th";
+    document.documentElement.lang = this.locale;
+    try {
+      localStorage.setItem("siam_locale", this.locale);
+    } catch {}
+
+    if (this.isKnowledgePage && !document.getElementById("sh-fonts")) {
+      const link = document.createElement("link");
+      link.id = "sh-fonts";
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap";
+      document.head.append(link);
+    }
     this.innerHTML = `
       <header class="main-header">
         <div class="header-container">
@@ -13,8 +42,10 @@ class MyHeader extends HTMLElement {
             <!-- Nav Menu -->
             <nav class="nav-menu" id="navMenu">
               <a href="/shop/" class="nav-tab">ผลิตภัณฑ์ทั้งหมด</a>
-              <a href="/about/" class="nav-tab">เกี่ยวกับเรา</a>
+              <a href="/th/ingredients/" class="nav-tab">คลังความรู้ส่วนผสม</a>
+              <a href="/th/wellness/" class="nav-tab">หัวข้อสุขภาพ</a>
               <a href="/articles/" class="nav-tab">บทความ</a>
+              <a href="/about/" class="nav-tab">เกี่ยวกับเรา</a>
               <a href="/contact/" class="nav-tab" id="contactNavBtn">ติดต่อเรา</a>
 
               <!-- ไอคอนแสดงในเมนูเบอร์เกอร์ (Mobile) -->
@@ -49,6 +80,7 @@ class MyHeader extends HTMLElement {
               </div>
             </nav>
 
+            <nav class="sh-language" aria-label="Language"><a href="#" data-locale="th" lang="th" aria-label="ภาษาไทย">TH</a><a href="#" data-locale="en" lang="en" aria-label="English">EN</a></nav>
             <!-- Search Icon Button -->
             <button class="icon-btn search-toggle-btn" id="searchToggleBtn" title="ค้นหา" aria-label="Toggle Search">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -116,89 +148,249 @@ class MyHeader extends HTMLElement {
       </header>
     `;
 
+    if (!this.isKnowledgePage && !document.getElementById("site-i18n")) {
+      const script = document.createElement("script");
+      script.id = "site-i18n";
+      script.src = "/js/site-i18n.js";
+      document.head.append(script);
+    }
     this.initHamburgerMenu();
     this.initSearchToggle();
     this.initSearchSystem();
     this.initContactScroll();
     this.initProfileSystem();
     this.updateCartBadge();
+    this.initLocale();
 
     window.addEventListener("cartUpdated", () => {
       this.updateCartBadge();
     });
   }
 
+  initLocale() {
+    this.querySelectorAll("[data-locale]").forEach((link) => {
+      const locale = link.dataset.locale;
+      link.classList.toggle("is-active", locale === this.locale);
+      if (locale === this.locale) link.setAttribute("aria-current", "true");
+      const url = new URL(location.href);
+      if (/^\/(th|en)\/(ingredients|wellness)(\/|$)/.test(url.pathname)) {
+        const alternate = document.querySelector(
+          'link[hreflang="' + locale + '"]',
+        );
+        if (alternate) url.pathname = new URL(alternate.href).pathname;
+        else
+          url.pathname = "/" + locale + "/" + url.pathname.split("/")[2] + "/";
+      } else url.searchParams.set("lang", locale);
+      link.href = url.pathname + url.search + url.hash;
+      link.addEventListener("click", () => {
+        try {
+          localStorage.setItem("siam_locale", locale);
+        } catch {}
+      });
+    });
+    this.querySelectorAll(".nav-tab").forEach((link) => {
+      link.href = link
+        .getAttribute("href")
+        .replace(/^\/(th|en)\//, "/" + this.locale + "/");
+      if (location.pathname.startsWith(new URL(link.href).pathname))
+        link.setAttribute("aria-current", "page");
+    });
+    this.localize();
+    this.querySelector("#searchOverlay").inert = true;
+    const menu = this.querySelector("#navMenu"),
+      button = this.querySelector("#hamburgerBtn");
+    button.setAttribute("aria-controls", "navMenu");
+    button.setAttribute("aria-expanded", "false");
+    const set = () => {
+      button.setAttribute(
+        "aria-expanded",
+        String(menu.classList.contains("active")),
+      );
+    };
+    new MutationObserver(set).observe(menu, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    this.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        menu.classList.remove("active");
+        button.classList.remove("active");
+        this.querySelector("#searchOverlay").classList.remove("active");
+        this.querySelector("#searchOverlay").inert = true;
+        this.querySelectorAll(
+          ".desktop-profile-container,.mobile-profile-container",
+        ).forEach((e) => e.classList.remove("active"));
+        button.focus();
+      }
+      if (event.key === "Tab" && menu.classList.contains("active")) {
+        const nodes = [button, ...menu.querySelectorAll("a,button")].filter(
+          (e) => e.getClientRects().length,
+        );
+        const first = nodes[0],
+          last = nodes[nodes.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+  localize() {
+    const translations = {
+      ผลิตภัณฑ์ทั้งหมด: "Products",
+      คลังความรู้ส่วนผสม: "Ingredients",
+      หัวข้อสุขภาพ: "Wellness",
+      เกี่ยวกับเรา: "Our story",
+      บทความ: "Journal",
+      ติดต่อเรา: "Contact",
+      ตะกร้าของคุณ: "Shopping bag",
+      บัญชีของฉัน: "My account",
+      บัญชีผู้ใช้: "Account",
+      ค้นหา: "Search",
+      "ค้นหาสินค้า หรือปัญหาสุขภาพ": "Search products or wellness topics",
+      เข้าสู่ระบบในชื่อ: "Signed in as",
+      ดูรายละเอียดคำสั่งซื้อ: "My orders",
+      ออกจากระบบ: "Sign out",
+      เข้าสู่ระบบ: "Sign in",
+      "เข้าสู่ระบบ / ลงทะเบียน": "Sign in / Register",
+      "เข้าสู่ระบบ / สมัครสมาชิก": "Sign in / Register",
+      สมัครสมาชิก: "Register",
+      สินค้า: "Product",
+      หมวดหมู่: "Category",
+      ไม่พบข้อมูลที่เกี่ยวข้องกับ: "No results for",
+      "Toggle Search": "Search",
+      "Profile Menu": "Account",
+      "Toggle navigation": "Navigation",
+      "ออกจากระบบ?": "Sign out?",
+      "คุณต้องการออกจากระบบใช่หรือไม่?": "Would you like to sign out?",
+      ยกเลิก: "Cancel",
+      ออกจากระบบสำเร็จ: "Signed out",
+    };
+    const walker = document.createTreeWalker(this, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      const text = node.textContent.trim();
+      if (this.locale === "en" && translations[text])
+        node.textContent = node.textContent.replace(text, translations[text]);
+    }
+    this.querySelectorAll("[title],[aria-label],[placeholder]").forEach(
+      (el) => {
+        for (const attr of ["title", "aria-label", "placeholder"]) {
+          const v = el.getAttribute(attr);
+          if (translations[v])
+            el.setAttribute(
+              attr,
+              this.locale === "en"
+                ? translations[v]
+                : {
+                    "Toggle Search": "ค้นหา",
+                    "Profile Menu": "บัญชีผู้ใช้",
+                    "Toggle navigation": "เมนูหลัก",
+                  }[v] || v,
+            );
+        }
+      },
+    );
+    this.querySelector("#searchCloseBtn")?.setAttribute(
+      "aria-label",
+      this.locale === "en" ? "Close search" : "ปิดการค้นหา",
+    );
+  }
   // ==========================================
   // 🔐 ฟังก์ชันผูก Event ควบคุม Dropdown
   // ==========================================
   initProfileSystem() {
-    const desktopToggle = this.querySelector('#desktopProfileToggle');
-    const desktopContainer = this.querySelector('#desktopProfileContainer');
-    const mobileToggle = this.querySelector('#mobileProfileToggle');
-    const mobileContainer = this.querySelector('#mobileProfileContainer');
+    const desktopToggle = this.querySelector("#desktopProfileToggle");
+    const desktopContainer = this.querySelector("#desktopProfileContainer");
+    const mobileToggle = this.querySelector("#mobileProfileToggle");
+    const mobileContainer = this.querySelector("#mobileProfileContainer");
 
     // Toggle Dropdown Event (Desktop)
     if (desktopToggle && desktopContainer) {
-      desktopToggle.addEventListener('click', (e) => {
+      desktopToggle.addEventListener("click", (e) => {
         e.stopPropagation();
-        desktopContainer.classList.toggle('active');
+        desktopContainer.classList.toggle("active");
       });
     }
 
     // Toggle Dropdown Event (Mobile)
     if (mobileToggle && mobileContainer) {
-      mobileToggle.addEventListener('click', (e) => {
+      mobileToggle.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        mobileContainer.classList.toggle('active');
+        mobileContainer.classList.toggle("active");
       });
     }
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', () => {
-      if (desktopContainer) desktopContainer.classList.remove('active');
-      if (mobileContainer) mobileContainer.classList.remove('active');
+    document.addEventListener("click", () => {
+      if (desktopContainer) desktopContainer.classList.remove("active");
+      if (mobileContainer) mobileContainer.classList.remove("active");
     });
 
     // วาด UI ครั้งแรกเมื่อโหลด
     this.updateProfileUI();
 
     // อัปเดต UI อัตโนมัติเมื่อกลับมาโฟกัสที่หน้าเดิม (แก้ปัญหาตอนกลับมาจากหน้าล็อกอิน)
-    window.addEventListener('focus', () => {
+    window.addEventListener("focus", () => {
       this.updateProfileUI();
     });
 
     // อัปเดต UI เมื่อ localStorage เปลี่ยนแปลงจากแท็บอื่น
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'siam_healthy_user' || e.key === 'sb-qqzgfnjrnenncgxbrqel-auth-token') {
+    window.addEventListener("storage", (e) => {
+      if (
+        e.key === "siam_healthy_user" ||
+        e.key === "sb-qqzgfnjrnenncgxbrqel-auth-token"
+      ) {
         this.updateProfileUI();
       }
     });
-    
+
     // เผื่อไว้กรณีต้องการสั่งอัปเดตเองจากสคริปต์หน้าอื่นผ่าน Custom Event
-    window.addEventListener('authStatusChanged', () => {
+    window.addEventListener("authStatusChanged", () => {
       this.updateProfileUI();
     });
   }
 
   updateProfileUI() {
-    const customToken = localStorage.getItem('siam_healthy_user');
-    const supabaseToken = localStorage.getItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
+    const customToken = localStorage.getItem("siam_healthy_user");
+    const supabaseToken = localStorage.getItem(
+      "sb-qqzgfnjrnenncgxbrqel-auth-token",
+    );
 
-    const hasCustomAuth = customToken && customToken !== 'null' && customToken !== 'undefined' && customToken.trim() !== '' && customToken !== '[]' && customToken !== '{}';
-    const hasSupabaseAuth = supabaseToken && supabaseToken !== 'null' && supabaseToken !== 'undefined' && supabaseToken !== '[]' && supabaseToken !== '{}';
+    const hasCustomAuth =
+      customToken &&
+      customToken !== "null" &&
+      customToken !== "undefined" &&
+      customToken.trim() !== "" &&
+      customToken !== "[]" &&
+      customToken !== "{}";
+    const hasSupabaseAuth =
+      supabaseToken &&
+      supabaseToken !== "null" &&
+      supabaseToken !== "undefined" &&
+      supabaseToken !== "[]" &&
+      supabaseToken !== "{}";
 
     const isLoggedIn = hasCustomAuth || hasSupabaseAuth;
 
     // ดึงข้อมูลชื่อ/อีเมลผู้ใช้
-    let displayName = 'ผู้ใช้งาน';
-    let userEmail = '';
+    let displayName = "ผู้ใช้งาน";
+    let userEmail = "";
 
     if (hasCustomAuth) {
       try {
         const parsed = JSON.parse(customToken);
-        displayName = parsed.name || parsed.username || parsed.full_name || parsed.email || 'ผู้ใช้งาน';
-        userEmail = parsed.email || '';
+        displayName =
+          parsed.name ||
+          parsed.username ||
+          parsed.full_name ||
+          parsed.email ||
+          "ผู้ใช้งาน";
+        userEmail = parsed.email || "";
       } catch (e) {
         displayName = customToken;
       }
@@ -206,27 +398,32 @@ class MyHeader extends HTMLElement {
       try {
         const parsed = JSON.parse(supabaseToken);
         const userObj = parsed.user || parsed;
-        displayName = userObj.user_metadata?.full_name || userObj.user_metadata?.name || userObj.email?.split('@')[0] || 'ผู้ใช้งาน';
-        userEmail = userObj.email || '';
+        displayName =
+          userObj.user_metadata?.full_name ||
+          userObj.user_metadata?.name ||
+          userObj.email?.split("@")[0] ||
+          "ผู้ใช้งาน";
+        userEmail = userObj.email || "";
       } catch (e) {
-        displayName = 'ผู้ใช้งาน';
+        displayName = "ผู้ใช้งาน";
       }
     }
 
     // อัปเดตข้อความบนปุ่ม Mobile Nav
-    const mobileProfileText = this.querySelector('#mobileProfileText');
+    const mobileProfileText = this.querySelector("#mobileProfileText");
     if (mobileProfileText) {
-      mobileProfileText.innerText = isLoggedIn ? displayName : 'บัญชีของฉัน';
+      mobileProfileText.innerText = isLoggedIn ? displayName : "บัญชีของฉัน";
     }
 
-    const dropdownContent = isLoggedIn ? `
+    const dropdownContent = isLoggedIn
+      ? `
       <!-- ส่วนแสดงข้อมูล User ที่ Login อยู่ -->
       <div class="dropdown-header-user" style="padding: 10px 14px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 2px;">
         <span style="font-size: 11px; color: #64748b; font-weight: 500;">เข้าสู่ระบบในชื่อ</span>
         <span style="font-size: 14px; font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
           ${displayName}
         </span>
-        ${userEmail && userEmail !== displayName ? `<span style="font-size: 12px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>` : ''}
+        ${userEmail && userEmail !== displayName ? `<span style="font-size: 12px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>` : ""}
       </div>
 
       <a href="/cart/orders.html" class="dropdown-item" style="display: flex; align-items: center; gap: 8px;">
@@ -247,7 +444,8 @@ class MyHeader extends HTMLElement {
         </svg>
         ออกจากระบบ
       </a>
-    ` : `
+    `
+      : `
       <a href="/login.html" class="dropdown-item" style="display: flex; align-items: center; gap: 8px;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
@@ -258,11 +456,12 @@ class MyHeader extends HTMLElement {
       </a>
     `;
 
-    const desktopDropdown = this.querySelector('#desktopProfileDropdown');
-    const mobileDropdown = this.querySelector('#mobileProfileDropdown');
-    
+    const desktopDropdown = this.querySelector("#desktopProfileDropdown");
+    const mobileDropdown = this.querySelector("#mobileProfileDropdown");
+
     if (desktopDropdown) desktopDropdown.innerHTML = dropdownContent;
     if (mobileDropdown) mobileDropdown.innerHTML = dropdownContent;
+    this.localize();
 
     this.bindLogoutEvents();
   }
@@ -271,24 +470,24 @@ class MyHeader extends HTMLElement {
   bindLogoutEvents() {
     const execSwalLogout = () => {
       Swal.fire({
-        title: 'ออกจากระบบ?',
-        text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
-        icon: 'question',
+        title: "ออกจากระบบ?",
+        text: "คุณต้องการออกจากระบบใช่หรือไม่?",
+        icon: "question",
         showCancelButton: true,
-        confirmButtonColor: '#e11d48',
-        cancelButtonColor: '#cbd5e1',
-        confirmButtonText: 'ออกจากระบบ',
-        cancelButtonText: 'ยกเลิก'
+        confirmButtonColor: "#e11d48",
+        cancelButtonColor: "#cbd5e1",
+        confirmButtonText: "ออกจากระบบ",
+        cancelButtonText: "ยกเลิก",
       }).then((result) => {
         if (result.isConfirmed) {
-          localStorage.removeItem('siam_healthy_user');
-          localStorage.removeItem('sb-qqzgfnjrnenncgxbrqel-auth-token');
-          
+          localStorage.removeItem("siam_healthy_user");
+          localStorage.removeItem("sb-qqzgfnjrnenncgxbrqel-auth-token");
+
           Swal.fire({
-            icon: 'success',
-            title: 'ออกจากระบบสำเร็จ',
+            icon: "success",
+            title: "ออกจากระบบสำเร็จ",
             timer: 1500,
-            showConfirmButton: false
+            showConfirmButton: false,
           }).then(() => {
             window.location.reload();
           });
@@ -296,12 +495,12 @@ class MyHeader extends HTMLElement {
       });
     };
 
-    this.querySelectorAll('.logout-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    this.querySelectorAll(".logout-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
-        if (typeof Swal === 'undefined') {
-          const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
+        if (typeof Swal === "undefined") {
+          const script = document.createElement("script");
+          script.src = "https://cdn.jsdelivr.net/npm/sweetalert2@11";
           script.onload = () => execSwalLogout();
           document.head.appendChild(script);
         } else {
@@ -312,19 +511,21 @@ class MyHeader extends HTMLElement {
   }
 
   initContactScroll() {
-    const contactBtn = this.querySelector('#contactNavBtn');
+    const contactBtn = this.querySelector("#contactNavBtn");
     if (contactBtn) {
-      contactBtn.addEventListener('click', (e) => {
-        const targetSection = document.querySelector('contact-section') || document.querySelector('mega-footer');
+      contactBtn.addEventListener("click", (e) => {
+        const targetSection =
+          document.querySelector("contact-section") ||
+          document.querySelector("mega-footer");
         if (targetSection) {
           e.preventDefault();
-          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
           const btn = this.querySelector("#hamburgerBtn");
           const menu = this.querySelector("#navMenu");
           if (btn) btn.classList.remove("active");
           if (menu) menu.classList.remove("active");
         } else {
-          window.location.href = '/index.html#contact';
+          window.location.href = "/index.html#contact";
         }
       });
     }
@@ -355,7 +556,9 @@ class MyHeader extends HTMLElement {
         menu.classList.toggle("active");
       });
 
-      this.querySelectorAll(".nav-tab, .mobile-icon-link:not(#mobileProfileToggle)").forEach((link) => {
+      this.querySelectorAll(
+        ".nav-tab, .mobile-icon-link:not(#mobileProfileToggle)",
+      ).forEach((link) => {
         link.addEventListener("click", () => {
           btn.classList.remove("active");
           menu.classList.remove("active");
@@ -372,11 +575,16 @@ class MyHeader extends HTMLElement {
 
     const openSearch = () => {
       overlay.classList.add("active");
+      overlay.inert = false;
+      toggleBtn.setAttribute("aria-expanded", "true");
       setTimeout(() => input.focus(), 150);
     };
 
     const closeSearch = () => {
       overlay.classList.remove("active");
+      overlay.inert = true;
+      toggleBtn.setAttribute("aria-expanded", "false");
+      toggleBtn.focus();
       input.value = "";
       const results = this.querySelector("#searchResults");
       if (results) {
@@ -402,44 +610,224 @@ class MyHeader extends HTMLElement {
     const resultsContainer = this.querySelector("#searchResults");
 
     const searchData = [
-      { name: "Andicellix (แอนไดเซลลิกซ์)", type: "product", tag: "การได้ยิน, หูอื้อ, หูดับ, เสียงดังในหู, เสียงจิ้งหรีด, บ้านหมุน, เส้นประสาทหู", url: "/shop/product.html?id=1" },
-      { name: "Astin (แอสติน)", type: "product", tag: "เบาหวาน, คุมน้ำตาล, ความดัน, ไขมันในเลือด, หัวใจ, หลอดเลือด, ชาปลายมือปลายเท้า", url: "/shop/product.html?id=2" },
-      { name: "Back Pro (แบคโปร)", type: "product", tag: "ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะบ่อย, ปัสสาวะไม่สุด, สุขภาพเพศชาย, ฮอร์โมนชาย", url: "product.html?id=3" },
-      { name: "Black Rhino (แบล็ก ไรโน)", type: "product", tag: "ต่อมลูกหมาก, ฮอร์โมนเพศชาย, สมรรถภาพ, ปัสสาวะแสบขัด, อ่อนเพลีย", url: "product.html?id=4" },
-      { name: "Carthisin (คาร์ธิซิน)", type: "product", tag: "กระดูก, ข้อต่อ, ปวดเข่า, ข้อเข่าเสื่อม, น้ำเลี้ยงข้อ, เก๊าท์, กระดูกพรุน", url: "product.html?id=5" },
-      { name: "Elsie (เอลซี่)", type: "product", tag: "ผิวหนัง, เชื้อรา, สะเก็ดเงิน, เล็บเปราะ, เชื้อราที่เล็บ, ภูมิคุ้มกันผิว, ผิวอักเสบ", url: "product.html?id=6" },
-      { name: "Extera (เอ็กซ์ทีร่า)", type: "product", tag: "ดีท็อกซ์ลำไส้, พยาธิ, ปรสิต, หูด, ติ่งเนื้อ, ท้องผูก, ขับถ่าย, ภูมิคุ้มกัน", url: "product.html?id=7" },
-      { name: "Genesis Caps (จินิซิส แคปส์)", type: "product", tag: "การได้ยิน, หูอื้อ, เสียงวิ้งในหู, น้ำในหูไม่เท่ากัน, เวียนหัว, บ้านหมุน, เส้นประสาทหู", url: "product.html?id=8" },
-      { name: "Geralox (จีราล็อกซ์)", type: "product", tag: "ริดสีดวงทวาร, ติ่งริดสีดวง, ขับถ่าย, ท้องผูกเรื้อรัง, ลำไส้, ถ่ายเป็นเลือด", url: "product.html?id=9" },
-      { name: "Helmina (เฮลมีน่า)", type: "product", tag: "ดีท็อกซ์, ลำไส้, หูดติ่งเนื้อ, พยาธิ, สารพิษตกค้าง, ท้องอืด, ท้องเฟ้อ", url: "product.html?id=10" },
-      { name: "Oclarizin (โอคลาริซิน)", type: "product", tag: "ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, ต้อกระจก, ต้อหิน, ต้อลม, แสงสีฟ้า", url: "product.html?id=11" },
-      { name: "Onix (โอนิกซ์)", type: "product", tag: "ลดน้ำหนัก, กระตุ้นเผาผลาญ, บล็อกแป้ง, บล็อกไขมัน, คุมหิว, เซลลูไลท์, สัดส่วน", url: "product.html?id=12" },
-      { name: "Philola (ฟิโลล่า)", type: "product", tag: "ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, โรคต้อ, จอประสาทตา, ปวดกระบอกตา", url: "product.html?id=13" },
-      { name: "S-Complex (เอส-คอมเพล็กซ์)", type: "product", tag: "ผิวขาวใส, ลดริ้วรอย, ฝ้ากระ, จุดด่างดำ, คอลลาเจน, ยกกระชับหน้า, หน้าเด็ก", url: "product.html?id=14" },
-      { name: "T-Chrome (ที-โครม)", type: "product", tag: "ลดน้ำหนัก, ระบบเผาผลาญ, คุมน้ำตาล, เซลลูไลท์, คุมหิว, ลดความอยากอาหาร", url: "product.html?id=15" },
-      { name: "Turbine (เทอร์บิน)", type: "product", tag: "ต่อมลูกหมาก, ปัสสาวะ, สุขภาพเพศชาย, สมรรถภาพ, พละกำลัง, ไหลเวียนเลือด", url: "product.html?id=16" },
-      { name: "Cartirex (คาร์ติเร็กซ์)", type: "product", tag: "กระดูก, ข้อต่อ, ปวดข้อ, ข้อเข่าเสื่อม, เพิ่มมวลกระดูก, อักเสบข้อ", url: "product.html?id=17" },
+      {
+        name: "Andicellix (แอนไดเซลลิกซ์)",
+        type: "product",
+        tag: "การได้ยิน, หูอื้อ, หูดับ, เสียงดังในหู, เสียงจิ้งหรีด, บ้านหมุน, เส้นประสาทหู",
+        url: "/shop/product.html?id=1",
+      },
+      {
+        name: "Astin (แอสติน)",
+        type: "product",
+        tag: "เบาหวาน, คุมน้ำตาล, ความดัน, ไขมันในเลือด, หัวใจ, หลอดเลือด, ชาปลายมือปลายเท้า",
+        url: "/shop/product.html?id=2",
+      },
+      {
+        name: "Back Pro (แบคโปร)",
+        type: "product",
+        tag: "ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะบ่อย, ปัสสาวะไม่สุด, สุขภาพเพศชาย, ฮอร์โมนชาย",
+        url: "/shop/product.html?id=3",
+      },
+      {
+        name: "Black Rhino (แบล็ก ไรโน)",
+        type: "product",
+        tag: "ต่อมลูกหมาก, ฮอร์โมนเพศชาย, สมรรถภาพ, ปัสสาวะแสบขัด, อ่อนเพลีย",
+        url: "/shop/product.html?id=4",
+      },
+      {
+        name: "Carthisin (คาร์ธิซิน)",
+        type: "product",
+        tag: "กระดูก, ข้อต่อ, ปวดเข่า, ข้อเข่าเสื่อม, น้ำเลี้ยงข้อ, เก๊าท์, กระดูกพรุน",
+        url: "/shop/product.html?id=5",
+      },
+      {
+        name: "Elsie (เอลซี่)",
+        type: "product",
+        tag: "ผิวหนัง, เชื้อรา, สะเก็ดเงิน, เล็บเปราะ, เชื้อราที่เล็บ, ภูมิคุ้มกันผิว, ผิวอักเสบ",
+        url: "/shop/product.html?id=6",
+      },
+      {
+        name: "Extera (เอ็กซ์ทีร่า)",
+        type: "product",
+        tag: "ดีท็อกซ์ลำไส้, พยาธิ, ปรสิต, หูด, ติ่งเนื้อ, ท้องผูก, ขับถ่าย, ภูมิคุ้มกัน",
+        url: "/shop/product.html?id=7",
+      },
+      {
+        name: "Genesis Caps (จินิซิส แคปส์)",
+        type: "product",
+        tag: "การได้ยิน, หูอื้อ, เสียงวิ้งในหู, น้ำในหูไม่เท่ากัน, เวียนหัว, บ้านหมุน, เส้นประสาทหู",
+        url: "/shop/product.html?id=8",
+      },
+      {
+        name: "Geralox (จีราล็อกซ์)",
+        type: "product",
+        tag: "ริดสีดวงทวาร, ติ่งริดสีดวง, ขับถ่าย, ท้องผูกเรื้อรัง, ลำไส้, ถ่ายเป็นเลือด",
+        url: "/shop/product.html?id=9",
+      },
+      {
+        name: "Helmina (เฮลมีน่า)",
+        type: "product",
+        tag: "ดีท็อกซ์, ลำไส้, หูดติ่งเนื้อ, พยาธิ, สารพิษตกค้าง, ท้องอืด, ท้องเฟ้อ",
+        url: "/shop/product.html?id=10",
+      },
+      {
+        name: "Oclarizin (โอคลาริซิน)",
+        type: "product",
+        tag: "ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, ต้อกระจก, ต้อหิน, ต้อลม, แสงสีฟ้า",
+        url: "/shop/product.html?id=11",
+      },
+      {
+        name: "Onix (โอนิกซ์)",
+        type: "product",
+        tag: "ลดน้ำหนัก, กระตุ้นเผาผลาญ, บล็อกแป้ง, บล็อกไขมัน, คุมหิว, เซลลูไลท์, สัดส่วน",
+        url: "/shop/product.html?id=12",
+      },
+      {
+        name: "Philola (ฟิโลล่า)",
+        type: "product",
+        tag: "ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, โรคต้อ, จอประสาทตา, ปวดกระบอกตา",
+        url: "/shop/product.html?id=13",
+      },
+      {
+        name: "S-Complex (เอส-คอมเพล็กซ์)",
+        type: "product",
+        tag: "ผิวขาวใส, ลดริ้วรอย, ฝ้ากระ, จุดด่างดำ, คอลลาเจน, ยกกระชับหน้า, หน้าเด็ก",
+        url: "/shop/product.html?id=14",
+      },
+      {
+        name: "T-Chrome (ที-โครม)",
+        type: "product",
+        tag: "ลดน้ำหนัก, ระบบเผาผลาญ, คุมน้ำตาล, เซลลูไลท์, คุมหิว, ลดความอยากอาหาร",
+        url: "/shop/product.html?id=15",
+      },
+      {
+        name: "Turbine (เทอร์บิน)",
+        type: "product",
+        tag: "ต่อมลูกหมาก, ปัสสาวะ, สุขภาพเพศชาย, สมรรถภาพ, พละกำลัง, ไหลเวียนเลือด",
+        url: "/shop/product.html?id=16",
+      },
+      {
+        name: "Cartirex (คาร์ติเร็กซ์)",
+        type: "product",
+        tag: "กระดูก, ข้อต่อ, ปวดข้อ, ข้อเข่าเสื่อม, เพิ่มมวลกระดูก, อักเสบข้อ",
+        url: "/shop/product.html?id=17",
+      },
 
-      { name: "กระดูกและข้อต่อ", type: "category", tag: "ปวดเข่า, ข้อเข่าเสื่อม, กระดูกเสื่อม, เพิ่มน้ำเลี้ยงข้อ", url: "/shop/?category=bone-immunity" },
-      { name: "หัวใจและหลอดเลือด", type: "category", tag: "ความดัน, ไขมันในเลือด, สุขภาพหัวใจ", url: "/shop/?category=blood-sugar" },
-      { name: "เบาหวาน", type: "category", tag: "คุมระดับน้ำตาล, อินซูลิน, เบาหวาน", url: "/shop/?category=blood-sugar" },
-      { name: "ลดน้ำหนัก", type: "category", tag: "เร่งการเผาผลาญ, คุมหิว, ลดความอ้วน, เซลลูไลท์", url: "/shop/?category=weight-metabolism" },
-      { name: "ผิวหนังและเล็บ", type: "category", tag: "บำรุงเซลล์ผิว, เล็บเปราะ, สะเก็ดเงิน, เชื้อรา", url: "/shop/?category=skin-aging" },
-      { name: "ดวงตา", type: "category", tag: "ตาแห้ง, ตาพร่ามัว, กรองแสงสีฟ้า, สายตา, โรคต้อ", url: "/shop/?category=eyes-ears" },
-      { name: "การได้ยิน", type: "category", tag: "ฟื้นฟูประสาทหู, หูอื้อตามวัย, การได้ยิน, เสียงวิ้งในหู, บ้านหมุน", url: "/shop/?category=eyes-ears" },
-      { name: "ลำไส้และการขับถ่าย", type: "category", tag: "ปรับสมดุลจุลินทรีย์, แก้ท้องผูก, ท้องอืด, ลำไส้, ริดสีดวง, ดีท็อกซ์", url: "/shop/?category=gut-digestive" },
-      { name: "ความงาม", type: "category", tag: "ผิวกระจ่างใส, ชะลอวัย, ออร่า, สุขภาพผิว, ลดริ้วรอย, ฝ้ากระ", url: "/shop/?category=skin-aging" },
-      { name: "สุขภาพเพศชาย", type: "category", tag: "เพิ่มพละกำลัง, ฟื้นฟูกำลัง, สมดุลฮอร์โมนชาย, ต่อมลูกหมาก, ปัสสาวะ", url: "/shop/?category=mens-health" },
+      {
+        name: "กระดูกและข้อต่อ",
+        type: "category",
+        tag: "ปวดเข่า, ข้อเข่าเสื่อม, กระดูกเสื่อม, เพิ่มน้ำเลี้ยงข้อ",
+        url: "/shop/?category=bone-immunity",
+      },
+      {
+        name: "หัวใจและหลอดเลือด",
+        type: "category",
+        tag: "ความดัน, ไขมันในเลือด, สุขภาพหัวใจ",
+        url: "/shop/?category=blood-sugar",
+      },
+      {
+        name: "เบาหวาน",
+        type: "category",
+        tag: "คุมระดับน้ำตาล, อินซูลิน, เบาหวาน",
+        url: "/shop/?category=blood-sugar",
+      },
+      {
+        name: "ลดน้ำหนัก",
+        type: "category",
+        tag: "เร่งการเผาผลาญ, คุมหิว, ลดความอ้วน, เซลลูไลท์",
+        url: "/shop/?category=weight-metabolism",
+      },
+      {
+        name: "ผิวหนังและเล็บ",
+        type: "category",
+        tag: "บำรุงเซลล์ผิว, เล็บเปราะ, สะเก็ดเงิน, เชื้อรา",
+        url: "/shop/?category=skin-aging",
+      },
+      {
+        name: "ดวงตา",
+        type: "category",
+        tag: "ตาแห้ง, ตาพร่ามัว, กรองแสงสีฟ้า, สายตา, โรคต้อ",
+        url: "/shop/?category=eyes-ears",
+      },
+      {
+        name: "การได้ยิน",
+        type: "category",
+        tag: "ฟื้นฟูประสาทหู, หูอื้อตามวัย, การได้ยิน, เสียงวิ้งในหู, บ้านหมุน",
+        url: "/shop/?category=eyes-ears",
+      },
+      {
+        name: "ลำไส้และการขับถ่าย",
+        type: "category",
+        tag: "ปรับสมดุลจุลินทรีย์, แก้ท้องผูก, ท้องอืด, ลำไส้, ริดสีดวง, ดีท็อกซ์",
+        url: "/shop/?category=gut-digestive",
+      },
+      {
+        name: "ความงาม",
+        type: "category",
+        tag: "ผิวกระจ่างใส, ชะลอวัย, ออร่า, สุขภาพผิว, ลดริ้วรอย, ฝ้ากระ",
+        url: "/shop/?category=skin-aging",
+      },
+      {
+        name: "สุขภาพเพศชาย",
+        type: "category",
+        tag: "เพิ่มพละกำลัง, ฟื้นฟูกำลัง, สมดุลฮอร์โมนชาย, ต่อมลูกหมาก, ปัสสาวะ",
+        url: "/shop/?category=mens-health",
+      },
 
-      { name: "ลุกก็โอย นั่งก็โอย เจ็บหัวเข่าแปล๊บๆ... สัญญาณข้อเข่าเสื่อม", type: "article", tag: "บทความ, กระดูก, ข้อเข่า, ปวดเข่า, ข้อเสื่อม, ข้อเข่าเสื่อม", url: "/articles/article1.html" },
-      { name: "หน้าจอมือถือทำลายดวงตามากกว่าที่คิด วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง", type: "article", tag: "บทความ, ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, แสงสีฟ้า", url: "/articles/article2.html" },
-      { name: "หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย", type: "article", tag: "บทความ, การได้ยิน, หูอื้อ, ฟังไม่ชัด, ประสาทหูเสื่อม", url: "/articles/article3.html" },
-      { name: "พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนัก", type: "article", tag: "บทความ, ลำไส้, ขับถ่าย, ริดสีดวง, ริดสีดวงทวาร", url: "/articles/article4.html" },
-      { name: "เช็ก 3 พฤติกรรมยิ่งแก้ ยิ่งท้องผูก! เผยวิธีใหม่ช่วยให้ขับถ่ายง่าย", type: "article", tag: "บทความ, ท้องผูก, ขับถ่าย, ลำไส้, ปรับสมดุลลำไส้, ดีท็อกซ์", url: "/articles/article5.html" },
-      { name: "ไม่อยากกินยาคุมเบาหวานไปตลอดชีวิต? เผย 5 สมุนไพรธรรมชาติ", type: "article", tag: "บทความ, เบาหวาน, คุมเบาหวาน, คุมน้ำตาล, ลดน้ำตาล", url: "/articles/article6.html" },
-      { name: "สัญญาณเตือนความดันโลหิตสูง วิธีสังเกตอาการ โดยไม่ต้องใช้เครื่องวัด", type: "article", tag: "บทความ, ความดัน, ความดันโลหิตสูง, หัวใจ, หลอดเลือด", url: "/articles/article7.html" },
-      { name: "ลดน้ำหนักแบบคนขี้เกียจ 5 เคล็ดลับเบิร์นไขมันเก่า", type: "article", tag: "บทความ, ลดน้ำหนัก, เบิร์นไขมัน, ไขมัน, หุ่นลีน", url: "/articles/article8.html" },
-      { name: "เสื่อมสมรรถภาพ ปัสสาวะแสบขัด เจาะลึกปัญหาต่อมลูกหมากโต", type: "article", tag: "บทความ, สุขภาพชาย, ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะแสบขัด, สมรรถภาพ", url: "/articles/article9.html" }
+      {
+        name: "ลุกก็โอย นั่งก็โอย เจ็บหัวเข่าแปล๊บๆ... สัญญาณข้อเข่าเสื่อม",
+        type: "article",
+        tag: "บทความ, กระดูก, ข้อเข่า, ปวดเข่า, ข้อเสื่อม, ข้อเข่าเสื่อม",
+        url: "/articles/article1.html",
+      },
+      {
+        name: "หน้าจอมือถือทำลายดวงตามากกว่าที่คิด วิธีดูแลตาพร่ามัว-ตาแห้งเรื้อรัง",
+        type: "article",
+        tag: "บทความ, ดวงตา, สายตา, ตาพร่ามัว, ตาแห้ง, แสงสีฟ้า",
+        url: "/articles/article2.html",
+      },
+      {
+        name: "หูอื้อ ฟังไม่ชัด คุยไม่รู้เรื่อง... สัญญาณเตือนประสาทหูเสื่อมตามวัย",
+        type: "article",
+        tag: "บทความ, การได้ยิน, หูอื้อ, ฟังไม่ชัด, ประสาทหูเสื่อม",
+        url: "/articles/article3.html",
+      },
+      {
+        name: "พฤติกรรมนั่งเล่นมือถือในห้องน้ำ ตัวการกระตุ้นริดสีดวงทวารหนัก",
+        type: "article",
+        tag: "บทความ, ลำไส้, ขับถ่าย, ริดสีดวง, ริดสีดวงทวาร",
+        url: "/articles/article4.html",
+      },
+      {
+        name: "เช็ก 3 พฤติกรรมยิ่งแก้ ยิ่งท้องผูก! เผยวิธีใหม่ช่วยให้ขับถ่ายง่าย",
+        type: "article",
+        tag: "บทความ, ท้องผูก, ขับถ่าย, ลำไส้, ปรับสมดุลลำไส้, ดีท็อกซ์",
+        url: "/articles/article5.html",
+      },
+      {
+        name: "ไม่อยากกินยาคุมเบาหวานไปตลอดชีวิต? เผย 5 สมุนไพรธรรมชาติ",
+        type: "article",
+        tag: "บทความ, เบาหวาน, คุมเบาหวาน, คุมน้ำตาล, ลดน้ำตาล",
+        url: "/articles/article6.html",
+      },
+      {
+        name: "สัญญาณเตือนความดันโลหิตสูง วิธีสังเกตอาการ โดยไม่ต้องใช้เครื่องวัด",
+        type: "article",
+        tag: "บทความ, ความดัน, ความดันโลหิตสูง, หัวใจ, หลอดเลือด",
+        url: "/articles/article7.html",
+      },
+      {
+        name: "ลดน้ำหนักแบบคนขี้เกียจ 5 เคล็ดลับเบิร์นไขมันเก่า",
+        type: "article",
+        tag: "บทความ, ลดน้ำหนัก, เบิร์นไขมัน, ไขมัน, หุ่นลีน",
+        url: "/articles/article8.html",
+      },
+      {
+        name: "เสื่อมสมรรถภาพ ปัสสาวะแสบขัด เจาะลึกปัญหาต่อมลูกหมากโต",
+        type: "article",
+        tag: "บทความ, สุขภาพชาย, ต่อมลูกหมาก, ต่อมลูกหมากโต, ปัสสาวะแสบขัด, สมรรถภาพ",
+        url: "/articles/article9.html",
+      },
     ];
 
     if (!input || !resultsContainer) return;
@@ -454,46 +842,46 @@ class MyHeader extends HTMLElement {
       }
 
       // 🔹 1. แยกข้อความค้นหาออกเป็น Keywords แต่ละคำ (ตัดช่องว่าง)
-      const keywords = rawQuery.split(/\s+/).filter(word => word.length > 0);
+      const keywords = rawQuery.split(/\s+/).filter((word) => word.length > 0);
 
       // 🔹 2. ค้นหาแบบ Keyword (ทุก Keyword ต้องมีอยู่ใน name หรือ tag)
       let filtered = searchData.filter((item) => {
         const itemText = `${item.name} ${item.tag}`.toLowerCase();
-        
+
         // เช็กว่าทุกคำที่พิมพ์มา มีปรากฏอยู่ในข้อมูลของชิ้นนั้น ๆ หรือไม่
-        return keywords.every(keyword => itemText.includes(keyword));
+        return keywords.every((keyword) => itemText.includes(keyword));
       });
 
       // 🔹 3. จัดลำดับผลลัพธ์ (คะแนนความแม่นยำ)
       filtered.sort((a, b) => {
         const aName = a.name.toLowerCase();
         const bName = b.name.toLowerCase();
-        
+
         const getScore = (name, tag) => {
           let score = 0;
-          
+
           // 1. ความสำคัญสูงสุด: ตรงกันเป๊ะ (เช่น พิมพ์ Astin เจอ Astin)
           if (name === rawQuery) {
-            score += 1000; 
-          } 
+            score += 1000;
+          }
           // 2. ความสำคัญรองลงมา: ชื่อขึ้นต้นด้วยคำที่พิมพ์ (พิมพ์ A เจอ Andicellix ก่อน)
           else if (name.startsWith(rawQuery)) {
-            score += 500; 
-          } 
+            score += 500;
+          }
           // 3. มีคำที่พิมพ์ เป็นส่วนหนึ่งของชื่อสินค้า (พิมพ์ ธิซิน เจอ Carthisin (คาร์ธิซิน))
           else if (name.includes(rawQuery)) {
             score += 100;
           }
 
           // 4. ตรวจสอบ Keyword ย่อยๆ ในชื่อและ Tag
-          keywords.forEach(word => {
+          keywords.forEach((word) => {
             // ถ้า Keyword อยู่ในชื่อสินค้า ให้คะแนนมากกว่า Tag
             if (name.includes(word)) score += 10;
             // ถ้า Keyword อยู่ใน Tag
             if (tag.toLowerCase().includes(word)) score += 3;
           });
 
-          // 5. โบนัส: เรียงตามตัวอักษร หากคะแนนเท่ากัน 
+          // 5. โบนัส: เรียงตามตัวอักษร หากคะแนนเท่ากัน
           // (เผื่อพิมพ์ A แล้วเจอ Andicellix กับ Astin จะได้เรียงตาม ABC)
           return score;
         };
@@ -502,10 +890,10 @@ class MyHeader extends HTMLElement {
         const scoreB = getScore(bName, b.tag);
 
         if (scoreB !== scoreA) {
-             return scoreB - scoreA; // เรียงตามคะแนนมากไปน้อย
+          return scoreB - scoreA; // เรียงตามคะแนนมากไปน้อย
         } else {
-             // ถ้าคะแนนเท่ากัน ให้เรียงตามตัวอักษร (A-Z)
-             return aName.localeCompare(bName); 
+          // ถ้าคะแนนเท่ากัน ให้เรียงตามตัวอักษร (A-Z)
+          return aName.localeCompare(bName);
         }
       });
 
@@ -515,20 +903,25 @@ class MyHeader extends HTMLElement {
           .map(
             (item) => `
           <a href="${item.url}" class="search-item">
-            <span class="item-name">${item.name}</span>
+            <span class="item-name">${this.locale === "en" ? item.name.replace(/\s*\([^)]*\)/g, "") : item.name}</span>
             <span class="item-badge ${item.type}">${
-              item.type === "product" ? "สินค้า" : item.type === "article" ? "บทความ" : "หมวดหมู่"
+              item.type === "product"
+                ? "สินค้า"
+                : item.type === "article"
+                  ? "บทความ"
+                  : "หมวดหมู่"
             }</span>
           </a>
-        `
+        `,
           )
           .join("");
       } else {
         resultsContainer.innerHTML = `
-          <div class="search-no-result">ไม่พบข้อมูลที่เกี่ยวข้องกับ "${e.target.value}"</div>
+          <div class="search-no-result">${this.locale === "en" ? "No results for" : "ไม่พบข้อมูลที่เกี่ยวข้องกับ"} "${String(e.target.value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c])}"</div>
         `;
       }
 
+      this.localize();
       resultsContainer.classList.add("active");
     });
   }
@@ -536,13 +929,30 @@ class MyHeader extends HTMLElement {
 
 customElements.define("my-header", MyHeader);
 
-window.addEventListener('load', () => {
-  if (window.location.hash === '#contact') {
-    const targetSection = document.querySelector('contact-section') || document.querySelector('mega-footer');
+window.addEventListener("load", () => {
+  if (window.location.hash === "#contact") {
+    const targetSection =
+      document.querySelector("contact-section") ||
+      document.querySelector("mega-footer");
     if (targetSection) {
       setTimeout(() => {
-        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 500);
     }
   }
 });
+// Load enhanced controls only where the page explicitly requests them.
+(() => {
+  if (!document.querySelector('select[data-enhance-select]')) return;
+  if (!document.getElementById("cw-select-css")) {
+    const css = document.createElement("link");
+    css.id = "cw-select-css";
+    css.rel = "stylesheet";
+    css.href = "/css/enhanced-select.css";
+    document.head.append(css);
+    const script = document.createElement("script");
+    script.src = "/js/enhanced-select.js";
+    script.defer = true;
+    document.head.append(script);
+  }
+})();

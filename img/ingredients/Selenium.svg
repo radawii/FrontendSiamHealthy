@@ -1,0 +1,9 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' role='img' aria-label='Selenium'>
+<defs><radialGradient id='s' cx='50%' cy='50%' r='50%'><stop offset='0' stop-color='#000' stop-opacity='.2'/><stop offset='1' stop-color='#000' stop-opacity='0'/></radialGradient></defs>
+<ellipse cx='300' cy='486' rx='170' ry='20' fill='url(#s)'/>
+<rect x='130' y='110' width='340' height='340' rx='10' fill='#fff' stroke='#5f6b7a' stroke-width='3'/>
+<text x='158' y='164' font-family='Inter, Helvetica, Arial, sans-serif' font-size='30' font-weight='600' fill='#5f6b7a'>34</text>
+<text x='300' y='330' text-anchor='middle' font-family='Noto Serif, Georgia, Times New Roman, serif' font-weight='600' font-size='150' fill='#1f2a24'>Se</text>
+<text x='300' y='392' text-anchor='middle' font-family='Inter, Helvetica, Arial, sans-serif' font-size='26' letter-spacing='4' fill='#4b554e'>SELENIUM</text>
+<text x='300' y='424' text-anchor='middle' font-family='Inter, Helvetica, Arial, sans-serif' font-size='20' fill='#7a837c'>78.971</text>
+</svg>

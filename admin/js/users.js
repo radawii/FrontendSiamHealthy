@@ -207,6 +207,8 @@ function renderUsersTable(usersToRender) {
         let roleBadge = '';
         if (role === 'ADMIN') {
             roleBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-semibold"><i class="fas fa-shield-alt mr-1.5"></i> Admin</span>`;
+        } else if (role === 'CONTENT') {
+            roleBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-sky-100 text-sky-700 rounded-full text-xs font-semibold"><i class="fas fa-pen-nib mr-1.5"></i> Content</span>`;
         } else {
             roleBadge = `<span class="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium"><i class="fas fa-user mr-1.5"></i> User</span>`;
         }
@@ -296,8 +298,9 @@ function openAddUserModal() {
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700 mb-1.5">สิทธิ์การใช้งาน (Role)</label>
-                        <select id="swal-role" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-colors bg-white">
+                        <select data-enhance-select id="swal-role" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-colors bg-white">
                             <option value="USER">User (ผู้ใช้งานทั่วไป)</option>
+                            <option value="CONTENT">Content (ทีมคอนเทนต์: สินค้า รีวิว คลังความรู้ หัวข้อสุขภาพ)</option>
                             <option value="ADMIN">Admin (ผู้ดูแลระบบ)</option>
                         </select>
                     </div>
@@ -386,8 +389,9 @@ function openEditUserModal(user) {
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700 mb-1.5">สิทธิ์การใช้งาน (Role)</label>
-                        <select id="edit-role" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-colors bg-white">
+                        <select data-enhance-select id="edit-role" class="w-full p-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-colors bg-white">
                             <option value="USER" ${currentRole === 'USER' ? 'selected' : ''}>User</option>
+                            <option value="CONTENT" ${currentRole === 'CONTENT' ? 'selected' : ''}>Content (ทีมคอนเทนต์)</option>
                             <option value="ADMIN" ${currentRole === 'ADMIN' ? 'selected' : ''}>Admin</option>
                         </select>
                     </div>

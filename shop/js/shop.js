@@ -23,3 +23,11 @@ thumbs.forEach(img => {
     });
 
 });
+// Ascender KB: load the ingredient-name linker (no-op on pages without ingredient cards)
+(function () {
+  if (document.querySelector('script[src="/js/ingredient-links.js"]')) return;
+  var s = document.createElement('script');
+  s.src = '/js/ingredient-links.js';
+  s.defer = true;
+  document.head.appendChild(s);
+})();

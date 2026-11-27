@@ -1,0 +1,20 @@
+{
+ "เข้าสู่ระบบ / สมัครสมาชิก | Siam-Healthy": "Log in / Sign up | Siam-Healthy",
+ "สร้างบัญชีใหม่": "Create a new account",
+ "ยินดีต้อนรับกลับมา": "Welcome back",
+ "เข้าสู่ระบบเพื่อจัดการคำสั่งซื้อและรับสิทธิประโยชน์": "Log in to manage your orders and receive member benefits",
+ "อีเมล หรือ Username": "Email or Username",
+ "กรอกอีเมล หรือ Username": "Enter your email or Username",
+ "รหัสผ่าน": "Password",
+ "ลืมรหัสผ่าน?": "Forgot password?",
+ "กรอกรหัสผ่านของคุณ": "Enter your password",
+ "จดจำการเข้าสู่ระบบ": "Remember me",
+ "หรือเข้าสู่ระบบด้วย": "<span>or log in with</span>",
+ "สร้างบัญชีใหม่เพื่อจัดการคำสั่งซื้อและรับสิทธิประโยชน์": "Create a new account to manage your orders and receive member benefits",
+ "ชื่อผู้ใช้งาน (Username)": "Username",
+ "ตั้งชื่อผู้ใช้งาน": "Choose a username",
+ "เบอร์โทรศัพท์": "Phone number",
+ "ฉันยอมรับ เงื่อนไขการใช้งาน และ นโยบายความเป็นส่วนตัว": "I accept the <a href=\"/terms\" target=\"_blank\">Terms of Use</a> and <a href=\"/privacy\" target=\"_blank\">Privacy Policy</a>",
+ "สมัครสมาชิก": "Sign up",
+ "หรือสมัครสมาชิกด้วย": "<span>or sign up with</span>"
+}

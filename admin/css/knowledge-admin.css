@@ -1,0 +1,27 @@
+/* Knowledge Base admin pages — follows the shared admin theme (slate + indigo). */
+.kb-admin table td { padding-top: 14px; padding-bottom: 14px; }
+
+/* Add / edit form: centered modal. Closes only via the X button. */
+#formPanel {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(960px, calc(100vw - 32px));
+  height: min(90vh, 920px);
+  border: 1px solid #e5e7eb;
+}
+#formPanel .field-input { min-height: 42px; line-height: 1.6; }
+#formPanel .field-input:focus { border-color: #a5b4fc; box-shadow: 0 0 0 3px rgba(99, 102, 241, .15); outline: none; }
+#formPanel textarea { min-height: 100px; }
+#formPanel [hidden] { display: none !important; }
+#previewContent img { max-width: 100%; }
+body.kb-modal-open { overflow: hidden; }
+
+@media (max-width: 640px) {
+  .kb-admin > div.p-6 { padding: 16px; }
+  #formPanel { width: calc(100vw - 16px); height: calc(100dvh - 16px); border-radius: 16px; }
+  .kb-admin table { min-width: 800px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #formPanel { transition: none !important; }
+}

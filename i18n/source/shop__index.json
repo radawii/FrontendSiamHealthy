@@ -1,0 +1,22 @@
+{
+ "ผลิตภัณฑ์ทั้งหมด | Siam-Healthy": {
+  "kind": "title",
+  "th": "ผลิตภัณฑ์ทั้งหมด | Siam-Healthy"
+ },
+ "เลือกจากความสนใจ": {
+  "kind": "unit",
+  "th": "เลือกจากความสนใจ"
+ },
+ "ทั้งหมด": {
+  "kind": "unit",
+  "th": "<a href=\"#\" class=\"category-btn active\" data-category=\"all\">ทั้งหมด</a>"
+ },
+ "หุ่นและระบบเผาผลาญ": {
+  "kind": "unit",
+  "th": "<a href=\"#\" class=\"category-btn\" data-category=\"weight-metabolism\">หุ่นและระบบเผาผลาญ</a>"
+ },
+ "17 ผลิตภัณฑ์": {
+  "kind": "unit",
+  "th": "<span class=\"product-count\">17 ผลิตภัณฑ์</span>"
+ }
+}

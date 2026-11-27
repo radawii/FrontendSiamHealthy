@@ -1,10 +1,12 @@
+@import url("../../css/about-background.css");
+
 /* ===================================================
    1. DESIGN SYSTEM & VARIABLES
 =================================================== */
 :root {
   --primary-color: #0d5c2e;
   --primary-hover: #08401f;
-  --bg-main: #f8faf8;
+  --bg-main: var(--about-background-color, #f8faf8);
   --text-dark: #334155; 
   --text-heading: #1e293b;
   --text-muted: #64748b;
@@ -440,5 +442,148 @@ body {
 @media (max-width: 480px) {
   .icon-sup {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Brand colour accents, scoped to the About page content. */
+.about-main .section-tag {
+  color: #0c6748;
+  background: #dff3e7;
+  border: 1px solid #b9ddca;
+}
+.about-main .about-intro-container {
+  border-top: 4px solid #17926b;
+  background: linear-gradient(135deg, #fff, #eff9f4);
+  box-shadow: 0 12px 36px #165c3d0e;
+}
+.about-main .sup-articles {
+  background: #fff9;
+}
+.about-main .icon-block {
+  --stat-accent: #13754e;
+  --stat-soft: #e2f5e9;
+  --stat-border: #bee4cc;
+  background: linear-gradient(145deg, #fff, var(--stat-soft));
+  border: 1px solid var(--stat-border);
+  border-top: 3px solid var(--stat-accent);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px #1c52320a;
+  min-width: 0;
+}
+.about-main .icon-block:nth-child(2) {
+  --stat-accent: #36784d;
+  --stat-soft: #edf6e5;
+  --stat-border: #cbdfbd;
+}
+.about-main .icon-block:nth-child(3) {
+  --stat-accent: #57733d;
+  --stat-soft: #f0f4e2;
+  --stat-border: #d5dfba;
+}
+.about-main .icon-block:nth-child(4) {
+  --stat-accent: #6b713a;
+  --stat-soft: #f5f3e2;
+  --stat-border: #e2dfbd;
+}
+.about-main .icon-image {
+  color: #fff;
+  background: var(--stat-accent);
+  box-shadow: 0 6px 14px #173d2918;
+}
+.about-main .icon-value {
+  color: var(--stat-accent);
+}
+.about-main .mesh-bg-container {
+  background: linear-gradient(125deg, #dbf3e5, #eff9f4 44%, #edf1df);
+  border-color: #c9e4d5;
+  box-shadow: 0 16px 40px #155c3c10;
+}
+.about-main .glow-1 {
+  background: #b0e3bc;
+}
+.about-main .glow-2 {
+  background: #c4dda9;
+}
+.about-main .glow-3 {
+  background: #dce6bd;
+}
+.about-main .section-tag.light {
+  color: white;
+  background: #126948;
+  border-color: #126948;
+  box-shadow: 0 4px 12px #12694820;
+}
+.about-main .concern-main-title {
+  color: #163d2d;
+}
+.about-main .distributed-glass-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.about-main .glass-card {
+  --value-accent: #13754e;
+  --value-soft: #e4f6eb;
+  --value-border: #a9d9be;
+  padding: 34px 28px;
+  border: 1px solid var(--value-border);
+  border-top: 4px solid var(--value-accent);
+  background: linear-gradient(150deg, #fff 5%, var(--value-soft));
+  box-shadow: 0 12px 28px #184f3210;
+  animation: none;
+  min-width: 0;
+}
+.about-main .glass-card:nth-child(2) {
+  --value-accent: #56743f;
+  --value-soft: #f0f3df;
+  --value-border: #cbdab6;
+}
+.about-main .glass-card .card-icon {
+  align-items: center;
+  align-self: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 24px;
+  background: var(--value-accent);
+  color: white;
+  box-shadow: 0 8px 20px #193e2e20;
+}
+.about-main .card-icon svg {
+  width: 46px;
+  height: 46px;
+  filter: none;
+}
+.about-main .glass-card .card-title {
+  color: var(--value-accent);
+}
+.about-main .glass-card .card-desc {
+  color: #4d6157;
+  line-height: 1.9;
+}
+.about-main .glass-card .card-desc strong {
+  color: #52693a;
+}
+.about-main .glass-card:hover {
+  background: linear-gradient(150deg, #fff 5%, var(--value-soft));
+  border-color: var(--value-accent);
+  transform: translateY(-5px) !important;
+}
+@media (max-width: 767px) {
+  .about-main .distributed-glass-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .about-main .mesh-bg-container {
+    padding: 32px 18px;
+    border-radius: 24px;
+  }
+  .about-main .glass-card {
+    padding: 28px 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-main *,
+  .about-main *:before,
+  .about-main *:after {
+    animation: none !important;
+    transition: none !important;
   }
 }

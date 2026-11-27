@@ -1,5 +1,21 @@
 // admin/js/sidebar.js
 
+// 🟢 0. Dropdown สวยงามทุกหน้าแอดมิน: โหลด enhanced-select + ธีมแอดมิน ครั้งเดียว
+(function loadAdminSelects() {
+    if (document.getElementById('cw-admin-select-css')) return;
+    const add = (tag, attrs) => { const el = document.createElement(tag); Object.assign(el, attrs); document.head.appendChild(el); };
+    add('link', { rel: 'stylesheet', href: '/css/enhanced-select.css' });
+    add('link', { rel: 'stylesheet', href: '/admin/css/admin-select.css', id: 'cw-admin-select-css' });
+    if (!window.__chiwaSelects) add('script', { src: '/js/enhanced-select.js', defer: true });
+})();
+
+// หน้าที่ Role CONTENT (ทีมคอนเทนต์) ดู แก้ไข และลบข้อมูลได้
+const CONTENT_PAGES = ['products.html', 'product-content.html', 'ingredients.html', 'wellness.html'];
+
+function currentAdminRole() {
+    try { return String(JSON.parse(localStorage.getItem('adminData') || '{}').role || '').toUpperCase(); } catch (e) { return ''; }
+}
+
 // 🟢 1. ระบบ Auth Guard: ตรวจสอบการเข้าสู่ระบบทันทีที่โหลดสคริปต์
 (function checkAdminAuth() {
     const currentPath = window.location.pathname;
@@ -20,11 +36,15 @@
 
     try {
         const user = JSON.parse(adminData);
-        // ตรวจสอบ Role หากไม่ใช่ ADMIN ให้ล้างค่า แล้วเตะออกทันที
-        if (user.role !== 'ADMIN' && user.role !== 'admin') {
+        const role = String(user.role || '').toUpperCase();
+        // ตรวจสอบ Role: ADMIN เข้าได้ทุกหน้า, CONTENT เข้าได้เฉพาะหน้าคอนเทนต์ อื่น ๆ เตะออก
+        if (role !== 'ADMIN' && role !== 'CONTENT') {
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminData');
             window.location.href = 'login.html';
+        } else if (role === 'CONTENT') {
+            const page = (currentPath.split('/').pop() || 'index').replace(/\.html$/, '') + '.html';
+            if (!CONTENT_PAGES.includes(page)) window.location.replace('products.html');
         }
     } catch (e) {
         localStorage.removeItem('adminToken');
@@ -47,16 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 🟢 รายการเมนู (เพิ่ม "จัดการ CRM Integration" เข้าไปแล้ว)
-    const menuItems = [
+    const allMenuItems = [
         { name: 'ภาพรวม (Dashboard)', icon: 'fas fa-home', link: 'index.html' },
         { name: 'รายการธุรกรรม', icon: 'fas fa-receipt', link: 'transactions.html' },
         { name: 'จัดการสินค้า', icon: 'fas fa-box', link: 'products.html' },
         { name: 'รีวิว & สารสกัด', icon: 'fas fa-star', link: 'product-content.html' },
+        { name: 'คลังความรู้ส่วนผสม', icon: 'fas fa-leaf', link: 'ingredients.html' },
+        { name: 'หัวข้อสุขภาพ', icon: 'fas fa-heart-pulse', link: 'wellness.html' },
         { name: 'ที่อยู่จัดส่ง', icon: 'fas fa-map-marked-alt', link: 'shipping.html' },
         { name: 'ผู้ใช้งาน', icon: 'fas fa-users', link: 'users.html' },
         { name: 'จัดการโค้ดส่วนลด', icon: 'fas fa-ticket', link: 'coupons.html' },
         { name: 'จัดการ CRM Integration', icon: 'fas fa-network-wired', link: 'crm-admin.html' }
     ];
+    const menuItems = currentAdminRole() === 'CONTENT'
+        ? allMenuItems.filter(item => CONTENT_PAGES.includes(item.link))
+        : allMenuItems;
 
     // โครงสร้าง HTML ของ Sidebar
     const sidebarHTML = `
@@ -136,3 +161,5 @@ function handleLogout() {
         }
     }
 }
+// Shared accessible dropdowns used by storefront and administration.
+(()=>{if(!document.getElementById('cw-select-css')){const css=document.createElement('link');css.id='cw-select-css';css.rel='stylesheet';css.href='/css/enhanced-select.css';document.head.append(css);const script=document.createElement('script');script.src='/js/enhanced-select.js';script.defer=true;document.head.append(script);}})();

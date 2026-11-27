@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <script src="/js/i18n-boot.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MNXV0DG3R"></script>
     <script>
@@ -95,11 +96,6 @@
             <!-- Header ของสินค้า -->
             <div class="shop-header">
                 <span class="product-count">กำลังเตรียมข้อมูล...</span>
-                <select>
-                    <option value="">เรียงตาม: แนะนำ</option>
-                    <option value="price-low">ราคา: ต่ำไปสูง</option>
-                    <option value="price-high">ราคา: สูงไปต่ำ</option>
-                </select>
             </div>
 
             <!-- Grid สินค้า (จะถูกเรนเดอร์ใหม่จาก JS เท่านั้น) -->
@@ -130,7 +126,6 @@
         let productCards = [];
         const productsContainer = document.getElementById('products-container');
         const productCountText = document.querySelector('.product-count');
-        const sortSelect = document.querySelector('.shop-header select');
         let isLogicInitialized = false;
 
         // ตารางแมปหมวดหมู่ตามชื่อสินค้า
@@ -332,9 +327,6 @@
                     });
                 });
 
-                if (sortSelect) {
-                    sortSelect.addEventListener('change', updateProductsUI);
-                }
                 isLogicInitialized = true;
             }
 
@@ -345,17 +337,9 @@
             try {
                 const activeBtn = document.querySelector('.category-btn.active');
                 const selectedCategory = activeBtn ? activeBtn.getAttribute('data-category') : 'all';
-                const sortValue = sortSelect ? sortSelect.value : '';
-
-                let sortedCards = [...productCards];
-
-                if (sortValue === 'price-low') {
-                    sortedCards.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
-                } else if (sortValue === 'price-high') {
-                    sortedCards.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
-                } else {
-                    sortedCards.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-                }
+                const sortedCards = [...productCards].sort(
+                    (a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex)
+                );
 
                 let visibleIndex = 0;
                 sortedCards.forEach(card => {

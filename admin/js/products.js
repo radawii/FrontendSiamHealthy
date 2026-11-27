@@ -209,7 +209,7 @@ function renderImageSlotsUI() {
 
                 ${hasImg ? `
                     <div class="w-full flex items-center gap-1 mt-1">
-                        <select onchange="moveImageSlot(${i}, parseInt(this.value))" class="text-[10px] p-1 border rounded bg-white w-full focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                        <select data-enhance-select data-size="sm" aria-label="ย้ายตำแหน่งรูป" onchange="moveImageSlot(${i}, parseInt(this.value))" class="text-[10px] p-1 border rounded bg-white w-full focus:outline-none focus:ring-1 focus:ring-indigo-500">
                             ${slotOptionsHtml}
                         </select>
                         <button type="button" onclick="removeImageSlot(${i})" class="text-red-500 hover:text-red-700 p-1.5 bg-white border rounded hover:bg-red-50" title="ลบรูปนี้">

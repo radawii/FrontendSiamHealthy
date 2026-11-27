@@ -38,6 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1.2 Clone หัว/ท้าย สำหรับ Infinite Loop
             const firstClone = originalItems[0].cloneNode(true);
             const lastClone = originalItems[totalOriginals - 1].cloneNode(true);
+            [firstClone, lastClone].forEach(slide => {
+                slide.setAttribute('aria-hidden', 'true');
+                slide.inert = true;
+            });
             
             track.appendChild(firstClone);
             track.insertBefore(lastClone, track.firstChild);
@@ -60,10 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             function updateDots() {
-                if (dots.length === 0) return;
                 let realIndex = currentIndex - 1;
                 if (currentIndex === 0) realIndex = totalOriginals - 1;
                 if (currentIndex === allItems.length - 1) realIndex = 0;
+                originalItems.forEach((slide, index) => {
+                    slide.setAttribute('aria-hidden', String(index !== realIndex));
+                    slide.inert = index !== realIndex;
+                });
 
                 dots.forEach((dot, idx) => {
                     if (idx === realIndex) {
@@ -108,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1.5 Autoplay
             function startAutoplay() {
                 stopAutoplay();
+                if (container?.contains(document.activeElement)) return;
                 autoplayTimer = setInterval(nextSlide, autoplayInterval);
             }
 
@@ -118,6 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (container) {
                 container.addEventListener('mouseenter', stopAutoplay);
                 container.addEventListener('mouseleave', startAutoplay);
+                container.addEventListener('focusin', stopAutoplay);
+                container.addEventListener('focusout', event => {
+                    if (!container.contains(event.relatedTarget)) startAutoplay();
+                });
             }
 
             // 1.6 Event Buttons
@@ -145,8 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             function dragStart(e) {
                 if (isTransitioning) return;
+                if (e.target.closest('a,button,input')) return;
                 isDragging = true;
                 startX = getPositionX(e);
+                currentX = startX;
                 stopAutoplay();
                 track.style.transition = 'none';
             }
@@ -189,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             setTrackPosition(currentIndex, false);
+            updateDots();
             startAutoplay();
         }
     }

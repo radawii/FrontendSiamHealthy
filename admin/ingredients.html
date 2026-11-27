@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - คลังความรู้ส่วนผสม</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Favicon รูปไอคอนบนแท็บเบราว์เซอร์ -->
+    <link rel="icon" type="image/png" href="/img/icon.png" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+        body {
+            font-family: 'Prompt', sans-serif;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Centered modal */
+        #formPanel { transition: opacity .2s ease, transform .25s cubic-bezier(0.16, 1, 0.3, 1), visibility .25s; }
+        #formPanel.is-closed { opacity: 0; visibility: hidden; pointer-events: none; transform: translate(-50%, -48%) scale(.97); }
+        .field-label { display: block; font-size: 0.8rem; font-weight: 500; color: #374151; margin-bottom: 0.35rem; }
+        .field-input {
+            width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem;
+            font-size: 0.875rem; outline: none; transition: all 0.15s; background: #fff;
+        }
+        .field-input:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(199, 210, 254, 0.5); }
+        .field-hint { font-size: 0.72rem; color: #9ca3af; margin-top: 0.25rem; }
+        .form-section-title {
+            font-size: 0.95rem; font-weight: 600; color: #1f2937; padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f3f4f6; margin-bottom: 1rem;
+        }
+        .tab-btn.is-active { background: #eef2ff; color: #4338ca; font-weight: 600; }
+    </style>
+<link rel="stylesheet" href="/admin/css/knowledge-admin.css">
+</head>
+<body class="bg-slate-50 flex h-screen overflow-hidden">
+
+    <!-- 🟢 Container สำหรับแสดง Sidebar จาก sidebar.js -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="kb-admin flex-1 flex flex-col overflow-y-auto">
+        <!-- Top Navbar -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center z-10 sticky top-0 border-b border-gray-100">
+            <div class="flex items-center">
+                <button class="sm:hidden text-gray-600 focus:outline-none mr-4">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold text-gray-800">คลังความรู้ส่วนผสม (Ingredient Knowledge Base)</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 border-l pl-4 border-gray-200">
+                    <span class="text-sm text-gray-600 hidden md:inline">ผู้ดูแลระบบ (Admin)</span>
+                    <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                        AD
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 w-full space-y-6 flex-1">
+
+
+            <!-- Search & Action Bar -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+                <div class="flex flex-col sm:flex-row gap-3 w-full xl:max-w-2xl">
+                    <div class="relative flex-1">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="searchInput" placeholder="ค้นหาชื่อไทย, ชื่ออังกฤษ, slug, ชื่อวิทยาศาสตร์..."
+                            class="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-lg focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all text-sm">
+                    </div>
+                    <select data-enhance-select id="statusFilter" class="py-2.5 px-3 bg-gray-50 border border-transparent rounded-lg focus:bg-white focus:border-indigo-300 outline-none text-sm">
+                        <option value="">ทุกสถานะ</option>
+                        <option value="PUBLISHED">เผยแพร่แล้ว</option>
+                        <option value="DRAFT">ฉบับร่าง</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-wrap xl:flex-nowrap w-full xl:w-auto gap-2">
+                    <a href="/admin/knowledge-preview.html?kind=ingredients" target="_blank" rel="noopener" class="w-full sm:w-auto whitespace-nowrap bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-arrow-up-right-from-square"></i> ดูตัวอย่างหน้าเว็บ
+                    </a>
+                    <button id="addCategoryBtn" class="w-full sm:w-auto whitespace-nowrap bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-tags"></i> เพิ่มหมวดหมู่
+                    </button>
+                    <button id="addIngredientBtn" class="w-full sm:w-auto whitespace-nowrap bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i> เพิ่มส่วนผสมใหม่
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ingredients Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-5 border-b border-gray-100 bg-white">
+                    <h3 class="font-semibold text-gray-800 flex items-center">
+                        รายการส่วนผสมทั้งหมด
+                        <span id="totalCountBadge" class="ml-2 px-2.5 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold">0 รายการ</span>
+                    </h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1100px]">
+                        <thead>
+                            <tr class="bg-white border-b border-gray-200 text-gray-400 text-xs font-medium tracking-wide uppercase">
+                                <th class="p-5 w-16">ID</th>
+                                <th class="p-5 w-72">ชื่อส่วนผสม</th>
+                                <th class="p-5 w-44">slug</th>
+                                <th class="p-5 w-36">หมวดหมู่</th>
+                                <th class="p-5 w-56">สถานะ</th>
+                                <th class="p-5 w-28 text-center">ผลิตภัณฑ์</th>
+                                <th class="p-5 w-32">อัปเดตล่าสุด</th>
+                                <th class="p-5 text-center w-32">แสดงบนเว็บ</th>
+                                <th class="p-5 text-center w-48">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ingredientsTableBody" class="text-sm text-gray-700 divide-y divide-gray-50">
+                            <tr>
+                                <td colspan="8" class="p-12 text-center text-gray-400">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-3 text-indigo-500"></i>
+                                    <p class="font-medium text-gray-500">กำลังโหลดข้อมูลส่วนผสม...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-5 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500 bg-white" id="paginationInfo">
+                    <span>กำลังประมวลผลข้อมูล...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 🟢 Slide-over Panel: ฟอร์มแก้ไข / ตัวอย่าง -->
+    <div id="panelBackdrop" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30" aria-hidden="true"></div>
+    <section id="formPanel" class="is-closed fixed z-40 bg-white shadow-2xl flex flex-col rounded-2xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+        <!-- Panel Header -->
+        <div class="p-5 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+            <div>
+                <h3 id="panelTitle" class="text-lg font-semibold text-gray-800">เพิ่มส่วนผสมใหม่</h3>
+                <div id="panelStatusBadges" class="flex flex-wrap gap-2 mt-2"></div>
+            </div>
+            <button id="closePanelBtn" type="button" aria-label="ปิด" class="text-gray-400 hover:text-gray-700 w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="px-5 pt-4 flex gap-2 flex-shrink-0 border-b border-gray-100">
+            <button class="tab-btn is-active px-4 py-2 rounded-t-lg text-sm text-gray-600" data-tab="edit">
+                <i class="fas fa-pen-to-square mr-1.5"></i> แก้ไขข้อมูล
+            </button>
+            <button class="tab-btn px-4 py-2 rounded-t-lg text-sm text-gray-600" data-tab="preview">
+                <i class="fas fa-eye mr-1.5"></i> ตัวอย่างเนื้อหา
+            </button>
+        </div>
+
+        <!-- Tab: Edit -->
+        <div id="tabEdit" class="flex-1 overflow-y-auto p-5 space-y-8">
+
+            <!-- Basic -->
+            <div>
+                <p class="form-section-title"><i class="fas fa-circle-info text-indigo-400 mr-1.5"></i> ข้อมูลพื้นฐาน</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="field-label">ชื่อภาษาไทย <span class="text-rose-500">*</span></label>
+                        <input type="text" id="f-nameTh" class="field-input" placeholder="เช่น ใบแปะก๊วย">
+                    </div>
+                    <div>
+                        <label class="field-label">ชื่อภาษาอังกฤษ <span class="text-rose-500">*</span></label>
+                        <input type="text" id="f-nameEn" class="field-input" placeholder="เช่น Ginkgo">
+                    </div>
+                    <div>
+                        <label class="field-label">slug (URL) <span class="text-rose-500">*</span></label>
+                        <input type="text" id="f-slug" class="field-input font-mono" placeholder="korean-ginseng">
+                        <p class="field-hint">ตัวอักษรอังกฤษตัวเล็ก ตัวเลข และขีดกลางเท่านั้น เช่น korean-ginseng</p>
+                    </div>
+                    <div>
+                        <label class="field-label">ชื่อวิทยาศาสตร์</label>
+                        <input type="text" id="f-scientificName" class="field-input" placeholder="เช่น Ginkgo biloba">
+                    </div>
+                    <div>
+                        <label class="field-label">หมวดหมู่</label>
+                        <select data-enhance-select id="f-categoryId" class="field-input">
+                            <option value="">— ไม่ระบุ —</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="field-label">แหล่งที่มา / ต้นกำเนิด</label>
+                        <input type="text" id="f-sourceOrigin" class="field-input" placeholder="เช่น สารสกัดจากใบ ปลูกในประเทศจีน">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="field-label">ชื่ออื่น ๆ (Alternative Names)</label>
+                        <input type="text" id="f-alternativeNames" class="field-input" placeholder="คั่นแต่ละชื่อด้วยเครื่องหมายจุลภาค (,)">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="field-label">คำพ้อง / คำค้นหา (Synonyms)</label>
+                        <input type="text" id="f-synonyms" class="field-input" placeholder="คั่นด้วยจุลภาค (,) ใช้ช่วยให้ค้นหาเจอง่ายขึ้น">
+                    </div>
+                    <div>
+                        <label class="field-label">รูปภาพหลัก</label>
+                        <input type="hidden" id="f-featuredImageUrl">
+                        <div data-image-picker="f-featuredImageUrl" data-hint="แนะนำรูปสี่เหลี่ยมจัตุรัส"></div>
+                    </div>
+                    <div>
+                        <label class="field-label">รูปสำหรับแชร์โซเชียล (OG)</label>
+                        <input type="hidden" id="f-ogImageUrl">
+                        <div data-image-picker="f-ogImageUrl" data-hint="ไม่ใส่ก็ได้ ระบบจะใช้รูปภาพหลักแทน"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content TH -->
+            <div>
+                <p class="form-section-title"><i class="fas fa-language text-indigo-500 mr-1.5"></i> เนื้อหาภาษาไทย (ภาษาหลัก)</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="field-label">คำอธิบายสั้น</label>
+                        <textarea id="f-shortDescriptionTh" rows="2" class="field-input" placeholder="สรุปสั้น ๆ 1-2 บรรทัด ใช้แสดงในการ์ดและ meta description"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">คำอธิบายแบบเต็ม</label>
+                        <textarea id="f-fullDescriptionTh" rows="5" class="field-input" placeholder="ข้อมูลทั่วไปของส่วนผสมนี้"></textarea>
+                        <p class="field-hint">เป็นข้อความธรรมดา ระบบจะคงการขึ้นบรรทัดใหม่ให้ (ไม่รองรับแท็ก HTML เพื่อความปลอดภัย)</p>
+                    </div>
+                    <div>
+                        <label class="field-label">คุณสมบัติสำคัญ (Key Functions)</label>
+                        <textarea id="f-keyFunctionsTh" rows="4" class="field-input" placeholder="หนึ่งข้อต่อหนึ่งบรรทัด"></textarea>
+                        <p class="field-hint">พิมพ์หนึ่งข้อต่อหนึ่งบรรทัด</p>
+                    </div>
+                    <div>
+                        <label class="field-label">กลไกการทำงานในร่างกาย</label>
+                        <textarea id="f-howItWorksTh" rows="4" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">จุดเด่นเฉพาะตัว</label>
+                        <textarea id="f-uniquePropertiesTh" rows="3" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">ข้อมูลงานวิจัย</label>
+                        <textarea id="f-scientificEvidenceTh" rows="4" class="field-input" placeholder="อ้างอิงจากเอกสารอ้างอิงด้านล่างเท่านั้น ห้ามสร้างข้อมูลขึ้นเอง"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">ข้อมูลความปลอดภัย / ข้อควรระวัง</label>
+                        <textarea id="f-safetyInformationTh" rows="3" class="field-input"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content EN -->
+            <div>
+                <p class="form-section-title"><i class="fas fa-globe text-sky-500 mr-1.5"></i> เนื้อหาภาษาอังกฤษ</p>
+                <p class="text-xs text-gray-500 mb-3 bg-sky-50 border border-sky-100 rounded-lg p-3">
+                    หน้าเว็บภาษาอังกฤษ (/en/) จะถูกสร้างขึ้นเฉพาะเมื่อมีคำอธิบายสั้นหรือคำอธิบายแบบเต็มภาษาอังกฤษแล้วเท่านั้น
+                </p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="field-label">Short description</label>
+                        <textarea id="f-shortDescriptionEn" rows="2" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Full description</label>
+                        <textarea id="f-fullDescriptionEn" rows="5" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Key functions</label>
+                        <textarea id="f-keyFunctionsEn" rows="4" class="field-input" placeholder="หนึ่งข้อต่อหนึ่งบรรทัด"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">How it works</label>
+                        <textarea id="f-howItWorksEn" rows="4" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Unique properties</label>
+                        <textarea id="f-uniquePropertiesEn" rows="3" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Scientific evidence</label>
+                        <textarea id="f-scientificEvidenceEn" rows="4" class="field-input"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Safety information</label>
+                        <textarea id="f-safetyInformationEn" rows="3" class="field-input"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO -->
+            <div>
+                <p class="form-section-title"><i class="fas fa-magnifying-glass-chart text-violet-500 mr-1.5"></i> SEO</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="field-label">SEO Title (ไทย)</label>
+                        <input type="text" id="f-seoTitleTh" class="field-input" maxlength="70">
+                        <p class="field-hint">ถ้าเว้นว่าง ระบบจะสร้างให้อัตโนมัติจากชื่อส่วนผสม</p>
+                    </div>
+                    <div>
+                        <label class="field-label">SEO Title (อังกฤษ)</label>
+                        <input type="text" id="f-seoTitleEn" class="field-input" maxlength="70">
+                    </div>
+                    <div>
+                        <label class="field-label">Meta Description (ไทย)</label>
+                        <textarea id="f-metaDescriptionTh" rows="2" class="field-input" maxlength="300"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Meta Description (อังกฤษ)</label>
+                        <textarea id="f-metaDescriptionEn" rows="2" class="field-input" maxlength="300"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relationships -->
+            <div>
+                <p class="form-section-title"><i class="fas fa-diagram-project text-cyan-500 mr-1.5"></i> ความเชื่อมโยง</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="field-label">ผลิตภัณฑ์ที่มีส่วนผสมนี้</label>
+                        <select data-enhance-select id="f-productIds" multiple size="7" class="field-input"></select>
+                        <p class="field-hint">กด Ctrl (หรือ Cmd) ค้างไว้เพื่อเลือกหลายรายการ</p>
+                    </div>
+                    <div>
+                        <label class="field-label">หัวข้อสุขภาพที่เกี่ยวข้อง</label>
+                        <select data-enhance-select id="f-wellnessTopicIds" multiple size="7" class="field-input"></select>
+                    </div>
+                    <div>
+                        <label class="field-label">ส่วนผสมที่เกี่ยวข้อง</label>
+                        <select data-enhance-select id="f-relatedIngredientIds" multiple size="7" class="field-input"></select>
+                    </div>
+                    <div>
+                        <label class="field-label">บทความที่เกี่ยวข้อง (slug)</label>
+                        <textarea id="f-relatedArticleSlugs" rows="4" class="field-input" placeholder="หนึ่ง slug ต่อหนึ่งบรรทัด เช่น herbs-for-blood-sugar"></textarea>
+                        <p class="field-hint">ใช้ชื่อไฟล์บทความใน /articles/ โดยไม่ต้องใส่ .html</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- References -->
+            <div>
+                <p class="form-section-title"><i class="fas fa-book text-indigo-500 mr-1.5"></i> เอกสารอ้างอิง</p>
+                <p class="text-xs text-gray-500 mb-3 bg-rose-50 border border-rose-100 rounded-lg p-3">
+                    ใส่เฉพาะงานวิจัยหรือเอกสารที่ตรวจสอบได้จริงเท่านั้น ห้ามสร้างรายการอ้างอิงขึ้นเอง
+                </p>
+                <div id="referencesList" class="space-y-3"></div>
+                <button type="button" id="addReferenceBtn" class="mt-3 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                    <i class="fas fa-plus-circle mr-1"></i> เพิ่มเอกสารอ้างอิง
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab: Preview -->
+        <div id="tabPreview" class="hidden flex-1 overflow-y-auto p-5">
+            <div class="bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs rounded-lg p-3 mb-5">
+                <i class="fas fa-eye-slash mr-1.5"></i>
+                นี่คือตัวอย่างภายในระบบแอดมินเท่านั้น เนื้อหาที่ยังไม่เผยแพร่จะไม่มี URL สาธารณะและไม่ปรากฏในผลการค้นหา
+            </div>
+            <div id="previewContent" class="space-y-6 text-sm text-gray-700"></div>
+        </div>
+
+        <!-- Panel Footer -->
+        <div class="p-4 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between gap-2 flex-shrink-0">
+            <div class="flex gap-2">
+                <button id="publishBtn" class="hidden bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                    <i class="fas fa-upload mr-1.5"></i> เผยแพร่
+                </button>
+                <button id="unpublishBtn" class="hidden bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fas fa-eye-slash mr-1.5"></i> ยกเลิกเผยแพร่
+                </button>
+                <button id="deleteBtn" class="hidden bg-rose-50 hover:bg-rose-500 hover:text-white text-rose-600 border border-rose-200 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fas fa-trash mr-1.5"></i> ลบ
+                </button>
+            </div>
+            <div class="flex gap-2">
+                <button id="saveBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                    <i class="fas fa-save mr-1.5"></i> บันทึก
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 🟢 Script พื้นฐาน -->
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/ingredients-admin.js"></script>
+    <script src="./js/kb-image-picker.js"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { document.body.style.opacity = '1'; }, 50);
+        });
+
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.hostname === window.location.hostname && this.target !== '_blank' && !this.hasAttribute('onclick')) {
+                    e.preventDefault();
+                    const target = this.href;
+                    document.body.style.opacity = '0';
+                    setTimeout(() => { window.location.href = target; }, 200);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

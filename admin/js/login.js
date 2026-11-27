@@ -77,7 +77,7 @@ async function handleLogin(event) {
         }
 
         // 🟢 ตรวจสอบ Role ซ้ำอีกรอบเพื่อความปลอดภัย
-        if (data.user && (data.user.role !== 'ADMIN' && data.user.role !== 'admin')) {
+        if (data.user && !['ADMIN', 'CONTENT'].includes(String(data.user.role).toUpperCase())) {
             throw new Error('คุณไม่มีสิทธิ์เข้าถึงระบบผู้ดูแลระบบ (Admin Only)');
         }
 
@@ -94,7 +94,8 @@ async function handleLogin(event) {
         submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> เข้าสู่ระบบสำเร็จ!';
         
         setTimeout(() => {
-            window.location.href = 'index.html';
+            // ทีมคอนเทนต์ไม่มีหน้า Dashboard — เริ่มที่หน้าจัดการสินค้า
+            window.location.href = String(data.user?.role).toUpperCase() === 'CONTENT' ? 'products.html' : 'index.html';
         }, 800);
 
     } catch (error) {

@@ -3233,7 +3233,7 @@ function renderUI() {
         let propsItems = ing.props.map((prop) => `<li>${prop}</li>`).join("");
         
         let imgHtml = ing.img 
-          ? `<img src="${ing.img}" alt="${ing.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\\'width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;\\'></div>';" />` 
+          ? `<img src="${ing.img}" alt="${ing.name}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.onerror=null; this.parentNode.innerHTML='<div style=\\'width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;\\'></div>';" />` 
           : `<div style="width:100%; height:100%; background-color:#e2e8f0; border-radius:50%;"></div>`;
           
         ingredientGrid.innerHTML += `
@@ -3280,7 +3280,7 @@ function renderUI() {
       reviewList.innerHTML = "";
       product.reviews.forEach((review) => {
         let imgHTML = review.img
-          ? `<img class="review-image" src="${review.img}" alt="Review Image" style="margin-top: 10px;" onerror="this.style.display='none'" />`
+          ? `<img class="review-image" loading="lazy" decoding="async" src="${review.img}" alt="Review Image" style="margin-top: 10px;" onerror="this.style.display='none'" />`
           : "";
 
         let starCount = review.rating || 5;
@@ -3403,7 +3403,7 @@ function renderUI() {
           relatedHTML += `
             <div class="product-card animate-in" onclick="window.location.href='product.html?id=${key}';">
               <div class="product-image">
-                <img src="${imgCover}" alt="${item.name}">
+                <img src="${imgCover}" alt="${item.name}" loading="lazy" decoding="async">
               </div>
               <h3 class="product-title">${item.name}</h3>
               <p class="product-tag">#ผลิตภัณฑ์เสริมอาหาร</p>

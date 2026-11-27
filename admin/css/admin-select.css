@@ -1,0 +1,45 @@
+/* Admin theme for the shared enhanced dropdown (cw-select): slate + indigo, matches Tailwind admin UI. */
+.cw-select-trigger {
+  min-height: 42px;
+  padding: 9px 12px;
+  gap: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  color: #1f2937;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+  font-family: 'Prompt', sans-serif;
+}
+.cw-select-trigger:hover { border-color: #a5b4fc; }
+.cw-select-trigger:focus-visible,
+.cw-select-trigger[aria-expanded=true] { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(99, 102, 241, .18); }
+.cw-select-trigger[aria-invalid=true] { border-color: #f43f5e; }
+.cw-select-chevron { color: #6b7280; }
+.cw-select-trigger[aria-expanded=true] .cw-select-chevron { color: #4f46e5; }
+
+.cw-select-menu {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 6px;
+  color: #1f2937;
+  box-shadow: 0 20px 45px -12px rgba(15, 23, 42, .25), 0 4px 10px rgba(15, 23, 42, .06);
+  animation: cwAdminMenuIn .14s ease-out;
+}
+@keyframes cwAdminMenuIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.cw-select-search { height: 38px; border-color: #e5e7eb; background: #f9fafb; border-radius: 9px; }
+.cw-select-search:focus { border-color: #818cf8; background: #fff; box-shadow: 0 0 0 3px rgba(99, 102, 241, .12); }
+.cw-select-option { min-height: 38px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; }
+.cw-select-option:hover,
+.cw-select-option.is-focused { background: #f3f4f6; }
+.cw-select-option[aria-selected=true] { background: #eef2ff; color: #4338ca; font-weight: 600; }
+.cw-select-check { color: #4f46e5; font-weight: 700; text-align: right; }
+.cw-select-empty { color: #9ca3af; }
+
+/* Filter-bar dropdowns keep a compact width beside the search box. */
+.cw-select:has(> #statusFilter) { width: 220px; flex-shrink: 0; }
+@media (max-width: 640px) { .cw-select:has(> #statusFilter) { width: 100%; } }
+
+/* Small variant (e.g. image-slot picker in product cards). */
+select[data-size=sm] + .cw-select-trigger { min-height: 26px; padding: 3px 8px; gap: 6px; font-size: 11px; border-radius: 6px; box-shadow: none; }
+select[data-size=sm] + .cw-select-trigger .cw-select-chevron { width: 6px; height: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .cw-select-menu { animation: none; } }

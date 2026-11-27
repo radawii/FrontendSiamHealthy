@@ -296,7 +296,7 @@ function openReviewModal() {
                 </div>
                 <div>
                     <label class="font-medium text-gray-700">ให้คะแนน (1 - 5 ดาว) <span class="text-red-500">*</span></label>
-                    <select id="revRating" class="w-full p-2 border border-gray-300 rounded-lg mt-1 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select data-enhance-select id="revRating" class="w-full p-2 border border-gray-300 rounded-lg mt-1 outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="5" selected>⭐⭐⭐⭐⭐ (5 ดาว)</option>
                         <option value="4">⭐⭐⭐⭐ (4 ดาว)</option>
                         <option value="3">⭐⭐⭐ (3 ดาว)</option>
@@ -345,7 +345,7 @@ function openEditReviewModal(rev) {
                 </div>
                 <div>
                     <label class="font-medium text-gray-700">ให้คะแนน (1 - 5 ดาว) <span class="text-red-500">*</span></label>
-                    <select id="editRevRating" class="w-full p-2 border border-gray-300 rounded-lg mt-1 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select data-enhance-select id="editRevRating" class="w-full p-2 border border-gray-300 rounded-lg mt-1 outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="5" ${curRating === 5 ? 'selected' : ''}>⭐⭐⭐⭐⭐ (5 ดาว)</option>
                         <option value="4" ${curRating === 4 ? 'selected' : ''}>⭐⭐⭐⭐ (4 ดาว)</option>
                         <option value="3" ${curRating === 3 ? 'selected' : ''}>⭐⭐⭐ (3 ดาว)</option>
