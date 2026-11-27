@@ -1140,3 +1140,476 @@ body.article-detail-page {
         gap: 10px;
     }
 }
+
+/* โครงสร้างหลักของการ์ด */
+.lipid-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.lipid-card {
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    border: 1px solid transparent;
+    border-left-width: 6px; /* แถบสีเน้นด้านซ้าย */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lipid-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.lipid-header {
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.12);
+}
+
+.lipid-title-box h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.lipid-body p {
+    margin: 0;
+    color: #334155;
+    line-height: 1.6;
+}
+
+/* --- สีของการ์ดแต่ละใบ --- */
+
+/* ใบที่ 1: โทนสีฟ้า (การประเมินพฤติกรรม) */
+.lipid-card.triglycerides {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-color: #bae6fd;
+    border-left-color: #0284c7;
+}
+.lipid-card.triglycerides h3 {
+    color: #0369a1;
+}
+
+/* ใบที่ 2: โทนสีเขียวมิ้นต์ (การปรับพฤติกรรม) */
+.lipid-card.hdl {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-color: #bbf7d0;
+    border-left-color: #16a34a;
+}
+.lipid-card.hdl h3 {
+    color: #15803d;
+}
+
+/* ใบที่ 3: โทนสีส้มอมเหลือง (การตรวจวินิจฉัย - เน้นให้สะดุดตา) */
+.lipid-card.ldl {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #fde68a;
+    border-left-color: #d97706;
+}
+.lipid-card.ldl h3 {
+    color: #b45309;
+}
+
+.lipid-badge.good-1 {
+    background: #bae6fd;
+    color: #0284c7;
+}
+
+.lipid-badge.good-2 {
+    background: #bbf7d0;
+    color: #16a34a;
+}
+
+.lipid-badge.good-3 {
+    background: #fde68a;
+    color: #d97706;
+}
+
+/* การ์ดหุ้มตาราง */
+.wl-compare-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #dcfce7;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+    overflow: hidden;
+    margin: 1.25rem 0;
+}
+
+.wl-compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.wl-compare-table thead th {
+    width: 50%;
+    padding: 1.1rem 1.25rem;
+    text-align: left;
+    vertical-align: top;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.45;
+    background: #f0fdf4;
+    color: #065f46;
+    border-bottom: 1px solid #bbf7d0;
+}
+
+.wl-compare-table thead th i {
+    margin-right: 0.35rem;
+}
+
+.wl-compare-table tbody td {
+    padding: 1.25rem;
+    vertical-align: top;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #334155;
+}
+
+.wl-compare-table tbody td.wl-col-loss {
+    border-right: 1px solid #e2e8f0;
+}
+
+/* ปรับการแสดงผลบนมือถือ */
+@media (max-width: 768px) {
+    .wl-compare-card {
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        box-shadow: none;
+    }
+
+    .wl-compare-table,
+    .wl-compare-table tbody,
+    .wl-compare-table tr,
+    .wl-compare-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* ซ่อนหัวตารางเดิมบนมือถือ แล้วใช้ data-label ของแต่ละช่องแทน */
+    .wl-compare-table thead {
+        display: none;
+    }
+
+    .wl-compare-table tbody td {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 1rem 1.1rem;
+        margin-bottom: 0.85rem;
+        border: 1px solid #e2e8f0;
+        border-left-width: 5px;
+    }
+
+    .wl-compare-table tbody td:last-child {
+        margin-bottom: 0;
+    }
+
+    .wl-compare-table tbody td.wl-col-loss {
+        border-right: 1px solid #e2e8f0;
+        border-left-color: #10b981;
+    }
+
+    .wl-compare-table tbody td.wl-col-recomp {
+        border-left-color: #0284c7;
+    }
+
+    /* แสดงชื่อหัวข้อด้านบนแต่ละกล่องบนมือถือ */
+    .wl-compare-table tbody td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.4;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .wl-compare-table tbody td.wl-col-loss::before {
+        color: #047857;
+    }
+
+    .wl-compare-table tbody td.wl-col-recomp::before {
+        color: #0369a1;
+    }
+}
+
+.eye-care-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.25rem 0;
+}
+
+.eye-care-card {
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    border-width: 1.5px;
+    border-style: solid;
+    border-left-width: 6px;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+}
+
+.eye-care-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.65rem;
+}
+
+.eye-care-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.eye-care-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.eye-care-text {
+    margin: 0;
+    font-size: 0.96rem;
+    line-height: 1.72;
+    color: #334155;
+}
+
+/* --- กรอบที่ 1: สีฟ้า --- */
+.eye-care-step-1 {
+    background: #f0f9ff;
+    border-color: #7dd3fc;
+    border-left-color: #0284c7;
+}
+.eye-care-step-1 .eye-care-icon {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+.eye-care-step-1 .eye-care-title {
+    color: #0369a1;
+}
+
+/* --- กรอบที่ 2: สีแดง --- */
+.eye-care-step-2 {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    border-left-color: #dc2626;
+}
+.eye-care-step-2 .eye-care-icon {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.eye-care-step-2 .eye-care-title {
+    color: #991b1b;
+}
+
+.eye-care-step-2 .eye-care-alert-list {
+    margin: 0.85rem 0 0;
+    padding: 0.85rem 1rem 0.85rem 2.1rem;
+    background: #ffffff;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+.eye-care-step-2 .eye-care-alert-list li {
+    font-size: 0.94rem;
+    line-height: 1.65;
+    color: #1e293b;
+}
+.eye-care-step-2 .eye-care-alert-list li::marker {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+/* --- กรอบที่ 3: สีเขียวอมฟ้า (Teal) --- */
+.eye-care-step-3 {
+    background: #f0fdfa;
+    border-color: #5eead4;
+    border-left-color: #0d9488;
+}
+.eye-care-step-3 .eye-care-icon {
+    background: #ccfbf1;
+    color: #0d9488;
+}
+.eye-care-step-3 .eye-care-title {
+    color: #0f766e;
+}
+
+/* ปรับระยะห่างบนมือถือ */
+@media (max-width: 600px) {
+    .eye-care-card {
+        padding: 1rem 1.1rem;
+        border-radius: 12px;
+    }
+
+    .eye-care-title {
+        font-size: 1.02rem;
+    }
+
+    .eye-care-step-2 .eye-care-alert-list {
+        padding: 0.75rem 0.85rem 0.75rem 1.85rem;
+    }
+}
+
+.eye-cmp-section {
+    margin: 1.5rem 0;
+}
+
+.eye-cmp-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+
+.eye-cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.eye-cmp-table thead th {
+    padding: 1rem 1.1rem;
+    text-align: left;
+    font-size: 0.98rem;
+    font-weight: 700;
+    background: #f8fafc;
+    color: #0f172a;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.eye-cmp-table thead th i {
+    margin-right: 0.35rem;
+}
+
+.eye-cmp-th-topic {
+    width: 24%;
+}
+
+.eye-cmp-th-cataract,
+.eye-cmp-th-glaucoma,
+.eye-cmp-th-floaters {
+    width: 25.33%;
+}
+
+.eye-cmp-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.eye-cmp-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.eye-cmp-topic {
+    padding: 1.1rem;
+    vertical-align: top;
+    font-size: 0.96rem;
+    line-height: 1.55;
+    color: #0f172a;
+}
+
+.eye-cmp-cell {
+    padding: 1rem;
+    vertical-align: top;
+}
+
+/* กล่องข้อความแต่ละโรค */
+.eye-cmp-badge {
+    display: block;
+    padding: 0.75rem 0.9rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.eye-cmp-badge.cataract {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.eye-cmp-badge.glaucoma {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+}
+
+.eye-cmp-badge.floaters {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    color: #9f1239;
+}
+
+/* --- มือถือ: แปลงแต่ละแถวเป็นการ์ด และเรียงหัวข้อโรคซ้อนด้านบน --- */
+@media (max-width: 768px) {
+    .eye-cmp-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    .eye-cmp-table,
+    .eye-cmp-table tbody,
+    .eye-cmp-table tr,
+    .eye-cmp-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .eye-cmp-table thead {
+        display: none;
+    }
+
+    .eye-cmp-table tbody tr {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .eye-cmp-topic {
+        padding: 0 0 0.75rem;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px dashed #cbd5e1;
+        font-size: 1.02rem;
+    }
+
+    .eye-cmp-cell {
+        padding: 0;
+        margin-bottom: 0.75rem;
+    }
+
+    .eye-cmp-cell:last-child {
+        margin-bottom: 0;
+    }
+
+    .eye-cmp-cell::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+        color: #475569;
+    }
+
+    .eye-cmp-badge {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.92rem;
+    }
+}
